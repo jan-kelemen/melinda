@@ -13,7 +13,6 @@ matrix:
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 
-  include:
     - os: linux
       addons:
         apt:
@@ -24,7 +23,6 @@ matrix:
       env:
         - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
 
-  include:
     - os: linux
       addons:
         apt:
