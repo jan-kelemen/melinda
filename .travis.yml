@@ -10,9 +10,9 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-7
-            - python
+            - python3
       install:
-          - sudo pip install conan
+          - sudo pip3 install conan
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 
@@ -23,9 +23,9 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-8
-            - python
+            - python3
       install:
-          - sudo pip install conan
+          - sudo pip3 install conan
       env:
         - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
 
@@ -36,9 +36,9 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-9
-            - python
+            - python3
       install:
-          - sudo pip install conan
+          - sudo pip3 install conan
       env:
         - MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"
 
@@ -51,9 +51,9 @@ matrix:
           packages:
             - g++-7
             - clang-8
-            - python
+            - python3
       install:
-          - sudo pip install conan
+          - sudo pip3 install conan
       env:
         - MATRIX_EVAL="CC=clang-8 && CXX=clang++-8"
 
