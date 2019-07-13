@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.4)
 
 set(TARGET_NAME melinda)
 
@@ -14,6 +14,22 @@ include(cmake/clang-format.cmake)
 include(cmake/clang-tidy.cmake)
 include(cmake/global-tools.cmake)
 include(cmake/conan.cmake)
+
+conan_add_remote(
+    NAME
+        catchorg
+    URL
+        https://api.bintray.com/conan/catchorg/Catch2
+)
+
+conan_cmake_run(
+    REQUIRES
+        Catch2/2.9.1@catchorg/stable
+    BASIC_SETUP
+        CMAKE_TARGETS
+    BUILD
+        missing
+)
 
 add_compile_options(-Wall -Wextra)
 
