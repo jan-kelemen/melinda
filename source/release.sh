@@ -4,5 +4,5 @@ then
 fi
 
 mkdir build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release && 
-    cmake --build . && mv -t .. compile_commands.json
+    cmake --build . && mv -t .. compile_commands.json && cd ..
 

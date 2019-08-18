@@ -15,24 +15,39 @@ include(cmake/clang-tidy.cmake)
 include(cmake/global-tools.cmake)
 include(cmake/conan.cmake)
 
-conan_add_remote(
-    NAME
-        catchorg
-    URL
-        https://api.bintray.com/conan/catchorg/Catch2
-)
+# ugly hack around conan_add_remote
+
+#conan_add_remote(
+#    NAME
+#        catchorg
+#    URL
+#        https://api.bintray.com/conan/catchorg/Catch2
+#)
+
+# for some reasoun the above code results in a remote not being added (?)
+
+execute_process(COMMAND conan remote add 
+    catchorg https://api.bintray.com/conan/catchorg/Catch2 -f)
+execute_process(COMMAND conan remote add 
+    bincrafters https://api.bintray.com/conan/bincrafters/public-conan -f)
 
 conan_cmake_run(
     REQUIRES
         Catch2/2.9.1@catchorg/stable
+        #GCC-7 doesn't support std::filesystem, preferrably use a common
+        #solution for currently supported compilers
+        boost_filesystem/1.69.0@bincrafters/stable
     BASIC_SETUP
         CMAKE_TARGETS
     BUILD
         missing
 )
 
-add_compile_options(-Wall -Wextra)
+add_compile_options(-W -Wall -Wextra -pedantic)
+
+add_subdirectory(common)
 
 add_executable(${TARGET_NAME} src/main.cpp)
+
 global_tools(${TARGET_NAME})
 
