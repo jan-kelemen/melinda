@@ -10,9 +10,7 @@ For now, just exploring CMake, Conan, Linux development, etc...
 
 #### Supported compilers:
 * gcc 7
-* gcc 8
-* gcc 9
-* clang 8
+* clang 9
 
 #### Steps:
 * Install required packages

@@ -1,3 +1,6 @@
+#ifndef MELINDA_COMMON_CPPEX_ITERATOR_TRAITS_INCLUDED
+#define MELINDA_COMMON_CPPEX_ITERATOR_TRAITS_INCLUDED
+
 #include <iterator>
 #include <type_traits>
 
@@ -78,3 +81,5 @@ namespace melinda::traits
         is_output_iterator<Iterator>::value;
 
 } // namespace melinda::traits
+
+#endif

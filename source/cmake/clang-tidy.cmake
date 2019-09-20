@@ -1,7 +1,7 @@
 # http://mariobadr.com/using-clang-tidy-with-cmake-36.html
 
 find_program(CLANG_TIDY_EXE
-        NAMES "clang-tidy"
+        NAMES "clang-tidy-9"
         DOC "Path to clang-tidy executable"
     )
 

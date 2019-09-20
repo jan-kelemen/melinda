@@ -34,9 +34,6 @@ execute_process(COMMAND conan remote add
 conan_cmake_run(
     REQUIRES
         Catch2/2.9.1@catchorg/stable
-        #GCC-7 doesn't support std::filesystem, preferrably use a common
-        #solution for currently supported compilers
-        boost_filesystem/1.69.0@bincrafters/stable
     BASIC_SETUP
         CMAKE_TARGETS
     BUILD
@@ -46,8 +43,4 @@ conan_cmake_run(
 add_compile_options(-W -Wall -Wextra -pedantic)
 
 add_subdirectory(common)
-
-add_executable(${TARGET_NAME} src/main.cpp)
-
-global_tools(${TARGET_NAME})
 

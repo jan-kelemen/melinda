@@ -8,8 +8,13 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
+            - sourceline: 'deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-9 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
             - g++-7
+            - clang-9
+            - clang-tidy-9
+            - clang-format-9
               # dependencies for conan
             - python3 
             - python3-pip 
@@ -25,44 +30,13 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-          packages:
-            - g++-8
-              # dependencies for conan
-            - python3
-            - python3-pip
-            - python3-setuptools
-      install:
-          # install conan
-          - pip3 install conan
-      env:
-        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
-
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-9
-              # dependencies for conan
-            - python3
-            - python3-pip
-            - python3-setuptools
-      install:
-          # install conan
-          - pip3 install conan
-      env:
-        - MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"
-
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - llvm-toolchain-xenial-8
-            - ubuntu-toolchain-r-test
+            - sourceline: 'deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-9 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
             - g++-7
-            - clang-8
+            - clang-9
+            - clang-tidy-9
+            - clang-format-9
               # dependencies for conan
             - python3
             - python3-pip
@@ -71,10 +45,9 @@ matrix:
           # install conan
           - pip3 install conan
       env:
-        - MATRIX_EVAL="CC=clang-8 && CXX=clang++-8"
+        - MATRIX_EVAL="CC=clang-9 && CXX=clang++-9"
 
 before_install:
     - eval "${MATRIX_EVAL}"
 
 script: ./travis.sh
-
