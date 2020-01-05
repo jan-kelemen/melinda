@@ -4,10 +4,13 @@ AccessModifierOffset: '-4'
 AlignAfterOpenBracket: DontAlign
 AlignConsecutiveAssignments: 'false'
 AlignConsecutiveDeclarations: 'false'
+AlignConsecutiveMacros: 'false'
 AlignEscapedNewlines: DontAlign
 AlignOperands: 'false'
 AlignTrailingComments: 'false'
-AllowAllParametersOfDeclarationOnNextLine: 'true'
+AllowAllArgumentsOnNextLine: 'false'
+AllowAllConstructorInitializersOnNextLine: 'false'
+AllowAllParametersOfDeclarationOnNextLine: 'false'
 AllowShortBlocksOnASingleLine: 'false'
 AllowShortCaseLabelsOnASingleLine: 'false'
 AllowShortFunctionsOnASingleLine: All
@@ -34,7 +37,7 @@ DerivePointerAlignment: 'false'
 DisableFormat: 'false'
 FixNamespaceComments: 'true'
 IncludeBlocks: Regroup
-IncludeIsMainRegex: '"$"'
+IncludeIsMainRegex: '"(.t)?$"'
 IndentCaseLabels: 'false'
 IndentPPDirectives: None
 IndentWidth: '4'
@@ -49,6 +52,7 @@ ReflowComments: 'true'
 SortIncludes: 'true'
 SortUsingDeclarations: 'false'
 SpaceAfterCStyleCast: 'true'
+SpaceAfterLogicalNot: 'false'
 SpaceAfterTemplateKeyword: 'false'
 SpaceBeforeAssignmentOperators: 'true'
 SpaceBeforeParens: ControlStatements
@@ -62,5 +66,4 @@ SpacesInSquareBrackets: 'false'
 Standard: Cpp11
 TabWidth: '4'
 UseTab: Never
-
 ...
