@@ -34,6 +34,9 @@ execute_process(COMMAND conan remote add
 conan_cmake_run(
     REQUIRES
         Catch2/2.9.1@catchorg/stable
+        fmt/6.0.0@bincrafters/stable
+        date/2.4.1@bincrafters/stable
+        boost_filesystem/1.69.0@bincrafters/stable
     BASIC_SETUP
         CMAKE_TARGETS
     BUILD
@@ -44,3 +47,7 @@ add_compile_options(-W -Wall -Wextra -pedantic)
 
 add_subdirectory(common)
 
+add_executable(tryout src/main.cpp)
+target_link_libraries(tryout
+    PRIVATE
+    common_trace)

@@ -1,5 +1,3 @@
-#define CATCH_CONFIG_MAIN
-
 #include "../include/iterator_traits.h"
 #include "catch2/catch.hpp"
 
