@@ -48,9 +48,9 @@ namespace melinda::trace
         trace_options(trace_options &&) noexcept = default;
 
     public: // Operators
-        auto operator=(trace_options const&)->trace_options& = default;
+        trace_options& operator=(trace_options const&) = default;
 
-        auto operator=(trace_options&&) noexcept->trace_options& = default;
+        trace_options& operator=(trace_options&&) noexcept = default;
 
     public: // Destruction
         ~trace_options() noexcept = default;
@@ -93,17 +93,17 @@ namespace melinda::trace
         trace_handle(trace_handle &&) noexcept = default;
 
     public: // Interface
-        [[nodiscard]] auto should_trace_message(trace_level level)
-            const noexcept->bool;
+        [[nodiscard]] bool should_trace_message(trace_level level)
+            const noexcept;
 
-        auto trace_level(trace_level new_level) noexcept->void;
+        void trace_level(trace_level new_level) noexcept;
 
-        auto trace(std::string_view message) const noexcept->void;
+        void trace(std::string_view message) const noexcept;
 
     public: // Operators
-        auto operator=(trace_handle const&) noexcept->trace_handle& = default;
+        trace_handle& operator=(trace_handle const&) noexcept = default;
 
-        auto operator=(trace_handle&&) noexcept->trace_handle& = default;
+        trace_handle& operator=(trace_handle&&) noexcept = default;
 
     public: // Conversions
         [[nodiscard]] explicit operator bool() const noexcept;
@@ -119,11 +119,10 @@ namespace melinda::trace
     };
 
     // Provides the handle for the tracing
-    [[nodiscard]] auto initialize_trace(trace_options const& options)
-        -> trace_handle;
+    [[nodiscard]] trace_handle initialize_trace(trace_options const& options);
 
     // Closes the trace handle
-    auto close_trace(trace_handle& handle) noexcept -> void;
+    void close_trace(trace_handle& handle) noexcept;
 
 } // namespace melinda::trace
 
@@ -140,7 +139,7 @@ namespace melinda::trace::detail
         uint16_t milliseconds;
     };
 
-    [[nodiscard]] auto current_timestamp() noexcept -> timestamp;
+    [[nodiscard]] timestamp current_timestamp() noexcept;
 } // namespace melinda::trace::detail
 
 template<>
@@ -217,11 +216,11 @@ namespace melinda::trace::detail
     }
 
     template<typename... T>
-    [[nodiscard]] auto format_message(char const* const filename,
+    [[nodiscard]] std::string format_message(char const* const filename,
         uintmax_t const line,
         melinda::trace::trace_level const level,
         std::string_view format,
-        T&&... args) -> std::string
+        T&&... args)
     {
         // TODO-JK: Can this be done without extra reformatting?
         timestamp const timestamp = current_timestamp();

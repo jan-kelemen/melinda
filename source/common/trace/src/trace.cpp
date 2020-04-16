@@ -34,14 +34,14 @@ namespace melinda::trace
         [[nodiscard]] auto should_trace_message(enum trace_level level)
             const noexcept->bool;
 
-        auto trace_level(enum trace_level new_level) noexcept->void;
+        void trace_level(enum trace_level new_level) noexcept;
 
-        auto trace(std::string_view message) const noexcept->void;
+        void trace(std::string_view message) const noexcept;
 
     public: // Operators
-        auto operator=(impl const&)->impl& = delete;
+        impl& operator=(impl const&) = delete;
 
-        auto operator=(impl&&) noexcept->impl& = delete;
+        impl& operator=(impl&&) noexcept = delete;
 
     public: // Destruction
         ~impl() noexcept;
@@ -52,16 +52,16 @@ namespace melinda::trace
         static constexpr std::size_t delay_filesize_check_default = 50;
 
     private: // Helpers
-        [[nodiscard]] auto has_filesize_exceeded(int file_descriptor_)
-            const noexcept->bool;
+        [[nodiscard]] bool has_filesize_exceeded(int file_descriptor_)
+            const noexcept;
 
-        [[nodiscard]] auto new_filename() const->fs::path;
+        [[nodiscard]] fs::path new_filename() const;
 
-        [[nodiscard]] auto open_file(fs::path const& full_path) const->int;
+        [[nodiscard]] int open_file(fs::path const& full_path) const;
 
-        [[nodiscard]] auto open_latest_file() const->int;
+        [[nodiscard]] int open_latest_file() const;
 
-        [[nodiscard]] auto find_matching_files() const->std::vector<fs::path>;
+        [[nodiscard]] std::vector<fs::path> find_matching_files() const;
 
     private: // Data
         mutable std::timed_mutex mtx;
@@ -94,20 +94,18 @@ namespace melinda::trace
     {
     }
 
-    auto trace_handle::impl::should_trace_message(enum trace_level level) const
-        noexcept -> bool
+    bool trace_handle::impl::should_trace_message(
+        enum trace_level level) const noexcept
     {
         return level >= trace_level_.load();
     }
 
-    auto trace_handle::impl::trace_level(enum trace_level new_level) noexcept
-        -> void
+    void trace_handle::impl::trace_level(enum trace_level new_level) noexcept
     {
         trace_level_.store(new_level);
     }
 
-    auto trace_handle::impl::trace(std::string_view message) const noexcept
-        -> void
+    void trace_handle::impl::trace(std::string_view message) const noexcept
     {
         using namespace std::chrono_literals;
         if (!mtx.try_lock_for(5s))
@@ -173,8 +171,8 @@ namespace melinda::trace
             [](fs::path const& p) { fs::remove(p); });
     }
 
-    auto trace_handle::impl::has_filesize_exceeded(
-        int const file_descriptor) const noexcept -> bool
+    bool trace_handle::impl::has_filesize_exceeded(
+        int const file_descriptor) const noexcept
     {
         struct stat64 file_stats
         {
@@ -188,10 +186,11 @@ namespace melinda::trace
             static_cast<uintmax_t>(file_stats.st_size) >= max_filesize_;
     }
 
-    auto trace_handle::impl::new_filename() const -> fs::path
+    fs::path trace_handle::impl::new_filename() const
     {
-        auto const current_time = std::chrono::high_resolution_clock::to_time_t(
-            std::chrono::high_resolution_clock::now());
+        std::time_t const current_time =
+            std::chrono::high_resolution_clock::to_time_t(
+                std::chrono::high_resolution_clock::now());
         struct tm tm = {};
         gmtime_r(std::addressof(current_time), std::addressof(tm));
         std::array<char, sizeof("_20200201204856.log") + 1> buffer = {};
@@ -207,7 +206,7 @@ namespace melinda::trace
         return directory_ / filename;
     }
 
-    auto trace_handle::impl::open_file(fs::path const& full_path) const -> int
+    int trace_handle::impl::open_file(fs::path const& full_path) const
     {
         fs::path const directory = full_path.parent_path();
         if (!fs::exists(directory))
@@ -222,7 +221,7 @@ namespace melinda::trace
             S_IRUSR | S_IWUSR);
     }
 
-    auto trace_handle::impl::open_latest_file() const -> int
+    int trace_handle::impl::open_latest_file() const
     {
         std::vector<fs::path> const matching_entries = find_matching_files();
         if (matching_entries.empty())
@@ -245,8 +244,7 @@ namespace melinda::trace
         return open_file(new_filename());
     }
 
-    auto trace_handle::impl::find_matching_files() const
-        -> std::vector<fs::path>
+    std::vector<fs::path> trace_handle::impl::find_matching_files() const
     {
         std::vector<fs::path> matching_entries;
         if (!fs::exists(directory_))
@@ -290,20 +288,20 @@ namespace melinda::trace
     {
     }
 
-    trace_handle::trace_handle() noexcept : impl_(nullptr) {}
+    trace_handle::trace_handle() noexcept : impl_(nullptr) { }
 
     trace_handle::trace_handle(trace_options const& options)
         : impl_(std::make_shared<impl>(options))
     {
     }
 
-    auto trace_handle::should_trace_message(enum trace_level const level) const
-        noexcept -> bool
+    bool trace_handle::should_trace_message(
+        enum trace_level const level) const noexcept
     {
         return impl_ && impl_->should_trace_message(level);
     }
 
-    auto trace_handle::trace_level(enum trace_level new_level) noexcept -> void
+    void trace_handle::trace_level(enum trace_level new_level) noexcept
     {
         if (impl_)
         {
@@ -311,7 +309,7 @@ namespace melinda::trace
         }
     }
 
-    auto trace_handle::trace(std::string_view message) const noexcept -> void
+    void trace_handle::trace(std::string_view message) const noexcept
     {
         if (impl_)
         {
@@ -321,7 +319,7 @@ namespace melinda::trace
 
     trace_handle::~trace_handle() noexcept = default;
 
-    auto initialize_trace(trace_options const& options) -> trace_handle
+    trace_handle initialize_trace(trace_options const& options)
     {
         try
         {
@@ -335,15 +333,12 @@ namespace melinda::trace
         }
     }
 
-    auto close_trace(trace_handle& handle) noexcept -> void
-    {
-        handle = trace_handle();
-    }
+    void close_trace(trace_handle& handle) noexcept { handle = trace_handle(); }
 } // namespace melinda::trace
 
 namespace melinda::trace::detail
 {
-    auto current_timestamp() noexcept -> timestamp
+    timestamp current_timestamp() noexcept
     {
         using namespace date;
         std::chrono::system_clock::time_point const time =

@@ -16,7 +16,7 @@ namespace melinda::cppex
     public: // Construction
         on_scope_exit() = delete;
 
-        on_scope_exit(Action& action) noexcept : action(action) {}
+        on_scope_exit(Action& action) noexcept : action(action) { }
 
         on_scope_exit(on_scope_exit const&) = delete;
 

@@ -50,8 +50,7 @@ namespace
 
     template<typename T,
         std::enable_if_t<melinda::cppex::is_input_iterator_v<T>, int> = 0>
-    [[nodiscard]] constexpr auto method_sfinae([[maybe_unused]] T&& it)
-        -> uint8_t
+    [[nodiscard]] constexpr uint8_t method_sfinae([[maybe_unused]] T&& it)
     {
         return uint8_t(1);
     }
@@ -59,8 +58,7 @@ namespace
     template<typename T,
         std::enable_if_t<melinda::cppex::is_random_access_iterator_v<T>, int> =
             0>
-    [[nodiscard]] constexpr auto method_sfinae([[maybe_unused]] T&& it)
-        -> uint8_t
+    [[nodiscard]] constexpr uint8_t method_sfinae([[maybe_unused]] T&& it)
     {
         return uint8_t(2);
     }

@@ -2,7 +2,7 @@
 
 file(GLOB_RECURSE ALL_SOURCE_FILES *.cpp *.h)
     
-add_custom_target(clangformat 
+add_custom_target(clang-format 
         COMMAND 
-            clang-format-9 -style=file -i ${ALL_SOURCE_FILES})
+            clang-format-10 -style=file -i ${ALL_SOURCE_FILES})
 
