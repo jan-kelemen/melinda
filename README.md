@@ -1,5 +1,5 @@
 # melinda [![Build Status](https://travis-ci.org/jan-kelemen/melinda.svg?branch=master)](https://travis-ci.org/jan-kelemen/melinda)
-For now, just exploring CMake, Conan, Linux development, etc...
+Melinda - Relational Database Management System
 
 # Develpment environment setup
 #### Required packages:
@@ -17,5 +17,6 @@ For now, just exploring CMake, Conan, Linux development, etc...
 * Install conan, https://docs.conan.io/en/latest/installation.html
 
 # Building [![Build Status](https://travis-ci.org/jan-kelemen/melinda.svg?branch=master)](https://travis-ci.org/jan-kelemen/melinda)
-* Run source/release.sh or source/debug.sh to build corresponding configuration
+* Run scripts/build.sh
+  * Script supports optional configuration parameter (-c) with options Debug, RelWithDebInfo, Release
 
