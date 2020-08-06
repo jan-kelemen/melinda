@@ -230,7 +230,7 @@ namespace melinda::trace::detail
             format,
             filename,
             line);
-        return fmt::format(real_format, std::forward<T...>(args...));
+        return fmt::format(real_format, std::forward<T>(args)...);
     }
 } // namespace melinda::trace::detail
 
