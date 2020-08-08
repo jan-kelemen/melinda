@@ -40,6 +40,7 @@ conan_cmake_run(
         fmt/6.0.0@bincrafters/stable
         date/2.4.1@bincrafters/stable
         boost_filesystem/1.69.0@bincrafters/stable
+        boost_uuid/1.69.0@bincrafters/stable
         cppzmq/4.6.0@bincrafters/stable
     BASIC_SETUP
         CMAKE_TARGETS
