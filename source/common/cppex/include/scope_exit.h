@@ -5,7 +5,7 @@
 
 // Provides a utility for execution actions when exiting the scope.
 
-namespace melinda::cppex
+namespace mel::cppex
 {
     template<typename Action>
     class on_scope_exit
@@ -34,14 +34,14 @@ namespace melinda::cppex
         Action& action;
     };
 
-} // namespace melinda::cppex
+} // namespace mel::cppex
 
 #define TOKEN_PASTEx(x, y) x##y
 #define TOKEN_PASTE(x, y) TOKEN_PASTEx(x, y)
 
 #define ON_SCOPE_EXIT_INTERNAL1(lname, aname, ...) \
     auto lname = [&]() { __VA_ARGS__; }; \
-    melinda::cppex::on_scope_exit<decltype(lname)> aname(lname);
+    mel::cppex::on_scope_exit<decltype(lname)> aname(lname);
 
 #define ON_SCOPE_EXIT_INTERNAL2(ctr, ...) \
     ON_SCOPE_EXIT_INTERNAL1(TOKEN_PASTE(ON_SCOPE_EXIT_func_, ctr), \

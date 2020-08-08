@@ -7,6 +7,6 @@
 // simmetrically for function arguments and return values. Return values still
 // have to be assigned and pollute the scope.
 
-#define MELINDA_UNUSED(x) static_cast<void>(x)
+#define MEL_UNUSED(x) static_cast<void>(x)
 
 #endif

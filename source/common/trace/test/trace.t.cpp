@@ -5,7 +5,7 @@
 
 TEST_CASE("Trace level always is larger than any other level")
 {
-    using melinda::trace::trace_level;
+    using mel::trace::trace_level;
     static_assert(trace_level::debug < trace_level::always);
     static_assert(trace_level::info < trace_level::always);
     static_assert(trace_level::warn < trace_level::always);

@@ -1,20 +1,19 @@
 #ifndef MELINDA_COMMON_CPPEX_TRACE_TRACE_INCLUDED
 #define MELINDA_COMMON_CPPEX_TRACE_TRACE_INCLUDED
 
-#include "boost/filesystem.hpp"
-#include "fmt/format.h"
-
 #include <cstdint>
+#include <filesystem>
+#include <fmt/format.h>
 #include <limits>
 #include <memory>
 #include <string_view>
 #include <type_traits>
 
+namespace fs = std::filesystem;
+
 // Provides trace support for the application module
 
-namespace fs = boost::filesystem;
-
-namespace melinda::trace
+namespace mel::trace
 {
     enum class [[nodiscard]] trace_level : uint8_t {
         debug = 1,
@@ -124,9 +123,9 @@ namespace melinda::trace
     // Closes the trace handle
     void close_trace(trace_handle& handle) noexcept;
 
-} // namespace melinda::trace
+} // namespace mel::trace
 
-namespace melinda::trace::detail
+namespace mel::trace::detail
 {
     struct timestamp
     {
@@ -140,15 +139,15 @@ namespace melinda::trace::detail
     };
 
     [[nodiscard]] timestamp current_timestamp() noexcept;
-} // namespace melinda::trace::detail
+} // namespace mel::trace::detail
 
 template<>
-struct fmt::formatter<melinda::trace::detail::timestamp>
+struct fmt::formatter<mel::trace::detail::timestamp>
 {
     constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
 
     template<typename FormatContext>
-    auto format(melinda::trace::detail::timestamp const& t, FormatContext& ctx)
+    auto format(mel::trace::detail::timestamp const& t, FormatContext& ctx)
     {
         return format_to(ctx.out(),
             "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}:{:03}",
@@ -163,27 +162,27 @@ struct fmt::formatter<melinda::trace::detail::timestamp>
 };
 
 template<>
-struct fmt::formatter<melinda::trace::trace_level>
+struct fmt::formatter<mel::trace::trace_level>
 {
     constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
 
     template<typename FormatContext>
-    auto format(melinda::trace::trace_level const& l, FormatContext& ctx)
+    auto format(mel::trace::trace_level const& l, FormatContext& ctx)
     {
         char const marker = [&l]() noexcept {
             switch (l)
             {
-            case melinda::trace::trace_level::debug:
+            case mel::trace::trace_level::debug:
                 return 'D';
-            case melinda::trace::trace_level::info:
+            case mel::trace::trace_level::info:
                 return 'I';
-            case melinda::trace::trace_level::warn:
+            case mel::trace::trace_level::warn:
                 return 'W';
-            case melinda::trace::trace_level::error:
+            case mel::trace::trace_level::error:
                 return 'E';
-            case melinda::trace::trace_level::fatal:
+            case mel::trace::trace_level::fatal:
                 return 'F';
-            case melinda::trace::trace_level::always:
+            case mel::trace::trace_level::always:
                 return 'A';
             default:
                 return 'X';
@@ -194,7 +193,7 @@ struct fmt::formatter<melinda::trace::trace_level>
     }
 };
 
-namespace melinda::trace::detail
+namespace mel::trace::detail
 {
     // https://stackoverflow.com/a/29921055
     constexpr char const* strend(char const* const str)
@@ -218,7 +217,7 @@ namespace melinda::trace::detail
     template<typename... T>
     [[nodiscard]] std::string format_message(char const* const filename,
         uintmax_t const line,
-        melinda::trace::trace_level const level,
+        mel::trace::trace_level const level,
         std::string_view format,
         T&&... args)
     {
@@ -232,17 +231,17 @@ namespace melinda::trace::detail
             line);
         return fmt::format(real_format, std::forward<T>(args)...);
     }
-} // namespace melinda::trace::detail
+} // namespace mel::trace::detail
 
-#define MELINDA_TRACE(f, l, level, handle, format, ...) \
+#define MEL_TRACE(f, l, level, handle, format, ...) \
     do \
     { \
         constexpr char const* const \
             filename_b015cf7e_932f_4d99_822a_b863763c6e23 = \
-                melinda::trace::detail::file_name_only(f); \
+                mel::trace::detail::file_name_only(f); \
         if (handle.should_trace_message(level)) \
         { \
-            handle.trace(melinda::trace::detail::format_message( \
+            handle.trace(mel::trace::detail::format_message( \
                 filename_b015cf7e_932f_4d99_822a_b863763c6e23, \
                 l, \
                 level, \
@@ -251,50 +250,50 @@ namespace melinda::trace::detail
         } \
     } while (false)
 
-#define MELINDA_TRACE_DEBUG(handle, format, ...) \
-    MELINDA_TRACE(__FILE__, \
+#define MEL_TRACE_DEBUG(handle, format, ...) \
+    MEL_TRACE(__FILE__, \
         __LINE__, \
-        melinda::trace::trace_level::debug, \
+        mel::trace::trace_level::debug, \
         handle, \
         format, \
         __VA_ARGS__)
 
-#define MELINDA_TRACE_INFO(handle, format, ...) \
-    MELINDA_TRACE(__FILE__, \
+#define MEL_TRACE_INFO(handle, format, ...) \
+    MEL_TRACE(__FILE__, \
         __LINE__, \
-        melinda::trace::trace_level::info, \
+        mel::trace::trace_level::info, \
         handle, \
         format, \
         __VA_ARGS__)
 
-#define MELINDA_TRACE_WARN(handle, format, ...) \
-    MELINDA_TRACE(__FILE__, \
+#define MEL_TRACE_WARN(handle, format, ...) \
+    MEL_TRACE(__FILE__, \
         __LINE__, \
-        melinda::trace::trace_level::warn, \
+        mel::trace::trace_level::warn, \
         handle, \
         format, \
         __VA_ARGS__)
 
-#define MELINDA_TRACE_ERROR(handle, format, ...) \
-    MELINDA_TRACE(__FILE__, \
+#define MEL_TRACE_ERROR(handle, format, ...) \
+    MEL_TRACE(__FILE__, \
         __LINE__, \
-        melinda::trace::trace_level::error, \
+        mel::trace::trace_level::error, \
         handle, \
         format, \
         __VA_ARGS__)
 
-#define MELINDA_TRACE_FATAL(handle, format, ...) \
-    MELINDA_TRACE(__FILE__, \
+#define MEL_TRACE_FATAL(handle, format, ...) \
+    MEL_TRACE(__FILE__, \
         __LINE__, \
-        melinda::trace::trace_level::fatal, \
+        mel::trace::trace_level::fatal, \
         handle, \
         format, \
         __VA_ARGS__)
 
-#define MELINDA_TRACE_ALWAYS(handle, format, ...) \
-    MELINDA_TRACE(__FILE__, \
+#define MEL_TRACE_ALWAYS(handle, format, ...) \
+    MEL_TRACE(__FILE__, \
         __LINE__, \
-        melinda::trace::trace_level::always, \
+        mel::trace::trace_level::always, \
         handle, \
         format, \
         __VA_ARGS__)

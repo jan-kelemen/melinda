@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <array>
+#include <atomic>
 #include <chrono>
 #include <ctime>
 #include <fcntl.h>
@@ -14,7 +15,7 @@
 #include <unistd.h>
 #include <vector>
 
-namespace melinda::trace
+namespace mel::trace
 {
     class [[nodiscard]] trace_handle::impl final
     {
@@ -334,9 +335,9 @@ namespace melinda::trace
     }
 
     void close_trace(trace_handle& handle) noexcept { handle = trace_handle(); }
-} // namespace melinda::trace
+} // namespace mel::trace
 
-namespace melinda::trace::detail
+namespace mel::trace::detail
 {
     timestamp current_timestamp() noexcept
     {
@@ -362,4 +363,4 @@ namespace melinda::trace::detail
             static_cast<uint8_t>(tmd.seconds().count()),
             static_cast<uint16_t>(tp / std::chrono::milliseconds(1))};
     }
-} // namespace melinda::trace::detail
+} // namespace mel::trace::detail

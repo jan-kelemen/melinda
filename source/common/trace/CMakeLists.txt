@@ -6,7 +6,6 @@ add_library(${TARGET_NAME} SHARED src/trace.cpp)
 target_link_libraries(${TARGET_NAME}
     PUBLIC
         CONAN_PKG::fmt
-        CONAN_PKG::boost_filesystem
     PRIVATE
         CONAN_PKG::date
 )

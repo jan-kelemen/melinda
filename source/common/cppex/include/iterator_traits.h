@@ -6,7 +6,7 @@
 
 // Provides utility traits for checking iterator categories
 
-namespace melinda::cppex
+namespace mel::cppex
 {
     namespace detail
     {
@@ -130,6 +130,6 @@ namespace melinda::cppex
     template<typename Iterator>
     inline constexpr bool is_output_iterator_v =
         is_output_iterator<Iterator>::value;
-} // namespace melinda::cppex
+} // namespace mel::cppex
 
 #endif

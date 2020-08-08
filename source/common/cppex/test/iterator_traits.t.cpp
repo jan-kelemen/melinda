@@ -26,7 +26,7 @@ namespace
 
     template<typename T>
     class class_sfinae<T,
-        std::enable_if_t<melinda::cppex::is_random_access_iterator_v<T>>>
+        std::enable_if_t<mel::cppex::is_random_access_iterator_v<T>>>
         final
     {
     public: // Constants
@@ -37,8 +37,7 @@ namespace
     };
 
     template<typename T>
-    class class_sfinae<T,
-        std::enable_if_t<melinda::cppex::is_output_iterator_v<T>>>
+    class class_sfinae<T, std::enable_if_t<mel::cppex::is_output_iterator_v<T>>>
         final
     {
     public: // Constants
@@ -49,15 +48,14 @@ namespace
     };
 
     template<typename T,
-        std::enable_if_t<melinda::cppex::is_input_iterator_v<T>, int> = 0>
+        std::enable_if_t<mel::cppex::is_input_iterator_v<T>, int> = 0>
     [[nodiscard]] constexpr uint8_t method_sfinae([[maybe_unused]] T&& it)
     {
         return uint8_t(1);
     }
 
     template<typename T,
-        std::enable_if_t<melinda::cppex::is_random_access_iterator_v<T>, int> =
-            0>
+        std::enable_if_t<mel::cppex::is_random_access_iterator_v<T>, int> = 0>
     [[nodiscard]] constexpr uint8_t method_sfinae([[maybe_unused]] T&& it)
     {
         return uint8_t(2);
@@ -66,7 +64,7 @@ namespace
 
 TEST_CASE("Input iterator tests")
 {
-    using namespace melinda::cppex;
+    using namespace mel::cppex;
 
     static_assert(atleast_input_iterator_v<input_iterator>);
     static_assert(is_input_iterator_v<input_iterator>);
@@ -86,7 +84,7 @@ TEST_CASE("Input iterator tests")
 
 TEST_CASE("Forward iterator tests")
 {
-    using namespace melinda::cppex;
+    using namespace mel::cppex;
 
     static_assert(atleast_input_iterator_v<forward_iterator>);
     static_assert(!is_input_iterator_v<forward_iterator>);
@@ -106,7 +104,7 @@ TEST_CASE("Forward iterator tests")
 
 TEST_CASE("Bidirectional iterator tests")
 {
-    using namespace melinda::cppex;
+    using namespace mel::cppex;
 
     static_assert(atleast_input_iterator_v<bidirectional_iterator>);
     static_assert(!is_input_iterator_v<bidirectional_iterator>);
@@ -126,7 +124,7 @@ TEST_CASE("Bidirectional iterator tests")
 
 TEST_CASE("Random access iterator tests")
 {
-    using namespace melinda::cppex;
+    using namespace mel::cppex;
 
     static_assert(atleast_input_iterator_v<random_access_iterator>);
     static_assert(!is_input_iterator_v<random_access_iterator>);
@@ -146,7 +144,7 @@ TEST_CASE("Random access iterator tests")
 
 TEST_CASE("Output iterator tests")
 {
-    using namespace melinda::cppex;
+    using namespace mel::cppex;
 
     static_assert(!atleast_input_iterator_v<output_iterator>);
     static_assert(!is_input_iterator_v<output_iterator>);
