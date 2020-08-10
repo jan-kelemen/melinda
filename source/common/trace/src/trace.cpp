@@ -9,11 +9,17 @@
 #include <ctime>
 #include <fcntl.h>
 #include <iostream>
+#include <memory>
 #include <mutex>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <vector>
+
+namespace
+{
+    std::unique_ptr<mel::trace::trace_handle> process_trace_handle;
+}
 
 namespace mel::trace
 {
@@ -320,7 +326,7 @@ namespace mel::trace
 
     trace_handle::~trace_handle() noexcept = default;
 
-    trace_handle initialize_trace(trace_options const& options)
+    trace_handle create_trace_handle(trace_options const& options)
     {
         try
         {
@@ -332,6 +338,12 @@ namespace mel::trace
             std::cout << ex.what() << '\n';
             return trace_handle();
         }
+    }
+
+    void initialize_process_trace_handle(trace_handle&& handle)
+    {
+        process_trace_handle =
+            std::make_unique<trace_handle>(std::move(handle));
     }
 
     void close_trace(trace_handle& handle) noexcept { handle = trace_handle(); }
@@ -362,5 +374,10 @@ namespace mel::trace::detail
             static_cast<uint8_t>(tmd.minutes().count()),
             static_cast<uint8_t>(tmd.seconds().count()),
             static_cast<uint16_t>(tp / std::chrono::milliseconds(1))};
+    }
+
+    trace_handle const* process_trace_handle() noexcept
+    {
+        return ::process_trace_handle.get();
     }
 } // namespace mel::trace::detail

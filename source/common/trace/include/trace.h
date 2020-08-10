@@ -118,7 +118,11 @@ namespace mel::trace
     };
 
     // Provides the handle for the tracing
-    [[nodiscard]] trace_handle initialize_trace(trace_options const& options);
+    [[nodiscard]] trace_handle create_trace_handle(
+        trace_options const& options);
+
+    // Initialize process wide tracing handle
+    void initialize_process_trace_handle(trace_handle&& handle);
 
     // Closes the trace handle
     void close_trace(trace_handle& handle) noexcept;
@@ -231,71 +235,115 @@ namespace mel::trace::detail
             line);
         return fmt::format(real_format, std::forward<T>(args)...);
     }
+
+    [[nodiscard]] trace_handle const* process_trace_handle() noexcept;
+
+    [[nodiscard]] inline bool should_trace_message(trace_handle const& handle,
+        trace_level const level) noexcept
+    {
+        return handle.should_trace_message(level);
+    }
+
+    [[nodiscard]] inline bool should_trace_message(trace_handle const* handle,
+        trace_level const level) noexcept
+    {
+        return handle && should_trace_message(*handle, level);
+    }
+
+    inline void trace(trace_handle const& handle,
+        std::string_view message) noexcept
+    {
+        handle.trace(message);
+    }
+
+    inline void trace(trace_handle const* handle,
+        std::string_view message) noexcept
+    {
+        trace(*handle, message);
+    }
 } // namespace mel::trace::detail
 
-#define MEL_TRACE(f, l, level, handle, format, ...) \
+#define MEL_TRACE(f, l, level, handle, ...) \
     do \
     { \
         constexpr char const* const \
             filename_b015cf7e_932f_4d99_822a_b863763c6e23 = \
                 mel::trace::detail::file_name_only(f); \
-        if (handle.should_trace_message(level)) \
+        if (mel::trace::detail::should_trace_message(handle, level)) \
         { \
-            handle.trace(mel::trace::detail::format_message( \
-                filename_b015cf7e_932f_4d99_822a_b863763c6e23, \
-                l, \
-                level, \
-                format, \
-                __VA_ARGS__)); \
+            mel::trace::detail::trace(handle, \
+                mel::trace::detail::format_message( \
+                    filename_b015cf7e_932f_4d99_822a_b863763c6e23, \
+                    l, \
+                    level, \
+                    __VA_ARGS__)); \
         } \
     } while (false)
 
-#define MEL_TRACE_DEBUG(handle, format, ...) \
+#define MEL_TRACE_HANDLE_DEBUG(handle, ...) \
     MEL_TRACE(__FILE__, \
         __LINE__, \
         mel::trace::trace_level::debug, \
         handle, \
-        format, \
         __VA_ARGS__)
 
-#define MEL_TRACE_INFO(handle, format, ...) \
+#define MEL_TRACE_HANDLE_INFO(handle, ...) \
     MEL_TRACE(__FILE__, \
         __LINE__, \
         mel::trace::trace_level::info, \
         handle, \
-        format, \
         __VA_ARGS__)
 
-#define MEL_TRACE_WARN(handle, format, ...) \
+#define MEL_TRACE_HANDLE_WARN(handle, ...) \
     MEL_TRACE(__FILE__, \
         __LINE__, \
         mel::trace::trace_level::warn, \
         handle, \
-        format, \
         __VA_ARGS__)
 
-#define MEL_TRACE_ERROR(handle, format, ...) \
+#define MEL_TRACE_HANDLE_ERROR(handle, ...) \
     MEL_TRACE(__FILE__, \
         __LINE__, \
         mel::trace::trace_level::error, \
         handle, \
-        format, \
         __VA_ARGS__)
 
-#define MEL_TRACE_FATAL(handle, format, ...) \
+#define MEL_TRACE_HANDLE_FATAL(handle, ...) \
     MEL_TRACE(__FILE__, \
         __LINE__, \
         mel::trace::trace_level::fatal, \
         handle, \
-        format, \
         __VA_ARGS__)
 
-#define MEL_TRACE_ALWAYS(handle, format, ...) \
+#define MEL_TRACE_HANDLE_ALWAYS(handle, ...) \
     MEL_TRACE(__FILE__, \
         __LINE__, \
         mel::trace::trace_level::always, \
         handle, \
-        format, \
+        __VA_ARGS__)
+
+#define MEL_TRACE_DEBUG(...) \
+    MEL_TRACE_HANDLE_DEBUG(mel::trace::detail::process_trace_handle(), \
+        __VA_ARGS__)
+
+#define MEL_TRACE_INFO(...) \
+    MEL_TRACE_HANDLE_INFO(mel::trace::detail::process_trace_handle(), \
+        __VA_ARGS__)
+
+#define MEL_TRACE_WARN(...) \
+    MEL_TRACE_HANDLE_WARN(mel::trace::detail::process_trace_handle(), \
+        __VA_ARGS__)
+
+#define MEL_TRACE_ERROR(...) \
+    MEL_TRACE_HANDLE_ERROR(mel::trace::detail::process_trace_handle(), \
+        __VA_ARGS__)
+
+#define MEL_TRACE_FATAL(...) \
+    MEL_TRACE_HANDLE_FATAL(mel::trace::detail::process_trace_handle(), \
+        __VA_ARGS__)
+
+#define MEL_TRACE_ALWAYS(...) \
+    MEL_TRACE_HANDLE_ALWAYS(mel::trace::detail::process_trace_handle(), \
         __VA_ARGS__)
 
 #endif

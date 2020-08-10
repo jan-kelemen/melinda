@@ -22,9 +22,8 @@ int main()
         fs::path("client"));
     trace_config.level = mel::trace::trace_level::info;
 
-    mel::trace::trace_handle trace_handle =
-        mel::trace::initialize_trace(trace_config);
-    ON_SCOPE_EXIT(mel::trace::close_trace(trace_handle));
+    mel::trace::initialize_process_trace_handle(
+        mel::trace::create_trace_handle(trace_config));
 
     constexpr std::size_t const max_identity_length = 255;
     std::string const identity = generate_identity();
@@ -43,13 +42,12 @@ int main()
     constexpr char const* const address = "tcp://localhost:22365";
     try
     {
-        MEL_TRACE_ALWAYS(trace_handle, "Client will connect to {}.", address);
+        MEL_TRACE_ALWAYS("Client will connect to {}.", address);
         socket.connect(address);
     }
     catch (zmq::error_t const& ex)
     {
-        MEL_TRACE_FATAL(trace_handle,
-            "Can't connect to {}. Reason: ZMQ-{}: ",
+        MEL_TRACE_FATAL("Can't connect to {}. Reason: ZMQ-{}: ",
             ex.num(),
             ex.what());
         std::terminate();
@@ -62,23 +60,21 @@ int main()
             zmq::message_t(address, sizeof("tcp://localhost:22365"));
         try
         {
-            MEL_TRACE_INFO(trace_handle,
-                "Sending request of {} bytes to {}.",
+            MEL_TRACE_INFO("Sending request of {} bytes to {}.",
                 request.size(),
                 address);
             zmq::send_result_t const result =
                 socket.send(request, zmq::send_flags::none);
             if (!result)
             {
-                MEL_TRACE_ERROR(trace_handle,
-                    "Can't send request to {}, server might be unreachable",
-                    "");
+                MEL_TRACE_ERROR(
+                    "Can't send request to {}, server might be unreachable");
                 continue;
             }
         }
         catch (zmq::error_t const& ex)
         {
-            MEL_TRACE_FATAL(trace_handle,
+            MEL_TRACE_FATAL(
                 "Unexpected error while sending request. Reason: ZMQ-{}: ",
                 ex.num(),
                 ex.what());
@@ -91,8 +87,7 @@ int main()
                 socket.recv(response); // TODO-JK this is blocking indefinately
             if (result)
             {
-                MEL_TRACE_INFO(trace_handle,
-                    "Received response of {} bytes in size from {}",
+                MEL_TRACE_INFO("Received response of {} bytes in size from {}",
                     result.value(),
                     address);
             }
@@ -103,7 +98,7 @@ int main()
         }
         catch (zmq::error_t const& ex)
         {
-            MEL_TRACE_FATAL(trace_handle,
+            MEL_TRACE_FATAL(
                 "Unexpected error while receiving response. Reason: ZMQ-{}: ",
                 ex.num(),
                 ex.what());
