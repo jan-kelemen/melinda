@@ -18,6 +18,6 @@ TEST_CASE(
 TEST_CASE(
     "std::error_condition and std::error_code are not allowed as values of result")
 {
-    static_assert(!mel::cppex::is_result_value<std::error_code>);
-    static_assert(!mel::cppex::is_result_value<std::error_condition>);
+    static_assert(!mel::cppex::detail::is_result_value<std::error_code>);
+    static_assert(!mel::cppex::detail::is_result_value<std::error_condition>);
 }

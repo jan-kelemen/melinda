@@ -1,47 +1,176 @@
 #ifndef MELINDA_COMMON_CPPEX_RESULT_INCLUDED
 #define MELINDA_COMMON_CPPEX_RESULT_INCLUDED
 
+#include "always_false.h"
+
 #include <concepts>
+#include <functional>
 #include <system_error>
 #include <type_traits>
 #include <variant>
 
 namespace mel::cppex
 {
-    template<typename T>
-    concept is_result_value =
-        !std::disjunction_v<std::is_convertible<T, std::error_code>,
-            std::is_convertible<T, std::error_condition>>;
+    namespace detail
+    {
+        template<typename T1, typename T2>
+        using either = std::variant<T1, T2>;
+
+        template<typename Callable, typename... Args>
+        concept
+            is_nothrow_invocable = std::invocable<Callable, Args...>&& noexcept(
+                std::invoke(std::declval<Callable>(), std::declval<Args>()...));
+
+        template<typename T>
+        concept is_result_value = !std::convertible_to<T, std::error_code> &&
+            !std::convertible_to<T, std::error_condition>;
+
+        template<typename Callable, typename T>
+        concept is_success_callable = std::invocable<Callable, T>;
+
+        template<typename Callable>
+        concept is_error_callable = std::invocable<Callable, std::error_code>;
+    } // namespace detail
 
     template<typename T>
-    requires(is_result_value<T>) class result final
+    requires(detail::is_result_value<T>) class [[nodiscard]] result final
     {
+    private: // Types
+        using either_t = detail::either<T, std::error_code>;
+
     public: // Construction
+        result() = default;
+
         template<typename... Args>
-        result(Args&&... value) requires(std::constructible_from<T, Args...>)
-            : value_(std::forward<Args>(value)...)
+        result(Args && ... value) noexcept(
+            std::is_nothrow_constructible_v<T, Args...>)
+            requires(std::constructible_from<T, Args...>)
+            : value_(T(std::forward<Args>(value)...))
         {
         }
 
-        explicit result(std::error_code error) noexcept { }
+        explicit result(std::error_code error) noexcept(
+            std::is_nothrow_constructible_v<either_t,
+                std::add_rvalue_reference_t<std::error_code>>)
+            : value_(std::move(error))
+        {
+        }
 
         result(result const& other) = default;
 
-        result(result&& other) noexcept = default;
+        result(result && other) noexcept = default;
+
+    public: // InterfaceA
+        template<typename OnSuccess>
+        result<std::invoke_result_t<OnSuccess, T>> map(OnSuccess on_success)
+            const requires(std::invocable<OnSuccess, T>)
+        {
+            using rv_t = result<std::invoke_result_t<OnSuccess, T>>;
+
+            return std::visit(
+                [&on_success](auto&& arg) {
+                    using U = std::decay<decltype(arg)>;
+                    if constexpr (std::same_as<U, T>)
+                    {
+                        return rv_t(on_success(arg));
+                    }
+                    else if constexpr (std::same_as<U, std::error_code>)
+                    {
+                        return rv_t(arg);
+                    }
+                    else
+                    {
+                        static_assert(always_false_v<T>,
+                            "non-exhaustive visitor!");
+                    }
+                },
+                value_);
+        }
+
+        template<typename OnSuccess, typename DefaultT>
+        std::common_type_t<std::invoke_result_t<OnSuccess, T>, DefaultT> map_or(
+            OnSuccess on_success,
+            DefaultT && default_value)
+        {
+            using rv_t = std::common_type_t<std::invoke_result_t<OnSuccess, T>,
+                DefaultT>;
+
+            // TODO-JK: CppCon passing values back and forth
+            return std::visit(
+                [&on_success, &default_value](auto&& arg) {
+                    using U = std::decay<decltype(arg)>;
+                    if constexpr (std::same_as<U, T>)
+                    {
+                        return rv_t(on_success(arg));
+                    }
+                    else if constexpr (std::same_as<U, std::error_code>)
+                    {
+                        return rv_t(default_value);
+                    }
+                    else
+                    {
+                        static_assert(always_false_v<T>,
+                            "non-exhaustive visitor!");
+                    }
+                },
+                value_);
+        }
+
+        template<typename OnSuccess, typename OnError>
+        std::common_type_t<std::invoke_result_t<OnSuccess, T>,
+            std::invoke_result_t<OnError, std::error_code>>
+        map_or_else(OnSuccess on_success, OnError on_error)
+            const requires(std::invocable<OnSuccess, T> &&
+                std::invocable<OnError, std::error_code>)
+        {
+            using rv_t = std::common_type_t<std::invoke_result_t<OnSuccess, T>,
+                std::invoke_result_t<OnError, std::error_code>>;
+
+            // https://en.cppreference.com/w/cpp/utility/variant/visit
+            return std::visit(
+                [&on_success, &on_error](auto&& arg) {
+                    using U = std::decay_t<decltype(arg)>;
+                    if constexpr (std::is_same_v<U, T>)
+                    {
+                        return rv_t(on_success(arg));
+                    }
+                    else if constexpr (std::is_same_v<U, std::error_code>)
+                    {
+                        return rv_t(on_error(arg));
+                    }
+                    else
+                    {
+                        static_assert(always_false_v<T>,
+                            "non-exhaustive visitor!");
+                    }
+                },
+                value_);
+        }
 
     public: // Operators
-        result& operator=(result const& other);
+        result& operator=(result const& other) = default;
 
-        result& operator=(result&& other) noexcept;
+        result& operator=(result&& other) noexcept = default;
 
-        explicit operator bool() noexcept { return value_.index() == 0; }
+    public: // Conversions
+        operator bool() const noexcept { return value_.index() == 0; }
+
+        explicit operator T&() { return std::get<T>(value_); }
+
+        explicit operator T const &() const { return std::get<T>(value_); }
+
+        explicit operator std::error_code() const
+        {
+            return std::get<std::error_code>(value_);
+        }
 
     public: // Destruction
         ~result() noexcept = default;
 
     public: // Data
-        std::variant<T, std::error_code> value_;
+        either_t value_;
     };
+
 } // namespace mel::cppex
 
 #endif
