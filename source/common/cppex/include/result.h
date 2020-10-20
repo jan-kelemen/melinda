@@ -18,22 +18,27 @@ namespace mel::cppex
 
         template<typename Callable, typename... Args>
         concept
-            is_nothrow_invocable = std::invocable<Callable, Args...>&& noexcept(
+            nothrow_invocable = std::invocable<Callable, Args...>&& noexcept(
                 std::invoke(std::declval<Callable>(), std::declval<Args>()...));
 
         template<typename T>
-        concept is_result_value = !std::convertible_to<T, std::error_code> &&
+        concept move_assignable = std::is_move_assignable_v<T>;
+
+        template<typename T>
+        concept result_value = !std::convertible_to<T, std::error_code> &&
             !std::convertible_to<T, std::error_condition>;
 
         template<typename Callable, typename T>
-        concept is_success_callable = std::invocable<Callable, T>;
+        concept success_callable = std::invocable<Callable, T>;
 
         template<typename Callable>
-        concept is_error_callable = std::invocable<Callable, std::error_code>;
+        concept error_callable = std::invocable<Callable, std::error_code>;
     } // namespace detail
 
+    // TODO-JK: result shouldn't be constrained to one type only, error should
+    // also be parametrizable
     template<typename T>
-    requires(detail::is_result_value<T>) class [[nodiscard]] result final
+    requires(detail::result_value<T>) class [[nodiscard]] result final
     {
     private: // Types
         using either_t = detail::either<T, std::error_code>;
@@ -58,18 +63,19 @@ namespace mel::cppex
 
         result(result const& other) = default;
 
-        result(result && other) noexcept = default;
+        result(result && other) noexcept requires(std::move_constructible<T>) =
+            default;
 
-    public: // InterfaceA
+    public: // Interface
         template<typename OnSuccess>
         result<std::invoke_result_t<OnSuccess, T>> map(OnSuccess on_success)
-            const requires(std::invocable<OnSuccess, T>)
+            const requires(detail::success_callable<OnSuccess, T>)
         {
             using rv_t = result<std::invoke_result_t<OnSuccess, T>>;
 
             return std::visit(
-                [&on_success](auto&& arg) {
-                    using U = std::decay<decltype(arg)>;
+                [&on_success](auto&& arg) -> rv_t {
+                    using U = std::decay_t<decltype(arg)>;
                     if constexpr (std::same_as<U, T>)
                     {
                         return rv_t(on_success(arg));
@@ -80,7 +86,7 @@ namespace mel::cppex
                     }
                     else
                     {
-                        static_assert(always_false_v<T>,
+                        static_assert(always_false_v<U>,
                             "non-exhaustive visitor!");
                     }
                 },
@@ -91,14 +97,17 @@ namespace mel::cppex
         std::common_type_t<std::invoke_result_t<OnSuccess, T>, DefaultT> map_or(
             OnSuccess on_success,
             DefaultT && default_value)
+            const requires(detail::success_callable<OnSuccess, T>)
         {
             using rv_t = std::common_type_t<std::invoke_result_t<OnSuccess, T>,
                 DefaultT>;
 
             // TODO-JK: CppCon passing values back and forth
             return std::visit(
-                [&on_success, &default_value](auto&& arg) {
-                    using U = std::decay<decltype(arg)>;
+                [&on_success,
+                    default_value = std::forward<DefaultT>(default_value)](
+                    auto&& arg) -> rv_t {
+                    using U = std::decay_t<decltype(arg)>;
                     if constexpr (std::same_as<U, T>)
                     {
                         return rv_t(on_success(arg));
@@ -109,7 +118,7 @@ namespace mel::cppex
                     }
                     else
                     {
-                        static_assert(always_false_v<T>,
+                        static_assert(!always_false_v<U>,
                             "non-exhaustive visitor!");
                     }
                 },
@@ -120,15 +129,15 @@ namespace mel::cppex
         std::common_type_t<std::invoke_result_t<OnSuccess, T>,
             std::invoke_result_t<OnError, std::error_code>>
         map_or_else(OnSuccess on_success, OnError on_error)
-            const requires(std::invocable<OnSuccess, T> &&
-                std::invocable<OnError, std::error_code>)
+            const requires(detail::success_callable<OnSuccess, T> &&
+                detail::error_callable<OnError>)
         {
             using rv_t = std::common_type_t<std::invoke_result_t<OnSuccess, T>,
                 std::invoke_result_t<OnError, std::error_code>>;
 
             // https://en.cppreference.com/w/cpp/utility/variant/visit
             return std::visit(
-                [&on_success, &on_error](auto&& arg) {
+                [&on_success, &on_error](auto&& arg) -> rv_t {
                     using U = std::decay_t<decltype(arg)>;
                     if constexpr (std::is_same_v<U, T>)
                     {
@@ -140,7 +149,7 @@ namespace mel::cppex
                     }
                     else
                     {
-                        static_assert(always_false_v<T>,
+                        static_assert(!always_false_v<U>,
                             "non-exhaustive visitor!");
                     }
                 },
@@ -150,7 +159,8 @@ namespace mel::cppex
     public: // Operators
         result& operator=(result const& other) = default;
 
-        result& operator=(result&& other) noexcept = default;
+        result& operator=(result&& other) noexcept requires(
+            detail::move_assignable<T>) = default;
 
     public: // Conversions
         operator bool() const noexcept { return value_.index() == 0; }
@@ -167,7 +177,7 @@ namespace mel::cppex
     public: // Destruction
         ~result() noexcept = default;
 
-    public: // Data
+    private: // Data
         either_t value_;
     };
 
