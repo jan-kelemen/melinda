@@ -5,14 +5,18 @@ set(TARGET_NAME common_cppex)
 add_library(${TARGET_NAME} STATIC 
     src/iterator_traits.cpp
     src/scope_exit.cpp
-    src/unused.cpp)
+    src/unused.cpp
+    src/always_false.cpp
+    src/result.cpp)
 add_dependencies(${TARGET_NAME} clang-format)
 
 add_executable(${TARGET_NAME}_test 
     test/main.cpp
     test/iterator_traits.t.cpp
     test/scope_exit.t.cpp
-    test/unused.t.cpp)
+    test/unused.t.cpp
+    test/always_false.t.cpp
+    test/result.t.cpp)
 target_link_libraries(
     ${TARGET_NAME}_test
     PRIVATE
