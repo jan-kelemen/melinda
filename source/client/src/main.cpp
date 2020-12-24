@@ -1,6 +1,7 @@
 #include "../../common/cppex/include/scope_exit.h"
 #include "../../common/cppex/include/unused.h"
 #include "../../common/trace/include/trace.h"
+#include "../../network/wire_generated.h"
 
 #include <array>
 #include <boost/uuid/random_generator.hpp>
@@ -18,6 +19,14 @@ std::string generate_identity();
 
 int main()
 {
+    flatbuffers::FlatBufferBuilder builder;
+    auto binary_content =
+        mel::network::CreatemessageDirect(builder, 5, "Hello");
+    builder.Finish(binary_content);
+
+    size_t size = builder.GetSize();
+    uint8_t* data = builder.GetBufferPointer();
+
     mel::trace::trace_options trace_config(fs::path("../log"),
         fs::path("client"));
     trace_config.level = mel::trace::trace_level::info;
@@ -56,8 +65,7 @@ int main()
 
     while (true)
     {
-        zmq::message_t request =
-            zmq::message_t(address, sizeof("tcp://localhost:22365"));
+        zmq::message_t request = zmq::message_t(data, size);
         try
         {
             MEL_TRACE_INFO("Sending request of {} bytes to {}.",

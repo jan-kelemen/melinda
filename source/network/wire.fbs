@@ -1,0 +1,7 @@
+namespace mel.network;
+
+table message {
+    length:int;
+    content:string;
+}
+

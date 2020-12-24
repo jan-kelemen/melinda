@@ -1,5 +1,6 @@
 #include "../../common/cppex/include/scope_exit.h"
 #include "../../common/trace/include/trace.h"
+#include "../../network/wire_generated.h"
 
 #include <algorithm>
 #include <array>
@@ -50,13 +51,17 @@ int main()
                 zmq::recv_flags::dontwait);
             if (result)
             {
+                mel::network::message const* msg =
+                    flatbuffers::GetRoot<mel::network::message>(
+                        request[2].data());
                 // Process the message, otherwise if result is empty then no
                 // messages were queued on the socket
                 MEL_TRACE_INFO(
-                    "Received {} messages of {} bytes in size from {}.",
+                    "Received {} messages of {} bytes in size from {} of content {}.",
                     request.size(),
                     result.value(),
-                    request[0].to_string_view());
+                    request[0].to_string_view(),
+                    msg->content()->c_str());
             }
         }
         catch (zmq::error_t const& ex)

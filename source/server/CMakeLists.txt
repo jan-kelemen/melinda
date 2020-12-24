@@ -4,10 +4,11 @@ set(TARGET_NAME server)
 
 add_executable(${TARGET_NAME}
     src/main.cpp)
-add_dependencies(${TARGET_NAME} clang-format)
+add_dependencies(${TARGET_NAME} clang-format fb)
 target_link_libraries(${TARGET_NAME}
     PRIVATE
         CONAN_PKG::cppzmq
+        CONAN_PKG::flatbuffers
         common_trace
 )
 

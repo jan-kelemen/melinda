@@ -41,11 +41,15 @@ conan_cmake_run(
         date/2.4.1@bincrafters/stable
         boost_uuid/1.69.0@bincrafters/stable
         cppzmq/4.6.0@bincrafters/stable
+        flatc/1.12.0@_/_
+        flatbuffers/1.12.0@_/_
     BASIC_SETUP
         CMAKE_TARGETS
     BUILD
         missing
 )
+
+set(FLATBUFFERS_FLATC_EXECUTABLE ${CONAN_BIN_DIRS_FLATC}/flatc)
 
 enable_testing()
 
