@@ -9,6 +9,7 @@ add_library(${TARGET_NAME} STATIC
     src/always_false.cpp
     src/result.cpp)
 add_dependencies(${TARGET_NAME} clang-format)
+target_include_directories(${TARGET_NAME} PUBLIC include)
 
 add_executable(${TARGET_NAME}_test 
     test/main.cpp

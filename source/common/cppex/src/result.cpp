@@ -1,1 +1,1 @@
-#include "../include/result.h"
+#include "result.h"

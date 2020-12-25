@@ -1,3 +1,3 @@
 #include <catch2/catch.hpp>
 
-#include "unused.h"
+#include "wire_generated.h"

@@ -7,9 +7,11 @@ target_link_libraries(${TARGET_NAME}
     PUBLIC
         CONAN_PKG::fmt
     PRIVATE
+        common_cppex
         CONAN_PKG::date
 )
 add_dependencies(${TARGET_NAME} clang-format)
+target_include_directories(${TARGET_NAME} PUBLIC include)
 
 add_executable(${TARGET_NAME}_test test/trace.t.cpp)
 target_link_libraries(${TARGET_NAME}_test
