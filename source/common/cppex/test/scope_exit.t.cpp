@@ -1,5 +1,6 @@
-#include "../include/scope_exit.h"
-#include "catch2/catch.hpp"
+#include <catch2/catch.hpp>
+
+#include "scope_exit.h"
 
 TEST_CASE("Exiting the scope calls the defined action")
 {

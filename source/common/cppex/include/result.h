@@ -1,13 +1,13 @@
 #ifndef MELINDA_COMMON_CPPEX_RESULT_INCLUDED
 #define MELINDA_COMMON_CPPEX_RESULT_INCLUDED
 
-#include "always_false.h"
-
 #include <concepts>
 #include <functional>
 #include <system_error>
 #include <type_traits>
 #include <variant>
+
+#include "always_false.h"
 
 namespace mel::cppex
 {

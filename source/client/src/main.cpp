@@ -1,19 +1,22 @@
-#include "../../common/cppex/include/scope_exit.h"
-#include "../../common/cppex/include/unused.h"
-#include "../../common/trace/include/trace.h"
-#include "../../network/wire_generated.h"
-
 #include <array>
-#include <boost/uuid/random_generator.hpp>
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 #include <chrono>
 #include <iostream>
 #include <thread>
-#include <unistd.h>
 #include <vector>
+
+#include <unistd.h>
+
+#include <boost/uuid/random_generator.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
 #include <zmq.hpp>
 #include <zmq_addon.hpp>
+
+#include "scope_exit.h"
+#include "trace.h"
+#include "unused.h"
+#include "wire_generated.h"
 
 std::string generate_identity();
 

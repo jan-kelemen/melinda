@@ -1,7 +1,8 @@
-#include "../include/result.h"
-#include "catch2/catch.hpp"
-
 #include <string>
+
+#include <catch2/catch.hpp>
+
+#include "result.h"
 
 TEST_CASE("result constructed from a value is considered not to be an error")
 {

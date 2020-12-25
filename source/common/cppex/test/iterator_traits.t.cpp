@@ -1,10 +1,11 @@
-#include "../include/iterator_traits.h"
-#include "catch2/catch.hpp"
-
 #include <forward_list>
 #include <iterator>
 #include <list>
 #include <vector>
+
+#include <catch2/catch.hpp>
+
+#include "iterator_traits.h"
 
 namespace
 {

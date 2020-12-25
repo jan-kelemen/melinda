@@ -1,7 +1,8 @@
 #define CATCH_CONFIG_MAIN
 
-#include "../include/trace.h"
-#include "catch2/catch.hpp"
+#include <catch2/catch.hpp>
+
+#include "trace.h"
 
 TEST_CASE("Trace level always is larger than any other level")
 {

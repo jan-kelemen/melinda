@@ -1,13 +1,14 @@
-#include "../../common/cppex/include/scope_exit.h"
-#include "../../common/trace/include/trace.h"
-#include "../../network/wire_generated.h"
-
 #include <algorithm>
 #include <array>
 #include <iostream>
 #include <vector>
+
 #include <zmq.hpp>
 #include <zmq_addon.hpp>
+
+#include "scope_exit.h"
+#include "trace.h"
+#include "wire_generated.h"
 
 int main()
 {

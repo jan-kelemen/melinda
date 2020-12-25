@@ -36,7 +36,7 @@ Cpp11BracedListStyle: 'true'
 DerivePointerAlignment: 'false'
 DisableFormat: 'false'
 FixNamespaceComments: 'true'
-IncludeBlocks: Regroup
+IncludeBlocks: Preserve
 IncludeIsMainRegex: '"(.t)?$"'
 IndentCaseLabels: 'false'
 IndentPPDirectives: None

@@ -3,11 +3,12 @@
 
 #include <cstdint>
 #include <filesystem>
-#include <fmt/format.h>
 #include <limits>
 #include <memory>
 #include <string_view>
 #include <type_traits>
+
+#include <fmt/format.h>
 
 namespace fs = std::filesystem;
 
