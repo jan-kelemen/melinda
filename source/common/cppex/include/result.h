@@ -47,7 +47,7 @@ namespace mel::cppex
         result() = default;
 
         template<typename... Args>
-        result(Args && ... value) noexcept(
+        result(Args&&... value) noexcept(
             std::is_nothrow_constructible_v<T, Args...>)
             requires(std::constructible_from<T, Args...>)
             : value_(T(std::forward<Args>(value)...))
@@ -63,13 +63,14 @@ namespace mel::cppex
 
         result(result const& other) = default;
 
-        result(result && other) noexcept requires(std::move_constructible<T>) =
-            default;
+        result(result&& other) noexcept
+            requires(std::move_constructible<T>) = default;
 
     public: // Interface
         template<typename OnSuccess>
-        result<std::invoke_result_t<OnSuccess, T>> map(OnSuccess on_success)
-            const requires(detail::success_callable<OnSuccess, T>)
+        result<std::invoke_result_t<OnSuccess, T>> map(
+            OnSuccess on_success) const
+            requires(detail::success_callable<OnSuccess, T>)
         {
             using rv_t = result<std::invoke_result_t<OnSuccess, T>>;
 
@@ -94,10 +95,9 @@ namespace mel::cppex
         }
 
         template<typename OnSuccess, typename DefaultT>
-        std::common_type_t<std::invoke_result_t<OnSuccess, T>, DefaultT> map_or(
-            OnSuccess on_success,
-            DefaultT && default_value)
-            const requires(detail::success_callable<OnSuccess, T>)
+        std::common_type_t<std::invoke_result_t<OnSuccess, T>, DefaultT>
+        map_or(OnSuccess on_success, DefaultT&& default_value) const
+            requires(detail::success_callable<OnSuccess, T>)
         {
             using rv_t = std::common_type_t<std::invoke_result_t<OnSuccess, T>,
                 DefaultT>;
@@ -128,9 +128,9 @@ namespace mel::cppex
         template<typename OnSuccess, typename OnError>
         std::common_type_t<std::invoke_result_t<OnSuccess, T>,
             std::invoke_result_t<OnError, std::error_code>>
-        map_or_else(OnSuccess on_success, OnError on_error)
-            const requires(detail::success_callable<OnSuccess, T> &&
-                detail::error_callable<OnError>)
+        map_or_else(OnSuccess on_success, OnError on_error) const
+            requires(detail::success_callable<OnSuccess, T>&&
+                    detail::error_callable<OnError>)
         {
             using rv_t = std::common_type_t<std::invoke_result_t<OnSuccess, T>,
                 std::invoke_result_t<OnError, std::error_code>>;
@@ -159,8 +159,8 @@ namespace mel::cppex
     public: // Operators
         result& operator=(result const& other) = default;
 
-        result& operator=(result&& other) noexcept requires(
-            detail::move_assignable<T>) = default;
+        result& operator=(result&& other) noexcept
+            requires(detail::move_assignable<T>) = default;
 
     public: // Conversions
         operator bool() const noexcept { return value_.index() == 0; }

@@ -19,8 +19,8 @@ matrix:
             - python3-pip
             - python3-setuptools
             # Clang tools
-            - clang-format-10
-            - clang-tidy-10
+            - clang-format-11
+            - clang-tidy-11
             # Build tools
             - cmake
       install:
@@ -46,14 +46,14 @@ matrix:
             - python3-pip
             - python3-setuptools
             # Clang tools
-            - clang-format-10
-            - clang-tidy-10
+            - clang-format-11
+            - clang-tidy-11
             # Build tools
             - cmake
       install:
           - pip3 install conan
       env:
-        - MATRIX_EVAL="CC=clang-10 && CXX=clang++-10"
+        - MATRIX_EVAL="CC=clang-11 && CXX=clang++-11"
 
 before_install:
     - eval "${MATRIX_EVAL}"

@@ -3,7 +3,7 @@
 find_program(
     CLANG_TIDY_EXE
     NAMES 
-        "clang-tidy-10"
+        "clang-tidy-11"
     DOC 
         "Path to clang-tidy executable"
 )
