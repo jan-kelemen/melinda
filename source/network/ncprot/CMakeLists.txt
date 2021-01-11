@@ -13,18 +13,27 @@ build_flatbuffers(
 
 set(TARGET_NAME network_ncprot)
 
-add_library(${TARGET_NAME} STATIC 
+add_library(${TARGET_NAME} SHARED 
+    src/ncprot_client.cpp
+    src/ncprot_internal.cpp
+    src/ncprot_message.cpp
     src/wire_generated.cpp
 )
 add_dependencies(${TARGET_NAME} generate_fb clang-format)
 target_link_libraries(${TARGET_NAME}
     PUBLIC
         CONAN_PKG::flatbuffers
+        common_cppex
+    PRIVATE
+        CONAN_PKG::cppzmq
+        CONAN_PKG::boost_uuid
 )
 target_include_directories(${TARGET_NAME} PUBLIC include)
 
 add_executable(${TARGET_NAME}_test
     test/main.cpp
+    test/ncprot_client.t.cpp
+    test/ncprot_message.t.cpp
     test/wire_generated.t.cpp
 )
 target_link_libraries(

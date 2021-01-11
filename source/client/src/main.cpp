@@ -6,19 +6,14 @@
 
 #include <unistd.h>
 
-#include <boost/uuid/random_generator.hpp>
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
-
 #include <zmq.hpp>
 #include <zmq_addon.hpp>
 
+#include "ncprot_client.h"
 #include "scope_exit.h"
 #include "trace.h"
 #include "unused.h"
 #include "wire_generated.h"
-
-std::string generate_identity();
 
 int main()
 {
@@ -37,8 +32,15 @@ int main()
     mel::trace::initialize_process_trace_handle(
         mel::trace::create_trace_handle(trace_config));
 
-    constexpr std::size_t const max_identity_length = 255;
-    std::string const identity = generate_identity();
+    mel::cppex::result<std::string> const identity =
+        mel::ncprot::generate_identity();
+    if (!identity)
+    {
+        MEL_TRACE_ERROR("Unable to create client identity: {}!",
+            static_cast<std::error_code>(identity).message());
+        std::terminate();
+    }
+    std::string const& raw_identity = static_cast<std::string const&>(identity);
 
     zmq::context_t ctx;
     zmq::socket_t socket = zmq::socket_t(ctx, zmq::socket_type::req);
@@ -47,9 +49,8 @@ int main()
     socket.setsockopt(ZMQ_SNDTIMEO,
         10 * 1000); // Set the timeout for sending requests to 10 seconds
     socket.setsockopt(ZMQ_ROUTING_ID,
-        identity.c_str(),
-        std::min(max_identity_length,
-            identity.length())); // Identify to the server with a unique name
+        raw_identity.c_str(),
+        raw_identity.length()); // Identify to the server with a unique name
 
     constexpr char const* const address = "tcp://localhost:22365";
     try
@@ -115,15 +116,4 @@ int main()
                 ex.what());
         }
     }
-}
-
-std::string generate_identity()
-{
-    boost::uuids::random_generator generator;
-    std::string const uuid = to_string(generator());
-
-    std::array<char, HOST_NAME_MAX + 1> buffer = {};
-    gethostname(buffer.data(), HOST_NAME_MAX);
-
-    return uuid + "_" + buffer.data();
 }
