@@ -45,7 +45,7 @@ namespace mel::trace
 
         trace_options(trace_options const&) = default;
 
-        trace_options(trace_options &&) noexcept = default;
+        trace_options(trace_options&&) noexcept = default;
 
     public: // Operators
         trace_options& operator=(trace_options const&) = default;
@@ -90,11 +90,11 @@ namespace mel::trace
 
         trace_handle(trace_handle const&) noexcept = default;
 
-        trace_handle(trace_handle &&) noexcept = default;
+        trace_handle(trace_handle&&) noexcept = default;
 
     public: // Interface
-        [[nodiscard]] bool should_trace_message(trace_level level)
-            const noexcept;
+        [[nodiscard]] bool should_trace_message(
+            trace_level level) const noexcept;
 
         void trace_level(trace_level new_level) noexcept;
 

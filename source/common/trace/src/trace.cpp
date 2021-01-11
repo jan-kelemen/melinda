@@ -36,11 +36,11 @@ public: // Construction
 
     impl(impl const&) = delete;
 
-    impl(impl && other) noexcept = delete;
+    impl(impl&& other) noexcept = delete;
 
 public: // Interface
-    [[nodiscard]] auto should_trace_message(enum trace_level level)
-        const noexcept->bool;
+    [[nodiscard]] auto should_trace_message(
+        enum trace_level level) const noexcept -> bool;
 
     void trace_level(enum trace_level new_level) noexcept;
 
@@ -60,8 +60,8 @@ private: // Constants
     static constexpr std::size_t delay_filesize_check_default = 50;
 
 private: // Helpers
-    [[nodiscard]] bool has_filesize_exceeded(int file_descriptor_)
-        const noexcept;
+    [[nodiscard]] bool has_filesize_exceeded(
+        int file_descriptor_) const noexcept;
 
     [[nodiscard]] fs::path new_filename() const;
 
