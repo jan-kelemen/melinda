@@ -10,6 +10,7 @@
 #include <zmq_addon.hpp>
 
 #include "ncprot_client.h"
+#include "ncprot_message.h"
 #include "scope_exit.h"
 #include "trace.h"
 #include "unused.h"
@@ -22,8 +23,11 @@ int main()
         mel::network::CreatemessageDirect(builder, 5, "Hello");
     builder.Finish(binary_content);
 
-    size_t size = builder.GetSize();
-    uint8_t* data = builder.GetBufferPointer();
+    static_assert(sizeof(std::byte) == sizeof(unsigned char));
+    mel::ncprot::message const message = mel::ncprot::message(
+        reinterpret_cast<std::byte*>(builder.GetBufferPointer()),
+        reinterpret_cast<std::byte*>(
+            builder.GetBufferPointer() + builder.GetSize()));
 
     mel::trace::trace_options trace_config(fs::path("../log"),
         fs::path("client"));
@@ -69,7 +73,7 @@ int main()
 
     while (true)
     {
-        zmq::message_t request = zmq::message_t(data, size);
+        zmq::message_t request = zmq::message_t(message.data(), message.size());
         try
         {
             MEL_TRACE_INFO("Sending request of {} bytes to {}.",
