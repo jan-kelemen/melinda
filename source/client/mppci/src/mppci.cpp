@@ -9,6 +9,7 @@
 #include <zmq.hpp>
 #include <zmq_addon.hpp>
 
+#include "mppci.h"
 #include "ncprot_client.h"
 #include "ncprot_message.h"
 #include "scope_exit.h"
@@ -16,7 +17,7 @@
 #include "unused.h"
 #include "wire_generated.h"
 
-int main()
+void mel::mppci::old_main()
 {
     flatbuffers::FlatBufferBuilder builder;
     auto binary_content =
