@@ -37,6 +37,8 @@ conan_add_remote(
 conan_add_remote(
     NAME
         jkconan-vendor
+    INDEX
+        0
     URL
         https://api.bintray.com/conan/jan-kelemen/conan-vendor
 )
