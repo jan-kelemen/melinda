@@ -15,6 +15,7 @@ workflows:
       - build_with_gcc:
           context:
             - docker-hub-creds
+            - bintray-creds
       - test:
           context:
             - docker-hub-creds
@@ -25,6 +26,7 @@ workflows:
       - build_with_clang:
           context:
             - docker-hub-creds
+            - bintray-creds
       - test:
           context:
             - docker-hub-creds
@@ -42,6 +44,11 @@ jobs:
       - run:
           name: Build sources
           command: ./scripts/build.sh -c RelWithDebInfo
+      - run:
+          name: Upload conan packages to Bintray
+          command: |
+            conan user -p $BINTRAY_APIKEY -r jkconan-vendor $BINTRAY_USERNAME
+            conan upload "*" --confirm --all --parallel -r jkconan-vendor
       - persist_to_workspace:
           root: .
           paths:
@@ -58,6 +65,11 @@ jobs:
       - run:
           name: Build sources
           command: ./scripts/build.sh -c RelWithDebInfo
+      - run:
+          name: Upload conan packages to Bintray
+          command: |
+            conan user -p $BINTRAY_APIKEY -r jkconan-vendor $BINTRAY_USERNAME
+            conan upload "*" --confirm --all --parallel -r jkconan-vendor
       - persist_to_workspace:
           root: .
           paths: 
