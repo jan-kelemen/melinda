@@ -1,5 +1,6 @@
 #include <array>
 #include <chrono>
+#include <flatbuffers/flatbuffers.h>
 #include <iostream>
 #include <thread>
 #include <vector>
@@ -19,17 +20,6 @@
 
 void mel::mppci::old_main()
 {
-    flatbuffers::FlatBufferBuilder builder;
-    auto binary_content =
-        mel::network::CreatemessageDirect(builder, 5, "Hello");
-    builder.Finish(binary_content);
-
-    static_assert(sizeof(std::byte) == sizeof(unsigned char));
-    mel::ncprot::message const message = mel::ncprot::message(
-        reinterpret_cast<std::byte*>(builder.GetBufferPointer()),
-        reinterpret_cast<std::byte*>(
-            builder.GetBufferPointer() + builder.GetSize()));
-
     mel::trace::trace_options trace_config(fs::path("../log"),
         fs::path("client"));
     trace_config.level = mel::trace::trace_level::info;
@@ -71,6 +61,29 @@ void mel::mppci::old_main()
         std::terminate();
     }
     ON_SCOPE_EXIT(socket.disconnect(address));
+
+    flatbuffers::FlatBufferBuilder raw_builder;
+    flatbuffers::Offset<mel::network::Query> query =
+        mel::network::CreateQueryDirect(raw_builder, "SELECT * FROM v$sql");
+    flatbuffers::Offset<flatbuffers::String> client =
+        raw_builder.CreateString(raw_identity.c_str());
+    mel::network::MessageBuilder builder(raw_builder);
+    builder.add_content_type(mel::network::MessageContent_query);
+    builder.add_content(query.Union());
+    builder.add_client(client);
+    flatbuffers::Offset<mel::network::Message> message_offset =
+        builder.Finish();
+    raw_builder.Finish(message_offset);
+
+    //    auto binary_content =
+    //       mel::network::CreateMessageDirect(builder, 5, "Hello");
+    //  builder.Finish(binary_content);
+
+    static_assert(sizeof(std::byte) == sizeof(unsigned char));
+    mel::ncprot::message const message = mel::ncprot::message(
+        reinterpret_cast<std::byte*>(raw_builder.GetBufferPointer()),
+        reinterpret_cast<std::byte*>(
+            raw_builder.GetBufferPointer() + raw_builder.GetSize()));
 
     while (true)
     {

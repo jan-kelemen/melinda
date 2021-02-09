@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <array>
+#include <flatbuffers/flatbuffers.h>
 #include <iostream>
 #include <vector>
 
@@ -52,9 +53,10 @@ int main()
                 zmq::recv_flags::dontwait);
             if (result)
             {
-                mel::network::message const* msg =
-                    flatbuffers::GetRoot<mel::network::message>(
+                mel::network::Message const* msg =
+                    flatbuffers::GetRoot<mel::network::Message>(
                         request[2].data());
+
                 // Process the message, otherwise if result is empty then no
                 // messages were queued on the socket
                 MEL_TRACE_INFO(
@@ -62,7 +64,7 @@ int main()
                     request.size(),
                     result.value(),
                     request[0].to_string_view(),
-                    msg->content()->c_str());
+                    msg->content_as_query()->content()->c_str());
             }
         }
         catch (zmq::error_t const& ex)

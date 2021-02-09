@@ -1,7 +1,21 @@
 namespace mel.network;
 
-table message {
-    length:int;
+table Query {
     content:string;
 }
 
+table QueryResult {
+    length:int;
+    offsets:[uint32];
+    raw_values:[ubyte];
+}
+
+union MessageContent {
+    query:Query,
+    result:QueryResult
+}
+
+table Message {
+    client:string;
+    content:MessageContent;
+}
