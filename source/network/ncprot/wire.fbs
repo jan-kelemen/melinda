@@ -5,7 +5,7 @@ table Query {
 }
 
 table QueryResult {
-    length:int;
+    length:uint32;
     offsets:[uint32];
     raw_values:[ubyte];
 }

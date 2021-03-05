@@ -23,10 +23,11 @@ add_dependencies(${TARGET_NAME} generate_fb clang-format)
 target_link_libraries(${TARGET_NAME}
     PUBLIC
         CONAN_PKG::flatbuffers
+        CONAN_PKG::cppzmq
         common_cppex
     PRIVATE
-        CONAN_PKG::cppzmq
         CONAN_PKG::boost_uuid
+        common_trace
 )
 target_include_directories(${TARGET_NAME} PUBLIC include)
 

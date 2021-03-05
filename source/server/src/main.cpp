@@ -7,6 +7,7 @@
 #include <zmq.hpp>
 #include <zmq_addon.hpp>
 
+#include "ncprot_client.h"
 #include "scope_exit.h"
 #include "trace.h"
 #include "wire_generated.h"
@@ -21,95 +22,91 @@ int main()
         mel::trace::create_trace_handle(trace_config));
 
     zmq::context_t ctx;
-    zmq::socket_t socket = zmq::socket_t(ctx, zmq::socket_type::router);
-
-    socket.setsockopt(ZMQ_LINGER, 0); // Close the socket immediately
-    socket.setsockopt(ZMQ_ROUTER_MANDATORY,
-        1); // Report host unreachable errors if the reply can't be routed
-    socket.setsockopt(ZMQ_SNDTIMEO,
-        10 * 1000); // Set the timeout for sending replies to 10 seconds
-
     constexpr char const* const address = "tcp://*:22365";
-    try
+
+    mel::cppex::result<zmq::socket_t> bind_result =
+        mel::ncprot::server::bind(ctx, address);
+    if (!bind_result)
     {
-        MEL_TRACE_ALWAYS("Server will be registered on '{}' endpoint.",
-            address);
-        socket.bind(address);
-    }
-    catch (zmq::error_t const& e)
-    {
-        MEL_TRACE_FATAL("Can't bind to {}. Reason: ZMQ-{}:", e.num(), e.what());
+        MEL_TRACE_FATAL("Can't connect to {}", address);
         std::terminate();
     }
+
+    zmq::socket_t& socket = static_cast<zmq::socket_t&>(bind_result);
     ON_SCOPE_EXIT(socket.unbind(address));
+
+    flatbuffers::FlatBufferBuilder query_result =
+        mel::ncprot::serialize_query_result(address, 0, {}, {});
 
     while (true)
     {
-        std::vector<zmq::message_t> request;
-        try
-        {
-            zmq::recv_result_t const result = zmq::recv_multipart(socket,
-                std::back_inserter(request),
-                zmq::recv_flags::dontwait);
-            if (result)
-            {
-                mel::network::Message const* msg =
-                    flatbuffers::GetRoot<mel::network::Message>(
-                        request[2].data());
+        using response_content_t = std::pair<std::string, zmq::message_t>;
+        using response_t = std::optional<response_content_t>;
+        using recv_t = std::pair<zmq::recv_result_t, response_t>;
 
-                // Process the message, otherwise if result is empty then no
-                // messages were queued on the socket
-                MEL_TRACE_INFO(
-                    "Received {} messages of {} bytes in size from {} of content {}.",
-                    request.size(),
-                    result.value(),
-                    request[0].to_string_view(),
-                    msg->content_as_query()->content()->c_str());
-            }
-        }
-        catch (zmq::error_t const& ex)
-        {
-            MEL_TRACE_FATAL(
-                "Unexpected error while receiving request. Reason: ZMQ-{}:",
-                ex.num(),
-                ex.what());
-        }
+        mel::ncprot::server::recv_result_t recv_result =
+            mel::ncprot::server::recv(socket);
 
-        if (request.empty())
+        if (recv_result.index() != 0)
+        {
+            continue;
+        }
+        recv_t const& success = std::get<recv_t>(recv_result);
+        if (!success.first)
         {
             continue;
         }
 
-        try
+        mel::network::Message const* const message =
+            flatbuffers::GetRoot<mel::ncprot::root_type>(
+                success.second->second.data());
+
+        if (message->content_type() != mel::network::MessageContent_query)
         {
-            std::vector<zmq::message_t> response;
-            response.emplace_back(std::move(request[0]));
-            response.emplace_back();
-            response.emplace_back(address, sizeof("tcp://*:22365"));
-            MEL_TRACE_INFO("Sending response of {} bytes to {}.",
-                response[2].size(),
-                response[0].to_string_view());
-            zmq::send_result_t const result = zmq::send_multipart(socket,
-                std::move(response),
-                zmq::send_flags::dontwait);
-            if (!result)
-            {
-                MEL_TRACE_ERROR("Can't send response");
-            }
+            continue;
         }
-        catch (zmq::error_t const& ex)
-        {
-            if (ex.num() == EHOSTUNREACH)
-            {
-                MEL_TRACE_WARN("Client has disconnected or is not known.");
-            }
-            else
-            {
-                MEL_TRACE_FATAL(
-                    "Unexpected error while receiving request. Reason: ZMQ-{}:",
-                    ex.num(),
-                    ex.what());
-            }
-        }
+
+        mel::network::Query const* const query = message->content_as_query();
+        MEL_TRACE_INFO("Recevied query {} from {}",
+            query->content()->c_str(),
+            success.second->first);
+
+        MEL_TRACE_INFO("Sending response to {}", success.second->first);
+        mel::ncprot::server::send_result_t send_result =
+            mel::ncprot::server::send(socket,
+                success.second->first,
+                {reinterpret_cast<std::byte*>(query_result.GetBufferPointer()),
+                    query_result.GetSize()});
+
+        std::visit(
+            [&client = success.second->first](auto&& arg) {
+                using T = std::decay_t<decltype(arg)>;
+                if constexpr (std::same_as<T,
+                                  std::variant_alternative_t<0,
+                                      decltype(send_result)>>)
+                {
+                    if (!arg)
+                    {
+                        MEL_TRACE_ERROR("Can't send response");
+                    }
+                }
+                else if constexpr (std::same_as<T,
+                                       std::variant_alternative_t<1,
+                                           decltype(send_result)>>)
+                {
+                    if (arg.num() == EHOSTUNREACH)
+                    {
+                        MEL_TRACE_WARN(
+                            "Client {} has disconnected or is not known.",
+                            client);
+                    }
+                }
+                else
+                {
+                    static_assert(mel::cppex::always_false_v<T>,
+                        "non-exhaustive visitor!");
+                }
+            },
+            send_result);
     }
 }

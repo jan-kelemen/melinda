@@ -152,10 +152,10 @@ namespace mel
                 VT_OFFSETS = 6,
                 VT_RAW_VALUES = 8
             };
-            int32_t length() const { return GetField<int32_t>(VT_LENGTH, 0); }
-            bool mutate_length(int32_t _length)
+            uint32_t length() const { return GetField<uint32_t>(VT_LENGTH, 0); }
+            bool mutate_length(uint32_t _length)
             {
-                return SetField<int32_t>(VT_LENGTH, _length, 0);
+                return SetField<uint32_t>(VT_LENGTH, _length, 0);
             }
             const flatbuffers::Vector<uint32_t>* offsets() const
             {
@@ -178,7 +178,7 @@ namespace mel
             bool Verify(flatbuffers::Verifier& verifier) const
             {
                 return VerifyTableStart(verifier) &&
-                    VerifyField<int32_t>(verifier, VT_LENGTH) &&
+                    VerifyField<uint32_t>(verifier, VT_LENGTH) &&
                     VerifyOffset(verifier, VT_OFFSETS) &&
                     verifier.VerifyVector(offsets()) &&
                     VerifyOffset(verifier, VT_RAW_VALUES) &&
@@ -191,9 +191,9 @@ namespace mel
             typedef QueryResult Table;
             flatbuffers::FlatBufferBuilder& fbb_;
             flatbuffers::uoffset_t start_;
-            void add_length(int32_t length)
+            void add_length(uint32_t length)
             {
-                fbb_.AddElement<int32_t>(QueryResult::VT_LENGTH, length, 0);
+                fbb_.AddElement<uint32_t>(QueryResult::VT_LENGTH, length, 0);
             }
             void add_offsets(
                 flatbuffers::Offset<flatbuffers::Vector<uint32_t>> offsets)
@@ -221,7 +221,7 @@ namespace mel
 
         inline flatbuffers::Offset<QueryResult> CreateQueryResult(
             flatbuffers::FlatBufferBuilder& _fbb,
-            int32_t length = 0,
+            uint32_t length = 0,
             flatbuffers::Offset<flatbuffers::Vector<uint32_t>> offsets = 0,
             flatbuffers::Offset<flatbuffers::Vector<uint8_t>> raw_values = 0)
         {
@@ -234,7 +234,7 @@ namespace mel
 
         inline flatbuffers::Offset<QueryResult> CreateQueryResultDirect(
             flatbuffers::FlatBufferBuilder& _fbb,
-            int32_t length = 0,
+            uint32_t length = 0,
             const std::vector<uint32_t>* offsets = nullptr,
             const std::vector<uint8_t>* raw_values = nullptr)
         {
