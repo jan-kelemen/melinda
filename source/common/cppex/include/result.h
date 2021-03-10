@@ -5,6 +5,7 @@
 #include <functional>
 #include <system_error>
 #include <type_traits>
+#include <utility>
 #include <variant>
 
 #include "always_false.h"
@@ -23,41 +24,60 @@ namespace mel::cppex
 
         template<typename T>
         concept move_assignable = std::is_move_assignable_v<T>;
-
-        template<typename T>
-        concept result_value = !std::convertible_to<T, std::error_code> &&
-            !std::convertible_to<T, std::error_condition>;
-
-        template<typename Callable, typename T>
-        concept success_callable = std::invocable<Callable, T>;
-
-        template<typename Callable>
-        concept error_callable = std::invocable<Callable, std::error_code>;
     } // namespace detail
 
-    // TODO-JK: result shouldn't be constrained to one type only, error should
-    // also be parametrizable
-    template<typename T>
-    requires(detail::result_value<T>) class [[nodiscard]] result final
+    template<typename T, typename E = std::error_code>
+    class result;
+
+    namespace res
     {
+        template<typename T, typename E = std::error_code, typename... Args>
+        result<T, E> ok(Args&&... args) noexcept(noexcept(
+            result<T, E>(std::in_place_index<0>, std::forward<Args>(args)...)));
+
+        template<typename T, typename E = std::error_code, typename... Args>
+        result<T, E> error(Args&&... args) noexcept(noexcept(
+            result<T, E>(std::in_place_index<1>, std::forward<Args>(args)...)));
+    } // namespace res
+
+    template<typename T, typename E>
+    class [[nodiscard]] result final
+    {
+    public: // Types
+        using ok_type = T;
+        using error_type = E;
+
     private: // Types
-        using either_t = detail::either<T, std::error_code>;
+        using either_t = detail::either<T, E>;
+
+    public: // Constants
+        static constexpr std::size_t ok_index = 0;
+        static constexpr std::size_t error_index = 1;
 
     public: // Construction
         result() = default;
 
-        template<typename... Args>
-        result(Args&&... value) noexcept(
+        template<typename U, typename... Args>
+        result(std::in_place_type_t<U> alternative, Args&&... value) noexcept(
             std::is_nothrow_constructible_v<T, Args...>)
-            requires(std::constructible_from<T, Args...>)
-            : value_(T(std::forward<Args>(value)...))
+            requires(std::constructible_from<T, Args...> &&
+                (!std::same_as<T, E> &&
+                    (std::same_as<U, T> || std::same_as<U, E>) ))
+            : value_(alternative, std::forward<Args>(value)...)
         {
         }
 
-        explicit result(std::error_code error) noexcept(
-            std::is_nothrow_constructible_v<either_t,
-                std::add_rvalue_reference_t<std::error_code>>)
-            : value_(std::move(error))
+        template<std::size_t I, typename... Args>
+        result(std::in_place_index_t<I> index, Args&&... value) noexcept(
+            std::is_nothrow_constructible_v<
+                std::variant_alternative_t<I, either_t>,
+                Args...>)
+            requires(
+                std::constructible_from<std::variant_alternative_t<I, either_t>,
+                    Args...> &&
+                (std::same_as<std::variant_alternative_t<I, either_t>, T> ||
+                    std::same_as<std::variant_alternative_t<I, either_t>, E>) )
+            : value_(index, std::forward<Args>(value)...)
         {
         }
 
@@ -68,93 +88,56 @@ namespace mel::cppex
 
     public: // Interface
         template<typename OnSuccess>
-        result<std::invoke_result_t<OnSuccess, T>> map(
-            OnSuccess on_success) const
-            requires(detail::success_callable<OnSuccess, T>)
+        result<std::invoke_result_t<OnSuccess, T>, E> map(
+            OnSuccess on_success) const requires(std::invocable<OnSuccess, T>)
         {
-            using rv_t = result<std::invoke_result_t<OnSuccess, T>>;
+            using success_t = std::invoke_result_t<OnSuccess, T>;
 
-            return std::visit(
-                [&on_success](auto&& arg) -> rv_t {
-                    using U = std::decay_t<decltype(arg)>;
-                    if constexpr (std::same_as<U, T>)
-                    {
-                        return rv_t(on_success(arg));
-                    }
-                    else if constexpr (std::same_as<U, std::error_code>)
-                    {
-                        return rv_t(arg);
-                    }
-                    else
-                    {
-                        static_assert(always_false_v<U>,
-                            "non-exhaustive visitor!");
-                    }
-                },
-                value_);
+            if (*this)
+            {
+                return res::ok<success_t, E>(on_success(ok()));
+            }
+            return res::error<success_t, E>(error());
         }
 
         template<typename OnSuccess, typename DefaultT>
         std::common_type_t<std::invoke_result_t<OnSuccess, T>, DefaultT>
         map_or(OnSuccess on_success, DefaultT&& default_value) const
-            requires(detail::success_callable<OnSuccess, T>)
+            requires(std::invocable<OnSuccess, T>)
         {
             using rv_t = std::common_type_t<std::invoke_result_t<OnSuccess, T>,
                 DefaultT>;
 
-            // TODO-JK: CppCon passing values back and forth
-            return std::visit(
-                [&on_success,
-                    default_value = std::forward<DefaultT>(default_value)](
-                    auto&& arg) -> rv_t {
-                    using U = std::decay_t<decltype(arg)>;
-                    if constexpr (std::same_as<U, T>)
-                    {
-                        return rv_t(on_success(arg));
-                    }
-                    else if constexpr (std::same_as<U, std::error_code>)
-                    {
-                        return rv_t(default_value);
-                    }
-                    else
-                    {
-                        static_assert(!always_false_v<U>,
-                            "non-exhaustive visitor!");
-                    }
-                },
-                value_);
+            if (*this)
+            {
+                return rv_t(on_success(ok()));
+            }
+            return rv_t(default_value);
         }
 
         template<typename OnSuccess, typename OnError>
         std::common_type_t<std::invoke_result_t<OnSuccess, T>,
-            std::invoke_result_t<OnError, std::error_code>>
+            std::invoke_result_t<OnError, E>>
         map_or_else(OnSuccess on_success, OnError on_error) const
-            requires(detail::success_callable<OnSuccess, T>&&
-                    detail::error_callable<OnError>)
+            requires(std::invocable<OnSuccess, T>&& std::invocable<OnError, E>)
         {
             using rv_t = std::common_type_t<std::invoke_result_t<OnSuccess, T>,
-                std::invoke_result_t<OnError, std::error_code>>;
+                std::invoke_result_t<OnError, E>>;
 
-            // https://en.cppreference.com/w/cpp/utility/variant/visit
-            return std::visit(
-                [&on_success, &on_error](auto&& arg) -> rv_t {
-                    using U = std::decay_t<decltype(arg)>;
-                    if constexpr (std::is_same_v<U, T>)
-                    {
-                        return rv_t(on_success(arg));
-                    }
-                    else if constexpr (std::is_same_v<U, std::error_code>)
-                    {
-                        return rv_t(on_error(arg));
-                    }
-                    else
-                    {
-                        static_assert(!always_false_v<U>,
-                            "non-exhaustive visitor!");
-                    }
-                },
-                value_);
+            if (*this)
+            {
+                return rv_t(on_success(ok()));
+            }
+            return rv_t(on_error(error()));
         }
+
+        T& ok() { return std::get<ok_index>(value_); }
+
+        T const& ok() const { return std::get<ok_index>(value_); }
+
+        E& error() { return std::get<error_index>(value_); }
+
+        E const& error() const { return std::get<error_index>(value_); }
 
     public: // Operators
         result& operator=(result const& other) = default;
@@ -163,16 +146,7 @@ namespace mel::cppex
             requires(detail::move_assignable<T>) = default;
 
     public: // Conversions
-        operator bool() const noexcept { return value_.index() == 0; }
-
-        explicit operator T&() { return std::get<T>(value_); }
-
-        explicit operator T const &() const { return std::get<T>(value_); }
-
-        explicit operator std::error_code() const
-        {
-            return std::get<std::error_code>(value_);
-        }
+        operator bool() const noexcept { return value_.index() == ok_index; }
 
     public: // Destruction
         ~result() noexcept = default;
@@ -180,6 +154,25 @@ namespace mel::cppex
     private: // Data
         either_t value_;
     };
+
+    namespace res
+    {
+        template<typename T, typename E, typename... Args>
+        result<T, E> ok(Args&&... args) noexcept(noexcept(
+            result<T, E>(std::in_place_index<0>, std::forward<Args>(args)...)))
+        {
+            return result<T, E>(std::in_place_index<0>,
+                std::forward<Args>(args)...);
+        }
+
+        template<typename T, typename E, typename... Args>
+        result<T, E> error(Args&&... args) noexcept(noexcept(
+            result<T, E>(std::in_place_index<1>, std::forward<Args>(args)...)))
+        {
+            return result<T, E>(std::in_place_index<1>,
+                std::forward<Args>(args)...);
+        }
+    } // namespace res
 
 } // namespace mel::cppex
 

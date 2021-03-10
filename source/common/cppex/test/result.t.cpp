@@ -4,25 +4,17 @@
 
 #include "result.h"
 
-TEST_CASE("result constructed from a value is considered not to be an error")
+TEST_CASE("result constructed by ::ok is considered not to be an error")
 {
-    mel::cppex::result<int> const r = mel::cppex::result<int>(1);
+    mel::cppex::result<int> const r = mel::cppex::res::ok<int>(1);
     REQUIRE(static_cast<bool>(r));
 }
 
-TEST_CASE(
-    "result constructed from a std::error_code is considered to be an error")
+TEST_CASE("result constructed by ::error is considered to be an error")
 {
-    mel::cppex::result<int> const r =
-        mel::cppex::result<int>(std::make_error_code(std::errc::bad_address));
+    mel::cppex::result<int, char> const r =
+        mel::cppex::res::error<int, char>('a');
     REQUIRE(!static_cast<bool>(r));
-}
-
-TEST_CASE(
-    "std::error_condition and std::error_code are not allowed as values of result")
-{
-    static_assert(!mel::cppex::detail::result_value<std::error_code>);
-    static_assert(!mel::cppex::detail::result_value<std::error_condition>);
 }
 
 TEST_CASE(
@@ -39,10 +31,12 @@ TEST_CASE(
     };
 
     mel::cppex::result<test_class> const result =
-        mel::cppex::result<test_class>(1, "test");
+        mel::cppex::result<test_class>(std::in_place_type<test_class>,
+            1,
+            "test");
     REQUIRE(static_cast<bool>(result));
 
-    test_class const& value = static_cast<test_class const&>(result);
+    test_class const& value = result.ok();
     REQUIRE(value.trivial_ == 1);
     REQUIRE(value.str_ == "test");
 }
@@ -110,18 +104,29 @@ TEST_CASE("Special member functions are propagated from containing type")
 
 TEST_CASE("result::map preserves the error")
 {
-    mel::cppex::result<int> const result =
-        mel::cppex::result<int>(std::make_error_code(std::errc::bad_address));
+    mel::cppex::result<int, char> const result =
+        mel::cppex::res::error<int, char>('a');
 
-    mel::cppex::result<std::string> mapped =
+    mel::cppex::result<std::string, char> const mapped =
         result.map([](int v) { return std::to_string(v); });
-    REQUIRE(static_cast<std::error_code>(mapped) == std::errc::bad_address);
+    REQUIRE(mapped.error() == 'a');
+}
+
+TEST_CASE("result::map preserves the state when single type is used")
+{
+    mel::cppex::result<int, int> value = mel::cppex::res::ok<int, int>(5);
+    mel::cppex::result<int, int> error = mel::cppex::res::error<int, int>(3);
+
+    auto callback = [](int) { return 1; };
+
+    REQUIRE(value.map(callback));
+    REQUIRE(!error.map(callback));
 }
 
 TEST_CASE("result::map_or returns default value in error case")
 {
-    mel::cppex::result<int> const result =
-        mel::cppex::result<int>(std::make_error_code(std::errc::bad_address));
+    mel::cppex::result<int, char> const result =
+        mel::cppex::res::error<int, char>('a');
 
     long const value = result.map_or([](int v) { return long(v); }, 5);
     REQUIRE(value == 5);
@@ -129,12 +134,12 @@ TEST_CASE("result::map_or returns default value in error case")
 
 TEST_CASE("result::map_or_else invokes correct callback")
 {
-    mel::cppex::result<int> value = mel::cppex::result<int>(5);
-    mel::cppex::result<int> error =
-        mel::cppex::result<int>(std::make_error_code(std::errc::bad_address));
+    mel::cppex::result<int, char> value = mel::cppex::res::ok<int, char>(5);
+    mel::cppex::result<int, char> error = mel::cppex::res::error<int, char>(3);
 
     auto value_callback = [](int) { return 3; };
-    auto error_callback = [](std::error_code) { return 5; };
+    auto error_callback = [](char) { return 5; };
+
     REQUIRE(value.map_or_else(value_callback, error_callback) == 3);
     REQUIRE(error.map_or_else(value_callback, error_callback) == 5);
 }
