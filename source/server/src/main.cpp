@@ -32,7 +32,7 @@ int main()
         std::terminate();
     }
 
-    zmq::socket_t& socket = static_cast<zmq::socket_t&>(bind_result);
+    zmq::socket_t& socket = bind_result.ok();
     ON_SCOPE_EXIT(socket.unbind(address));
 
     flatbuffers::FlatBufferBuilder query_result =

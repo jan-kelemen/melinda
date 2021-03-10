@@ -24,7 +24,7 @@ namespace
         std::array<char, HOST_NAME_MAX + 1> buffer = {};
         if (gethostname(buffer.data(), HOST_NAME_MAX) == -1)
         {
-            return mel::cppex::result<std::string>(
+            return mel::cppex::res::error<std::string>(
                 std::make_error_code(static_cast<std::errc>(errno)));
         }
 
@@ -34,7 +34,7 @@ namespace
             rv.resize(max_identity_length);
         }
 
-        return mel::cppex::result<std::string>(rv);
+        return mel::cppex::res::ok<std::string>(rv);
     }
 } // namespace
 
@@ -105,11 +105,10 @@ mel::cppex::result<zmq::socket_t> mel::ncprot::client::connect(
     if (!identity)
     {
         MEL_TRACE_ERROR("Unable to create client identity: {}!",
-            static_cast<std::error_code>(identity).message());
-        return cppex::result<zmq::socket_t>(
-            static_cast<std::error_code>(identity));
+            identity.error().message());
+        return cppex::res::error<zmq::socket_t>(identity.error());
     }
-    std::string const& raw_identity = static_cast<std::string const&>(identity);
+    std::string const& raw_identity = identity.ok();
 
     zmq::socket_t socket = zmq::socket_t(context, zmq::socket_type::req);
 
@@ -131,10 +130,10 @@ mel::cppex::result<zmq::socket_t> mel::ncprot::client::connect(
             address,
             ex.num(),
             ex.what());
-        return cppex::result<zmq::socket_t>(
+        return cppex::res::error<zmq::socket_t>(
             std::make_error_code(static_cast<std::errc>(errno)));
     }
-    return cppex::result<zmq::socket_t>(std::move(socket));
+    return cppex::res::ok<zmq::socket_t>(std::move(socket));
 }
 
 mel::ncprot::client::send_result_t mel::ncprot::client::send(
@@ -204,10 +203,10 @@ mel::ncprot::server::bind(zmq::context_t& context, std::string const& address)
         MEL_TRACE_ERROR("Can't bind to {}. Reason: ZMQ-{}:",
             ex.num(),
             ex.what());
-        return cppex::result<zmq::socket_t>(
+        return cppex::res::error<zmq::socket_t>(
             std::make_error_code(static_cast<std::errc>(ex.num())));
     }
-    return cppex::result<zmq::socket_t>(std::move(socket));
+    return cppex::res::ok<zmq::socket_t>(std::move(socket));
 }
 
 mel::ncprot::server::send_result_t mel::ncprot::server::send(

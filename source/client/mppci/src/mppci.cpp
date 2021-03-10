@@ -32,7 +32,7 @@ void mel::mppci::old_main()
     }
 
     // TODO-JK allow taking values out of result
-    zmq::socket_t& socket = static_cast<zmq::socket_t&>(connect_result);
+    zmq::socket_t& socket = connect_result.ok();
     ON_SCOPE_EXIT(socket.disconnect(address));
 
     char identity[256];
