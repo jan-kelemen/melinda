@@ -16,7 +16,9 @@ set(TARGET_NAME network_ncprot)
 add_library(${TARGET_NAME} SHARED 
     src/ncprot_client.cpp
     src/ncprot_internal.cpp
-    src/ncprot_message.cpp
+    src/ncprot_server.cpp
+    src/ncprot_types.cpp
+    src/ncprot_serialization.cpp
     src/wire_generated.cpp
 )
 add_dependencies(${TARGET_NAME} generate_fb clang-format)
@@ -34,7 +36,9 @@ target_include_directories(${TARGET_NAME} PUBLIC include)
 add_executable(${TARGET_NAME}_test
     test/main.cpp
     test/ncprot_client.t.cpp
-    test/ncprot_message.t.cpp
+    test/ncprot_server.t.cpp
+    test/ncprot_types.t.cpp
+    test/ncprot_serialization.t.cpp
     test/wire_generated.t.cpp
 )
 target_link_libraries(

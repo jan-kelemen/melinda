@@ -1,22 +1,16 @@
+#include "mppci.h"
+
 #include <array>
 #include <chrono>
-#include <flatbuffers/flatbuffers.h>
 #include <iostream>
 #include <thread>
+#include <unistd.h>
 #include <vector>
 
-#include <unistd.h>
-
-#include <zmq.hpp>
-#include <zmq_addon.hpp>
-
-#include "mppci.h"
 #include "ncprot_client.h"
-#include "ncprot_message.h"
+#include "ncprot_serialization.h"
 #include "scope_exit.h"
 #include "trace.h"
-#include "unused.h"
-#include "wire_generated.h"
 
 void mel::mppci::old_main()
 {

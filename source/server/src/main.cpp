@@ -1,16 +1,13 @@
+#include "ncprot_server.h"
+
 #include <algorithm>
 #include <array>
-#include <flatbuffers/flatbuffers.h>
 #include <iostream>
 #include <vector>
 
-#include <zmq.hpp>
-#include <zmq_addon.hpp>
-
-#include "ncprot_client.h"
+#include "ncprot_serialization.h"
 #include "scope_exit.h"
 #include "trace.h"
-#include "wire_generated.h"
 
 int main()
 {
