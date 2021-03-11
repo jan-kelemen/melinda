@@ -40,26 +40,21 @@ int main()
 
     while (true)
     {
-        using response_content_t = std::pair<std::string, zmq::message_t>;
-        using response_t = std::optional<response_content_t>;
-        using recv_t = std::pair<zmq::recv_result_t, response_t>;
-
-        mel::ncprot::server::recv_result_t recv_result =
+        mel::ncprot::zmq_result<mel::ncprot::recv_response<
+            mel::ncprot::server::client_message>> const recv_result =
             mel::ncprot::server::recv(socket);
 
-        if (recv_result.index() != 0)
+        if (!recv_result || !recv_result.ok().received)
         {
             continue;
         }
-        recv_t const& success = std::get<recv_t>(recv_result);
-        if (!success.first)
-        {
-            continue;
-        }
+
+        mel::ncprot::recv_response<mel::ncprot::server::client_message> const&
+            success = recv_result.ok();
 
         mel::network::Message const* const message =
             flatbuffers::GetRoot<mel::ncprot::root_type>(
-                success.second->second.data());
+                success.message->content.data());
 
         if (message->content_type() != mel::network::MessageContent_query)
         {
@@ -69,44 +64,30 @@ int main()
         mel::network::Query const* const query = message->content_as_query();
         MEL_TRACE_INFO("Recevied query {} from {}",
             query->content()->c_str(),
-            success.second->first);
+            success.message->identity);
 
-        MEL_TRACE_INFO("Sending response to {}", success.second->first);
-        mel::ncprot::server::send_result_t send_result =
+        MEL_TRACE_INFO("Sending response to {}", success.message->identity);
+        mel::ncprot::zmq_result<zmq::send_result_t> const send_result =
             mel::ncprot::server::send(socket,
-                success.second->first,
+                success.message->identity,
                 {reinterpret_cast<std::byte*>(query_result.GetBufferPointer()),
                     query_result.GetSize()});
 
-        std::visit(
-            [&client = success.second->first](auto&& arg) {
-                using T = std::decay_t<decltype(arg)>;
-                if constexpr (std::same_as<T,
-                                  std::variant_alternative_t<0,
-                                      decltype(send_result)>>)
-                {
-                    if (!arg)
-                    {
-                        MEL_TRACE_ERROR("Can't send response");
-                    }
-                }
-                else if constexpr (std::same_as<T,
-                                       std::variant_alternative_t<1,
-                                           decltype(send_result)>>)
-                {
-                    if (arg.num() == EHOSTUNREACH)
-                    {
-                        MEL_TRACE_WARN(
-                            "Client {} has disconnected or is not known.",
-                            client);
-                    }
-                }
-                else
-                {
-                    static_assert(mel::cppex::always_false_v<T>,
-                        "non-exhaustive visitor!");
-                }
-            },
-            send_result);
+        if (send_result)
+        {
+            if (!send_result.ok())
+            {
+                MEL_TRACE_ERROR("Can't send response to {}",
+                    success.message->identity);
+            }
+            continue;
+        }
+
+        if (send_result.error().num() == EHOSTUNREACH)
+        {
+            MEL_TRACE_ERROR("Client {} has disconnected or is not known",
+                success.message->identity);
+            continue;
+        }
     }
 }

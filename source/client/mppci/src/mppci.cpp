@@ -44,30 +44,29 @@ void mel::mppci::old_main()
 
     while (true)
     {
-        auto send_result = mel::ncprot::client::send(socket,
-            {reinterpret_cast<std::byte*>(query.GetBufferPointer()),
-                query.GetSize()});
+        mel::ncprot::zmq_result<zmq::send_result_t> const send_result =
+            mel::ncprot::client::send(socket,
+                {reinterpret_cast<std::byte*>(query.GetBufferPointer()),
+                    query.GetSize()});
 
-        if (send_result.index() == 0)
+        if (!send_result || !send_result.ok())
         {
-            if (!std::get<zmq::send_result_t>(send_result))
-            {
-                continue;
-            }
+            continue;
         }
 
-        auto recv_result = mel::ncprot::client::recv(
-            socket); // TODO-JK: This is blocking indefinately
-        if (recv_result.index() == 0)
+        mel::ncprot::zmq_result<mel::ncprot::recv_response<zmq::message_t>>
+            recv_result = mel::ncprot::client::recv(
+                socket); // TODO-JK: This is blocking indefinately
+
+        if (recv_result)
         {
-            auto const& result =
-                std::get<std::pair<zmq::recv_result_t, zmq::message_t>>(
-                    recv_result);
-            if (result.first)
+            mel::ncprot::recv_response<zmq::message_t> const& success =
+                recv_result.ok();
+            if (success.received)
             {
                 mel::network::Message const* message =
                     flatbuffers::GetRoot<mel::ncprot::root_type>(
-                        result.second.data());
+                        success.message.value().data());
 
                 if (message->content_type() ==
                     mel::network::MessageContent_result)

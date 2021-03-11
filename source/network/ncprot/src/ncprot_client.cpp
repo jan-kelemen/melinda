@@ -136,7 +136,7 @@ mel::cppex::result<zmq::socket_t> mel::ncprot::client::connect(
     return cppex::res::ok<zmq::socket_t>(std::move(socket));
 }
 
-mel::ncprot::client::send_result_t mel::ncprot::client::send(
+mel::ncprot::zmq_result<zmq::send_result_t> mel::ncprot::client::send(
     zmq::socket_t& socket,
     std::span<std::byte> bytes,
     zmq::send_flags flags)
@@ -150,7 +150,7 @@ mel::ncprot::client::send_result_t mel::ncprot::client::send(
         {
             MEL_TRACE_ERROR("Can't send message, peer might be unreachable");
         }
-        return result;
+        return zmq_res_ok<zmq::send_result_t>(result);
     }
     catch (zmq::error_t const& ex)
     {
@@ -158,11 +158,11 @@ mel::ncprot::client::send_result_t mel::ncprot::client::send(
             "Unexpected error while sending message. Reason: ZMQ-{}: {}",
             ex.num(),
             ex.what());
-        return ex;
+        return zmq_res_error<zmq::send_result_t>(ex);
     }
 }
 
-mel::ncprot::client::recv_result_t
+mel::ncprot::zmq_result<mel::ncprot::recv_response<zmq::message_t>>
 mel::ncprot::client::recv(zmq::socket_t& socket, zmq::recv_flags flags)
 {
     zmq::message_t message;
@@ -170,7 +170,14 @@ mel::ncprot::client::recv(zmq::socket_t& socket, zmq::recv_flags flags)
     {
         zmq::recv_result_t const result = socket.recv(message, flags);
         MEL_TRACE_INFO("Received message of {} bytes", result.value());
-        return std::make_pair(result, std::move(message));
+        // clang-format off
+        return zmq_res_ok<recv_response<zmq::message_t>>(
+            recv_response<zmq::message_t> 
+            {
+                .received = result,
+                .message = std::optional<zmq::message_t>(std::move(message))
+            });
+        // clang-format on
     }
     catch (zmq::error_t const& ex)
     {
@@ -178,7 +185,7 @@ mel::ncprot::client::recv(zmq::socket_t& socket, zmq::recv_flags flags)
             "Unexpected error while receiving message. Reason: ZMQ-{}: {}",
             ex.num(),
             ex.what());
-        return ex;
+        return zmq_res_error<recv_response<zmq::message_t>>(ex);
     }
 }
 
@@ -209,7 +216,7 @@ mel::ncprot::server::bind(zmq::context_t& context, std::string const& address)
     return cppex::res::ok<zmq::socket_t>(std::move(socket));
 }
 
-mel::ncprot::server::send_result_t mel::ncprot::server::send(
+mel::ncprot::zmq_result<zmq::send_result_t> mel::ncprot::server::send(
     zmq::socket_t& socket,
     std::string const& client,
     std::span<std::byte> bytes,
@@ -224,7 +231,7 @@ mel::ncprot::server::send_result_t mel::ncprot::server::send(
     {
         zmq::send_result_t const result =
             zmq::send_multipart(socket, std::move(response), flags);
-        return result;
+        return zmq_res_ok<zmq::send_result_t>(result);
     }
     catch (zmq::error_t const& ex)
     {
@@ -232,17 +239,14 @@ mel::ncprot::server::send_result_t mel::ncprot::server::send(
             "Unexpected error while receiving request. Reason: ZMQ-{}: {}",
             ex.num(),
             ex.what());
-        return ex;
+        return zmq_res_error<zmq::send_result_t>(ex);
     }
 }
 
-mel::ncprot::server::recv_result_t
+mel::ncprot::zmq_result<
+    mel::ncprot::recv_response<mel::ncprot::server::client_message>>
 mel::ncprot::server::recv(zmq::socket_t& socket, zmq::recv_flags flags)
 {
-    using response_content_t = std::pair<std::string, zmq::message_t>;
-    using response_t = std::optional<response_content_t>;
-    using recv_t = std::pair<zmq::recv_result_t, response_t>;
-
     std::vector<zmq::message_t> messages;
     try
     {
@@ -255,12 +259,28 @@ mel::ncprot::server::recv(zmq::socket_t& socket, zmq::recv_flags flags)
                 messages[2].size(),
                 messages[0].to_string_view());
 
-            return recv_t(result,
-                response_t(response_content_t(messages[0].to_string(),
-                    std::move(messages.back()))));
+            // clang-format off
+            return zmq_res_ok<recv_response<client_message>>(
+                recv_response<mel::ncprot::server::client_message> 
+                {
+                    .received = result,
+                    .message = mel::ncprot::server::client_message 
+                    {
+                        .identity = messages[0].to_string(),
+                        .content = std::move(messages.back())
+                    }
+                });
+            // clang-fromat on
         }
 
-        return recv_t(result, std::nullopt);
+        // clang-format off
+        return zmq_res_ok<recv_response<client_message>>(
+            recv_response<mel::ncprot::server::client_message> 
+            {
+                .received = result,
+                .message = std::nullopt
+            });
+        // clang-format on
     }
     catch (zmq::error_t const& ex)
     {
@@ -268,6 +288,6 @@ mel::ncprot::server::recv(zmq::socket_t& socket, zmq::recv_flags flags)
             "Unexpected error while receiving request. Reason: ZMQ-{}: {}",
             ex.num(),
             ex.what());
-        return ex;
+        return zmq_res_error<recv_response<client_message>>(ex);
     }
 }

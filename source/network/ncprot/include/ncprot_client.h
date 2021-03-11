@@ -30,44 +30,62 @@ namespace mel::ncprot
         std::span<std::byte> const& data);
 } // namespace mel::ncprot
 
+namespace mel::ncprot
+{
+    template<typename T>
+    using zmq_result = cppex::result<T, zmq::error_t>;
+
+    template<typename T, typename... Args>
+    zmq_result<T> zmq_res_ok(Args&&... args)
+    {
+        return cppex::res::ok<T, zmq::error_t>(std::forward<Args>(args)...);
+    }
+
+    template<typename T, typename... Args>
+    zmq_result<T> zmq_res_error(Args&&... args)
+    {
+        return cppex::res::error<T, zmq::error_t>(std::forward<Args>(args)...);
+    }
+
+    template<typename T>
+    struct recv_response
+    {
+        zmq::recv_result_t received;
+        std::optional<T> message;
+    };
+} // namespace mel::ncprot
+
 namespace mel::ncprot::client
 {
-    using send_result_t = std::variant<zmq::send_result_t, zmq::error_t>;
-    using recv_result_t =
-        std::variant<std::pair<zmq::recv_result_t, zmq::message_t>,
-            zmq::error_t>;
-
     cppex::result<zmq::socket_t> connect(zmq::context_t& context,
         std::string const& address);
 
-    send_result_t send(zmq::socket_t& socket,
+    zmq_result<zmq::send_result_t> send(zmq::socket_t& socket,
         std::span<std::byte> bytes,
         zmq::send_flags flags = zmq::send_flags::none);
 
-    recv_result_t recv(zmq::socket_t& socket,
+    zmq_result<recv_response<zmq::message_t>> recv(zmq::socket_t& socket,
         zmq::recv_flags flags = zmq::recv_flags::none);
 
 } // namespace mel::ncprot::client
 
 namespace mel::ncprot::server
 {
-    using send_result_t = std::variant<zmq::send_result_t, zmq::error_t>;
-
-    // TODO-JK: Clean up this horrible return type
-    using recv_result_t =
-        std::variant<std::pair<zmq::recv_result_t,
-                         std::optional<std::pair<std::string, zmq::message_t>>>,
-            zmq::error_t>;
+    struct client_message
+    {
+        std::string identity;
+        zmq::message_t content;
+    };
 
     cppex::result<zmq::socket_t> bind(zmq::context_t& context,
         std::string const& address);
 
-    send_result_t send(zmq::socket_t& socket,
+    zmq_result<zmq::send_result_t> send(zmq::socket_t& socket,
         std::string const& client,
         std::span<std::byte> bytes,
         zmq::send_flags flags = zmq::send_flags::dontwait);
 
-    recv_result_t recv(zmq::socket_t& socket,
+    zmq_result<recv_response<client_message>> recv(zmq::socket_t& socket,
         zmq::recv_flags flags = zmq::recv_flags::dontwait);
 } // namespace mel::ncprot::server
 
