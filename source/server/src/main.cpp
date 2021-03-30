@@ -1,14 +1,13 @@
+#include "ncprot_server.h"
+
 #include <algorithm>
 #include <array>
 #include <iostream>
 #include <vector>
 
-#include <zmq.hpp>
-#include <zmq_addon.hpp>
-
+#include "ncprot_serialization.h"
 #include "scope_exit.h"
 #include "trace.h"
-#include "wire_generated.h"
 
 int main()
 {
@@ -20,94 +19,72 @@ int main()
         mel::trace::create_trace_handle(trace_config));
 
     zmq::context_t ctx;
-    zmq::socket_t socket = zmq::socket_t(ctx, zmq::socket_type::router);
-
-    socket.setsockopt(ZMQ_LINGER, 0); // Close the socket immediately
-    socket.setsockopt(ZMQ_ROUTER_MANDATORY,
-        1); // Report host unreachable errors if the reply can't be routed
-    socket.setsockopt(ZMQ_SNDTIMEO,
-        10 * 1000); // Set the timeout for sending replies to 10 seconds
-
     constexpr char const* const address = "tcp://*:22365";
-    try
+
+    mel::cppex::result<zmq::socket_t> bind_result =
+        mel::ncprot::server::bind(ctx, address);
+    if (!bind_result)
     {
-        MEL_TRACE_ALWAYS("Server will be registered on '{}' endpoint.",
-            address);
-        socket.bind(address);
-    }
-    catch (zmq::error_t const& e)
-    {
-        MEL_TRACE_FATAL("Can't bind to {}. Reason: ZMQ-{}:", e.num(), e.what());
+        MEL_TRACE_FATAL("Can't connect to {}", address);
         std::terminate();
     }
+
+    zmq::socket_t& socket = bind_result.ok();
     ON_SCOPE_EXIT(socket.unbind(address));
+
+    flatbuffers::FlatBufferBuilder query_result =
+        mel::ncprot::serialize_query_result(address, 0, {}, {});
 
     while (true)
     {
-        std::vector<zmq::message_t> request;
-        try
-        {
-            zmq::recv_result_t const result = zmq::recv_multipart(socket,
-                std::back_inserter(request),
-                zmq::recv_flags::dontwait);
-            if (result)
-            {
-                mel::network::message const* msg =
-                    flatbuffers::GetRoot<mel::network::message>(
-                        request[2].data());
-                // Process the message, otherwise if result is empty then no
-                // messages were queued on the socket
-                MEL_TRACE_INFO(
-                    "Received {} messages of {} bytes in size from {} of content {}.",
-                    request.size(),
-                    result.value(),
-                    request[0].to_string_view(),
-                    msg->content()->c_str());
-            }
-        }
-        catch (zmq::error_t const& ex)
-        {
-            MEL_TRACE_FATAL(
-                "Unexpected error while receiving request. Reason: ZMQ-{}:",
-                ex.num(),
-                ex.what());
-        }
+        mel::ncprot::zmq_result<mel::ncprot::recv_response<
+            mel::ncprot::server::client_message>> const recv_result =
+            mel::ncprot::server::recv(socket);
 
-        if (request.empty())
+        if (!recv_result || !recv_result.ok().received)
         {
             continue;
         }
 
-        try
+        mel::ncprot::recv_response<mel::ncprot::server::client_message> const&
+            success = recv_result.ok();
+
+        mel::network::Message const* const message =
+            flatbuffers::GetRoot<mel::ncprot::root_type>(
+                success.message->content.data());
+
+        if (message->content_type() != mel::network::MessageContent_query)
         {
-            std::vector<zmq::message_t> response;
-            response.emplace_back(std::move(request[0]));
-            response.emplace_back();
-            response.emplace_back(address, sizeof("tcp://*:22365"));
-            MEL_TRACE_INFO("Sending response of {} bytes to {}.",
-                response[2].size(),
-                response[0].to_string_view());
-            zmq::send_result_t const result = zmq::send_multipart(socket,
-                std::move(response),
-                zmq::send_flags::dontwait);
-            if (!result)
-            {
-                MEL_TRACE_ERROR("Can't send response");
-            }
+            continue;
         }
-        catch (zmq::error_t const& ex)
+
+        mel::network::Query const* const query = message->content_as_query();
+        MEL_TRACE_INFO("Recevied query {} from {}",
+            query->content()->c_str(),
+            success.message->identity);
+
+        MEL_TRACE_INFO("Sending response to {}", success.message->identity);
+        mel::ncprot::zmq_result<zmq::send_result_t> const send_result =
+            mel::ncprot::server::send(socket,
+                success.message->identity,
+                {reinterpret_cast<std::byte*>(query_result.GetBufferPointer()),
+                    query_result.GetSize()});
+
+        if (send_result)
         {
-            if (ex.num() == EHOSTUNREACH)
+            if (!send_result.ok())
             {
-                MEL_TRACE_WARN("Client has disconnected or is not known.");
+                MEL_TRACE_ERROR("Can't send response to {}",
+                    success.message->identity);
             }
-            else
-            {
-                MEL_TRACE_FATAL(
-                    "Unexpected error while receiving request. Reason: ZMQ-{}:",
-                    ex.num(),
-                    ex.what());
-            }
+            continue;
+        }
+
+        if (send_result.error().num() == EHOSTUNREACH)
+        {
+            MEL_TRACE_ERROR("Client {} has disconnected or is not known",
+                success.message->identity);
+            continue;
         }
     }
 }

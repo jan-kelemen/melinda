@@ -2,4 +2,4 @@
 *.h text eol=lf whitespace
 *.cpp text eol=lf whitespace
 *.cmake text eol=lf whitespace
-
+*.fbs text eol=lf whitespace
