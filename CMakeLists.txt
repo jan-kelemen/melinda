@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.4)
 set(TARGET_NAME melinda)
 project(${TARGET_NAME} VERSION 0.1)
 
+option(SETUP_DEPENDENCIES_ONLY "Build dependencies and not the sources" OFF)
+
 # Export compile_commands.json during build for integration with other tools
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -15,48 +17,10 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-include(cmake/conan.cmake)
 include(cmake/clang-format.cmake)
 # include(cmake/clang-tidy.cmake)
 
-# Conan and dependencies configuration
-conan_add_remote(
-    NAME
-        catchorg
-    URL
-        https://api.bintray.com/conan/catchorg/Catch2
-)
-
-conan_add_remote(
-    NAME
-        bincrafters
-    URL
-        https://api.bintray.com/conan/bincrafters/public-conan
-)
-
-conan_add_remote(
-    NAME
-        jkconan-vendor
-    INDEX
-        0
-    URL
-        https://api.bintray.com/conan/jan-kelemen/conan-vendor
-)
-
-conan_cmake_run(
-    REQUIRES
-        Catch2/2.12.2@catchorg/stable
-        fmt/6.0.0@bincrafters/stable
-        date/2.4.1@bincrafters/stable
-        boost_uuid/1.69.0@bincrafters/stable
-        cppzmq/4.6.0@bincrafters/stable
-        flatc/1.12.0@_/_
-        flatbuffers/1.12.0@_/_
-    BASIC_SETUP
-        CMAKE_TARGETS
-    BUILD
-        missing
-)
+include(cmake/dependencies.cmake)
 
 set(FLATBUFFERS_FLATC_EXECUTABLE ${CONAN_BIN_DIRS_FLATC}/flatc)
 
@@ -64,5 +28,7 @@ enable_testing()
 
 add_compile_options(-W -Wall -Wextra -pedantic)
 
-add_subdirectory(source)
+if (NOT SETUP_DEPENDENCIES_ONLY)
+    add_subdirectory(source)
+endif()
 

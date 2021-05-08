@@ -2,6 +2,7 @@
 
 #include <system_error>
 
+#include <zmq.hpp>
 #include <zmq_addon.hpp>
 
 #include "trace.h"
@@ -13,10 +14,10 @@ mel::ncprot::server::bind(zmq::context_t& context, std::string const& address)
 {
     zmq::socket_t socket = zmq::socket_t(context, zmq::socket_type::router);
 
-    socket.setsockopt(ZMQ_LINGER, 0); // Close the socket immediately
-    socket.setsockopt(ZMQ_ROUTER_MANDATORY,
+    socket.set(zmq::sockopt::linger, 0); // Close the socket immediately
+    socket.set(zmq::sockopt::router_mandatory,
         1); // Report host unreachable errors if the reply can't be routed
-    socket.setsockopt(ZMQ_SNDTIMEO,
+    socket.set(zmq::sockopt::sndtimeo,
         10 * 1000); // Set the timeout for sending replies to 10 seconds
 
     MEL_TRACE_INFO("Registering on '{}' endpoint.", address);

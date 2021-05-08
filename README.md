@@ -9,8 +9,8 @@ Melinda - Relational Database Management System
 * cmake
 
 #### Supported compilers:
-* GCC 10
-* Clang 11
+* GCC-11
+* Clang-12
 
 #### Steps:
 * Install required packages
@@ -19,4 +19,5 @@ Melinda - Relational Database Management System
 # Building [![Build Status](https://circleci.com/gh/jan-kelemen/melinda.svg?style=shield)](https://app.circleci.com/pipelines/github/jan-kelemen/melinda)
 * Run scripts/build.sh
   * Script supports optional configuration parameter (-c) with options Debug, RelWithDebInfo, Release
+  * Script supports optional setup parameter (-s) which sets up the dependencies only
 

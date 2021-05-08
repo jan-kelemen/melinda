@@ -172,9 +172,8 @@ void mel::trace::trace_handle::impl::trace(
     std::nth_element(std::begin(matching_entries),
         std::begin(matching_entries) + log_files_to_keep_,
         std::end(matching_entries),
-        [](fs::path const& lhs, fs::path const& rhs) {
-            return fs::last_write_time(lhs) > fs::last_write_time(rhs);
-        });
+        [](fs::path const& lhs, fs::path const& rhs)
+        { return fs::last_write_time(lhs) > fs::last_write_time(rhs); });
 
     std::for_each(std::cbegin(matching_entries) + log_files_to_keep_,
         std::cend(matching_entries),
@@ -241,9 +240,8 @@ int mel::trace::trace_handle::impl::open_latest_file() const
 
     fs::path const& p = *std::max_element(std::cbegin(matching_entries),
         std::cend(matching_entries),
-        [](fs::path const& lhs, fs::path const& rhs) {
-            return fs::last_write_time(lhs) < fs::last_write_time(rhs);
-        });
+        [](fs::path const& lhs, fs::path const& rhs)
+        { return fs::last_write_time(lhs) < fs::last_write_time(rhs); });
 
     int const file_descriptor = open_file(p);
     if (file_descriptor != bad_file_descriptor &&

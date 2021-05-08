@@ -21,8 +21,10 @@ AlwaysBreakBeforeMultilineStrings: 'true'
 AlwaysBreakTemplateDeclarations: 'true'
 BinPackArguments: 'false'
 BinPackParameters: 'false'
+BitFieldColonSpacing: Both
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Allman
+BreakBeforeConceptDeclarations: 'true'
 BreakBeforeInheritanceComma: 'true'
 BreakBeforeTernaryOperators: 'true'
 BreakConstructorInitializers: BeforeComma
@@ -40,6 +42,7 @@ IncludeBlocks: Preserve
 IncludeIsMainRegex: '"(.t)?$"'
 IndentCaseLabels: 'false'
 IndentPPDirectives: None
+IndentRequires: 'false'
 IndentWidth: '4'
 IndentWrappedFunctionNames: 'false'
 KeepEmptyLinesAtTheStartOfBlocks: 'false'
@@ -55,6 +58,7 @@ SpaceAfterCStyleCast: 'true'
 SpaceAfterLogicalNot: 'false'
 SpaceAfterTemplateKeyword: 'false'
 SpaceBeforeAssignmentOperators: 'true'
+SpaceBeforeCaseColon: 'false'
 SpaceBeforeParens: ControlStatements
 SpaceInEmptyParentheses: 'false'
 SpacesBeforeTrailingComments: '1'

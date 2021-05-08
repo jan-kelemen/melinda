@@ -56,12 +56,11 @@ mel::cppex::result<zmq::socket_t> mel::ncprot::client::connect(
 
     zmq::socket_t socket = zmq::socket_t(context, zmq::socket_type::req);
 
-    socket.setsockopt(ZMQ_LINGER, 0); // Close the socket immediately
-    socket.setsockopt(ZMQ_SNDTIMEO,
+    socket.set(zmq::sockopt::linger, 0); // Close the socket immediately
+    socket.set(zmq::sockopt::sndtimeo,
         10 * 1000); // Set the timeout for sending requests to 10 seconds
-    socket.setsockopt(ZMQ_ROUTING_ID,
-        raw_identity.c_str(),
-        raw_identity.length()); // Identify to the server with a unique name
+    socket.set(zmq::sockopt::routing_id,
+        raw_identity); // Identify to the server with a unique name
 
     MEL_TRACE_INFO("Connecting to {}.", address);
     try

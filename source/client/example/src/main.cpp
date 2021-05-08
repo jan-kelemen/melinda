@@ -34,9 +34,7 @@ int main()
     zmq::socket_t& socket = connect_result.ok();
     ON_SCOPE_EXIT(socket.disconnect(address));
 
-    char identity[256];
-    std::size_t l = 256;
-    socket.getsockopt(ZMQ_ROUTING_ID, identity, &l);
+    std::string const identity = socket.get(zmq::sockopt::routing_id, 256);
 
     flatbuffers::FlatBufferBuilder const query =
         mel::ncprot::serialize_query(identity, "SELECT * FROM v$sql");

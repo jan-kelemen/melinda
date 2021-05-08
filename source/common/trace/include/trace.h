@@ -174,7 +174,8 @@ struct fmt::formatter<mel::trace::trace_level>
     template<typename FormatContext>
     auto format(mel::trace::trace_level const& l, FormatContext& ctx)
     {
-        char const marker = [&l]() noexcept {
+        char const marker = [&l]() noexcept
+        {
             switch (l)
             {
             case mel::trace::trace_level::debug:

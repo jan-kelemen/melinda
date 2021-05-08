@@ -22,7 +22,7 @@ target_link_libraries(
     ${TARGET_NAME}_test
     PRIVATE
         ${TARGET_NAME}
-        CONAN_PKG::Catch2
+        CONAN_PKG::catch2
 )
 add_dependencies(${TARGET_NAME}_test clang-format)
 catch_discover_tests(${TARGET_NAME}_test)
