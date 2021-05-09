@@ -17,6 +17,8 @@ conan_cmake_run(
         cppzmq/4.7.1
         flatc/1.12.0
         flatbuffers/1.12.0
+    OPTIONS
+        boost:header_only=True
     BASIC_SETUP
         CMAKE_TARGETS
     BUILD
