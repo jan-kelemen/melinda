@@ -10,16 +10,16 @@ executors:
 
 workflows:
   version: 2
-# GCC:
-#   jobs:
-#     - build_with_gcc:
-#         context:
-#           - docker-hub-creds
-#     - test:
-#         context:
-#           - docker-hub-creds
-#         requires:
-#           - build_with_gcc
+ GCC:
+   jobs:
+     - build_with_gcc:
+         context:
+           - docker-hub-creds
+     - test:
+         context:
+           - docker-hub-creds
+         requires:
+           - build_with_gcc
   Clang:
     jobs:
       - build_with_clang:
@@ -40,8 +40,11 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Temporary workaround for GCC-11
+          command: conan config init && sed -i 's/\"4.8\", \"4.9\"/\"4.8\", \"4.9\", \"11\", \"11.1\"/' ~/.conan/settings.yml
+      - run:
           name: Build sources
-          command: ./scripts/build.sh -c RelWithDebInfo
+          command: ./scripts/build.sh -c Release
       - persist_to_workspace:
           root: .
           paths:
@@ -57,7 +60,7 @@ jobs:
       - checkout
       - run:
           name: Build sources
-          command: ./scripts/build.sh -c RelWithDebInfo
+          command: ./scripts/build.sh -c Release
       - persist_to_workspace:
           root: .
           paths: 
