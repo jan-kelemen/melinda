@@ -10,16 +10,16 @@ executors:
 
 workflows:
   version: 2
- GCC:
-   jobs:
-     - build_with_gcc:
-         context:
-           - docker-hub-creds
-     - test:
-         context:
-           - docker-hub-creds
-         requires:
-           - build_with_gcc
+  GCC:
+    jobs:
+      - build_with_gcc:
+          context:
+            - docker-hub-creds
+      - test:
+          context:
+            - docker-hub-creds
+          requires:
+            - build_with_gcc
   Clang:
     jobs:
       - build_with_clang:
