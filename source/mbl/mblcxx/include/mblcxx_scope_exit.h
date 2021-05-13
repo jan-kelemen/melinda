@@ -7,32 +7,32 @@
 
 namespace melinda::mblcxx
 {
-template<typename Action>
-class on_scope_exit
-{
-public: // Types
-    using class_name = on_scope_exit;
+    template<typename Action>
+    class on_scope_exit
+    {
+    public: // Types
+        using class_name = on_scope_exit;
 
-public: // Construction
-    on_scope_exit() = delete;
+    public: // Construction
+        on_scope_exit() = delete;
 
-    on_scope_exit(Action& action) noexcept : action(action) { }
+        on_scope_exit(Action& action) noexcept : action(action) { }
 
-    on_scope_exit(on_scope_exit const&) = delete;
+        on_scope_exit(on_scope_exit const&) = delete;
 
-    on_scope_exit(on_scope_exit&&) noexcept = delete;
+        on_scope_exit(on_scope_exit&&) noexcept = delete;
 
-public: // Operators
-    on_scope_exit& operator=(on_scope_exit const&) = delete;
+    public: // Operators
+        on_scope_exit& operator=(on_scope_exit const&) = delete;
 
-    on_scope_exit& operator=(on_scope_exit&&) noexcept = delete;
+        on_scope_exit& operator=(on_scope_exit&&) noexcept = delete;
 
-public: // Destruction
-    ~on_scope_exit() { action(); }
+    public: // Destruction
+        ~on_scope_exit() { action(); }
 
-private: // Data
-    Action& action;
-};
+    private: // Data
+        Action& action;
+    };
 
 } // namespace melinda::mblcxx
 
