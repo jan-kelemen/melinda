@@ -21,10 +21,12 @@
 
 namespace
 {
-    std::unique_ptr<melinda::mbltrc::trace_handle> process_trace_handle;
+std::unique_ptr<melinda::mbltrc::trace_handle> process_trace_handle;
 }
 
-class [[nodiscard]] melinda::mbltrc::trace_handle::impl final
+namespace melinda::mbltrc
+{
+class [[nodiscard]] trace_handle::impl final
 {
 public: // Types
     using class_name = impl;
@@ -92,7 +94,7 @@ private: // Data
     mutable std::size_t delay_filesize_check_ = 0;
 };
 
-melinda::mbltrc::trace_handle::impl::impl(trace_options const& options)
+trace_handle::impl::impl(trace_options const& options)
     : directory_(std::filesystem::absolute(options.trace_directory))
     , base_filename_(options.base_filename)
     , max_filesize_(options.max_filesize)
@@ -103,20 +105,18 @@ melinda::mbltrc::trace_handle::impl::impl(trace_options const& options)
 {
 }
 
-bool melinda::mbltrc::trace_handle::impl::should_trace_message(
+bool trace_handle::impl::should_trace_message(
     enum trace_level level) const noexcept
 {
     return level >= trace_level_.load();
 }
 
-void melinda::mbltrc::trace_handle::impl::trace_level(
-    enum trace_level new_level) noexcept
+void trace_handle::impl::trace_level(enum trace_level new_level) noexcept
 {
     trace_level_.store(new_level);
 }
 
-void melinda::mbltrc::trace_handle::impl::trace(
-    std::string_view message) const noexcept
+void trace_handle::impl::trace(std::string_view message) const noexcept
 {
     using namespace std::chrono_literals;
     if (!mtx.try_lock_for(5s))
@@ -184,7 +184,7 @@ void melinda::mbltrc::trace_handle::impl::trace(
         [](std::filesystem::path const& p) { std::filesystem::remove(p); });
 }
 
-bool melinda::mbltrc::trace_handle::impl::has_filesize_exceeded(
+bool trace_handle::impl::has_filesize_exceeded(
     int const file_descriptor) const noexcept
 {
     struct stat64 file_stats
@@ -199,7 +199,7 @@ bool melinda::mbltrc::trace_handle::impl::has_filesize_exceeded(
         static_cast<uintmax_t>(file_stats.st_size) >= max_filesize_;
 }
 
-std::filesystem::path melinda::mbltrc::trace_handle::impl::new_filename() const
+std::filesystem::path trace_handle::impl::new_filename() const
 {
     std::time_t const current_time =
         std::chrono::high_resolution_clock::to_time_t(
@@ -219,8 +219,7 @@ std::filesystem::path melinda::mbltrc::trace_handle::impl::new_filename() const
     return directory_ / filename;
 }
 
-int melinda::mbltrc::trace_handle::impl::open_file(
-    std::filesystem::path const& full_path) const
+int trace_handle::impl::open_file(std::filesystem::path const& full_path) const
 {
     std::filesystem::path const directory = full_path.parent_path();
     if (!std::filesystem::exists(directory))
@@ -235,7 +234,7 @@ int melinda::mbltrc::trace_handle::impl::open_file(
         S_IRUSR | S_IWUSR);
 }
 
-int melinda::mbltrc::trace_handle::impl::open_latest_file() const
+int trace_handle::impl::open_latest_file() const
 {
     std::vector<std::filesystem::path> const matching_entries =
         find_matching_files();
@@ -263,7 +262,7 @@ int melinda::mbltrc::trace_handle::impl::open_latest_file() const
 }
 
 std::vector<std::filesystem::path>
-melinda::mbltrc::trace_handle::impl::find_matching_files() const
+trace_handle::impl::find_matching_files() const
 {
     std::vector<std::filesystem::path> matching_entries;
     if (!std::filesystem::exists(directory_))
@@ -288,7 +287,7 @@ melinda::mbltrc::trace_handle::impl::find_matching_files() const
     return matching_entries;
 }
 
-melinda::mbltrc::trace_handle::impl::~impl() noexcept
+trace_handle::impl::~impl() noexcept
 {
     if (file_descriptor_ != bad_file_descriptor)
     {
@@ -301,29 +300,27 @@ melinda::mbltrc::trace_handle::impl::~impl() noexcept
     }
 }
 
-melinda::mbltrc::trace_options::trace_options(
-    std::filesystem::path trace_directory,
+trace_options::trace_options(std::filesystem::path trace_directory,
     std::filesystem::path base_filename)
     : trace_directory(std::move(trace_directory))
     , base_filename(std::move(base_filename))
 {
 }
 
-melinda::mbltrc::trace_handle::trace_handle() noexcept : impl_(nullptr) { }
+trace_handle::trace_handle() noexcept : impl_(nullptr) { }
 
-melinda::mbltrc::trace_handle::trace_handle(trace_options const& options)
+trace_handle::trace_handle(trace_options const& options)
     : impl_(std::make_shared<impl>(options))
 {
 }
 
-bool melinda::mbltrc::trace_handle::should_trace_message(
+bool trace_handle::should_trace_message(
     enum trace_level const level) const noexcept
 {
     return impl_ && impl_->should_trace_message(level);
 }
 
-void melinda::mbltrc::trace_handle::trace_level(
-    enum trace_level new_level) noexcept
+void trace_handle::trace_level(enum trace_level new_level) noexcept
 {
     if (impl_)
     {
@@ -331,8 +328,7 @@ void melinda::mbltrc::trace_handle::trace_level(
     }
 }
 
-void melinda::mbltrc::trace_handle::trace(
-    std::string_view message) const noexcept
+void trace_handle::trace(std::string_view message) const noexcept
 {
     if (impl_)
     {
@@ -340,7 +336,8 @@ void melinda::mbltrc::trace_handle::trace(
     }
 }
 
-melinda::mbltrc::trace_handle::~trace_handle() noexcept = default;
+trace_handle::~trace_handle() noexcept = default;
+} // namespace melinda::mbltrc
 
 melinda::mbltrc::trace_handle melinda::mbltrc::create_trace_handle(
     melinda::mbltrc::trace_options const& options)

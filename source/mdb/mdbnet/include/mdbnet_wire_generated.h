@@ -7,422 +7,406 @@
 
 namespace melinda
 {
-    namespace mdbnet
+namespace mdbnet
+{
+struct Query;
+struct QueryBuilder;
+
+struct QueryResult;
+struct QueryResultBuilder;
+
+struct Message;
+struct MessageBuilder;
+
+enum MessageContent
+{
+    MessageContent_NONE = 0,
+    MessageContent_query = 1,
+    MessageContent_result = 2,
+    MessageContent_MIN = MessageContent_NONE,
+    MessageContent_MAX = MessageContent_result
+};
+
+inline const MessageContent (&EnumValuesMessageContent())[3]
+{
+    static const MessageContent values[] = {MessageContent_NONE,
+        MessageContent_query,
+        MessageContent_result};
+    return values;
+}
+
+inline const char* const* EnumNamesMessageContent()
+{
+    static const char* const names[4] = {"NONE", "query", "result", nullptr};
+    return names;
+}
+
+inline const char* EnumNameMessageContent(MessageContent e)
+{
+    if (flatbuffers::IsOutRange(e, MessageContent_NONE, MessageContent_result))
+        return "";
+    const size_t index = static_cast<size_t>(e);
+    return EnumNamesMessageContent()[index];
+}
+
+template<typename T>
+struct MessageContentTraits
+{
+    static const MessageContent enum_value = MessageContent_NONE;
+};
+
+template<>
+struct MessageContentTraits<melinda::mdbnet::Query>
+{
+    static const MessageContent enum_value = MessageContent_query;
+};
+
+template<>
+struct MessageContentTraits<melinda::mdbnet::QueryResult>
+{
+    static const MessageContent enum_value = MessageContent_result;
+};
+
+bool VerifyMessageContent(flatbuffers::Verifier& verifier,
+    const void* obj,
+    MessageContent type);
+bool VerifyMessageContentVector(flatbuffers::Verifier& verifier,
+    const flatbuffers::Vector<flatbuffers::Offset<void>>* values,
+    const flatbuffers::Vector<uint8_t>* types);
+
+struct Query FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table
+{
+    typedef QueryBuilder Builder;
+    enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE
     {
-        struct Query;
-        struct QueryBuilder;
+        VT_CONTENT = 4
+    };
+    const flatbuffers::String* content() const
+    {
+        return GetPointer<const flatbuffers::String*>(VT_CONTENT);
+    }
+    flatbuffers::String* mutable_content()
+    {
+        return GetPointer<flatbuffers::String*>(VT_CONTENT);
+    }
+    bool Verify(flatbuffers::Verifier& verifier) const
+    {
+        return VerifyTableStart(verifier) &&
+            VerifyOffset(verifier, VT_CONTENT) &&
+            verifier.VerifyString(content()) && verifier.EndTable();
+    }
+};
 
-        struct QueryResult;
-        struct QueryResultBuilder;
+struct QueryBuilder
+{
+    typedef Query Table;
+    flatbuffers::FlatBufferBuilder& fbb_;
+    flatbuffers::uoffset_t start_;
+    void add_content(flatbuffers::Offset<flatbuffers::String> content)
+    {
+        fbb_.AddOffset(Query::VT_CONTENT, content);
+    }
+    explicit QueryBuilder(flatbuffers::FlatBufferBuilder& _fbb) : fbb_(_fbb)
+    {
+        start_ = fbb_.StartTable();
+    }
+    QueryBuilder& operator=(const QueryBuilder&);
+    flatbuffers::Offset<Query> Finish()
+    {
+        const auto end = fbb_.EndTable(start_);
+        auto o = flatbuffers::Offset<Query>(end);
+        return o;
+    }
+};
 
-        struct Message;
-        struct MessageBuilder;
+inline flatbuffers::Offset<Query> CreateQuery(
+    flatbuffers::FlatBufferBuilder& _fbb,
+    flatbuffers::Offset<flatbuffers::String> content = 0)
+{
+    QueryBuilder builder_(_fbb);
+    builder_.add_content(content);
+    return builder_.Finish();
+}
 
-        enum MessageContent
+inline flatbuffers::Offset<Query> CreateQueryDirect(
+    flatbuffers::FlatBufferBuilder& _fbb,
+    const char* content = nullptr)
+{
+    auto content__ = content ? _fbb.CreateString(content) : 0;
+    return melinda::mdbnet::CreateQuery(_fbb, content__);
+}
+
+struct QueryResult FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table
+{
+    typedef QueryResultBuilder Builder;
+    enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE
+    {
+        VT_LENGTH = 4,
+        VT_OFFSETS = 6,
+        VT_RAW_VALUES = 8
+    };
+    uint32_t length() const { return GetField<uint32_t>(VT_LENGTH, 0); }
+    bool mutate_length(uint32_t _length)
+    {
+        return SetField<uint32_t>(VT_LENGTH, _length, 0);
+    }
+    const flatbuffers::Vector<uint32_t>* offsets() const
+    {
+        return GetPointer<const flatbuffers::Vector<uint32_t>*>(VT_OFFSETS);
+    }
+    flatbuffers::Vector<uint32_t>* mutable_offsets()
+    {
+        return GetPointer<flatbuffers::Vector<uint32_t>*>(VT_OFFSETS);
+    }
+    const flatbuffers::Vector<uint8_t>* raw_values() const
+    {
+        return GetPointer<const flatbuffers::Vector<uint8_t>*>(VT_RAW_VALUES);
+    }
+    flatbuffers::Vector<uint8_t>* mutable_raw_values()
+    {
+        return GetPointer<flatbuffers::Vector<uint8_t>*>(VT_RAW_VALUES);
+    }
+    bool Verify(flatbuffers::Verifier& verifier) const
+    {
+        return VerifyTableStart(verifier) &&
+            VerifyField<uint32_t>(verifier, VT_LENGTH) &&
+            VerifyOffset(verifier, VT_OFFSETS) &&
+            verifier.VerifyVector(offsets()) &&
+            VerifyOffset(verifier, VT_RAW_VALUES) &&
+            verifier.VerifyVector(raw_values()) && verifier.EndTable();
+    }
+};
+
+struct QueryResultBuilder
+{
+    typedef QueryResult Table;
+    flatbuffers::FlatBufferBuilder& fbb_;
+    flatbuffers::uoffset_t start_;
+    void add_length(uint32_t length)
+    {
+        fbb_.AddElement<uint32_t>(QueryResult::VT_LENGTH, length, 0);
+    }
+    void add_offsets(flatbuffers::Offset<flatbuffers::Vector<uint32_t>> offsets)
+    {
+        fbb_.AddOffset(QueryResult::VT_OFFSETS, offsets);
+    }
+    void add_raw_values(
+        flatbuffers::Offset<flatbuffers::Vector<uint8_t>> raw_values)
+    {
+        fbb_.AddOffset(QueryResult::VT_RAW_VALUES, raw_values);
+    }
+    explicit QueryResultBuilder(flatbuffers::FlatBufferBuilder& _fbb)
+        : fbb_(_fbb)
+    {
+        start_ = fbb_.StartTable();
+    }
+    QueryResultBuilder& operator=(const QueryResultBuilder&);
+    flatbuffers::Offset<QueryResult> Finish()
+    {
+        const auto end = fbb_.EndTable(start_);
+        auto o = flatbuffers::Offset<QueryResult>(end);
+        return o;
+    }
+};
+
+inline flatbuffers::Offset<QueryResult> CreateQueryResult(
+    flatbuffers::FlatBufferBuilder& _fbb,
+    uint32_t length = 0,
+    flatbuffers::Offset<flatbuffers::Vector<uint32_t>> offsets = 0,
+    flatbuffers::Offset<flatbuffers::Vector<uint8_t>> raw_values = 0)
+{
+    QueryResultBuilder builder_(_fbb);
+    builder_.add_raw_values(raw_values);
+    builder_.add_offsets(offsets);
+    builder_.add_length(length);
+    return builder_.Finish();
+}
+
+inline flatbuffers::Offset<QueryResult> CreateQueryResultDirect(
+    flatbuffers::FlatBufferBuilder& _fbb,
+    uint32_t length = 0,
+    const std::vector<uint32_t>* offsets = nullptr,
+    const std::vector<uint8_t>* raw_values = nullptr)
+{
+    auto offsets__ = offsets ? _fbb.CreateVector<uint32_t>(*offsets) : 0;
+    auto raw_values__ =
+        raw_values ? _fbb.CreateVector<uint8_t>(*raw_values) : 0;
+    return melinda::mdbnet::CreateQueryResult(_fbb,
+        length,
+        offsets__,
+        raw_values__);
+}
+
+struct Message FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table
+{
+    typedef MessageBuilder Builder;
+    enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE
+    {
+        VT_CLIENT = 4,
+        VT_CONTENT_TYPE = 6,
+        VT_CONTENT = 8
+    };
+    const flatbuffers::String* client() const
+    {
+        return GetPointer<const flatbuffers::String*>(VT_CLIENT);
+    }
+    flatbuffers::String* mutable_client()
+    {
+        return GetPointer<flatbuffers::String*>(VT_CLIENT);
+    }
+    melinda::mdbnet::MessageContent content_type() const
+    {
+        return static_cast<melinda::mdbnet::MessageContent>(
+            GetField<uint8_t>(VT_CONTENT_TYPE, 0));
+    }
+    const void* content() const { return GetPointer<const void*>(VT_CONTENT); }
+    template<typename T>
+    const T* content_as() const;
+    const melinda::mdbnet::Query* content_as_query() const
+    {
+        return content_type() == melinda::mdbnet::MessageContent_query
+            ? static_cast<const melinda::mdbnet::Query*>(content())
+            : nullptr;
+    }
+    const melinda::mdbnet::QueryResult* content_as_result() const
+    {
+        return content_type() == melinda::mdbnet::MessageContent_result
+            ? static_cast<const melinda::mdbnet::QueryResult*>(content())
+            : nullptr;
+    }
+    void* mutable_content() { return GetPointer<void*>(VT_CONTENT); }
+    bool Verify(flatbuffers::Verifier& verifier) const
+    {
+        return VerifyTableStart(verifier) &&
+            VerifyOffset(verifier, VT_CLIENT) &&
+            verifier.VerifyString(client()) &&
+            VerifyField<uint8_t>(verifier, VT_CONTENT_TYPE) &&
+            VerifyOffset(verifier, VT_CONTENT) &&
+            VerifyMessageContent(verifier, content(), content_type()) &&
+            verifier.EndTable();
+    }
+};
+
+template<>
+inline const melinda::mdbnet::Query*
+Message::content_as<melinda::mdbnet::Query>() const
+{
+    return content_as_query();
+}
+
+template<>
+inline const melinda::mdbnet::QueryResult*
+Message::content_as<melinda::mdbnet::QueryResult>() const
+{
+    return content_as_result();
+}
+
+struct MessageBuilder
+{
+    typedef Message Table;
+    flatbuffers::FlatBufferBuilder& fbb_;
+    flatbuffers::uoffset_t start_;
+    void add_client(flatbuffers::Offset<flatbuffers::String> client)
+    {
+        fbb_.AddOffset(Message::VT_CLIENT, client);
+    }
+    void add_content_type(melinda::mdbnet::MessageContent content_type)
+    {
+        fbb_.AddElement<uint8_t>(Message::VT_CONTENT_TYPE,
+            static_cast<uint8_t>(content_type),
+            0);
+    }
+    void add_content(flatbuffers::Offset<void> content)
+    {
+        fbb_.AddOffset(Message::VT_CONTENT, content);
+    }
+    explicit MessageBuilder(flatbuffers::FlatBufferBuilder& _fbb) : fbb_(_fbb)
+    {
+        start_ = fbb_.StartTable();
+    }
+    MessageBuilder& operator=(const MessageBuilder&);
+    flatbuffers::Offset<Message> Finish()
+    {
+        const auto end = fbb_.EndTable(start_);
+        auto o = flatbuffers::Offset<Message>(end);
+        return o;
+    }
+};
+
+inline flatbuffers::Offset<Message> CreateMessage(
+    flatbuffers::FlatBufferBuilder& _fbb,
+    flatbuffers::Offset<flatbuffers::String> client = 0,
+    melinda::mdbnet::MessageContent content_type =
+        melinda::mdbnet::MessageContent_NONE,
+    flatbuffers::Offset<void> content = 0)
+{
+    MessageBuilder builder_(_fbb);
+    builder_.add_content(content);
+    builder_.add_client(client);
+    builder_.add_content_type(content_type);
+    return builder_.Finish();
+}
+
+inline flatbuffers::Offset<Message> CreateMessageDirect(
+    flatbuffers::FlatBufferBuilder& _fbb,
+    const char* client = nullptr,
+    melinda::mdbnet::MessageContent content_type =
+        melinda::mdbnet::MessageContent_NONE,
+    flatbuffers::Offset<void> content = 0)
+{
+    auto client__ = client ? _fbb.CreateString(client) : 0;
+    return melinda::mdbnet::CreateMessage(_fbb,
+        client__,
+        content_type,
+        content);
+}
+
+inline bool VerifyMessageContent(flatbuffers::Verifier& verifier,
+    const void* obj,
+    MessageContent type)
+{
+    switch (type)
+    {
+    case MessageContent_NONE:
+    {
+        return true;
+    }
+    case MessageContent_query:
+    {
+        auto ptr = reinterpret_cast<const melinda::mdbnet::Query*>(obj);
+        return verifier.VerifyTable(ptr);
+    }
+    case MessageContent_result:
+    {
+        auto ptr = reinterpret_cast<const melinda::mdbnet::QueryResult*>(obj);
+        return verifier.VerifyTable(ptr);
+    }
+    default:
+        return true;
+    }
+}
+
+inline bool VerifyMessageContentVector(flatbuffers::Verifier& verifier,
+    const flatbuffers::Vector<flatbuffers::Offset<void>>* values,
+    const flatbuffers::Vector<uint8_t>* types)
+{
+    if (!values || !types)
+        return !values && !types;
+    if (values->size() != types->size())
+        return false;
+    for (flatbuffers::uoffset_t i = 0; i < values->size(); ++i)
+    {
+        if (!VerifyMessageContent(verifier,
+                values->Get(i),
+                types->GetEnum<MessageContent>(i)))
         {
-            MessageContent_NONE = 0,
-            MessageContent_query = 1,
-            MessageContent_result = 2,
-            MessageContent_MIN = MessageContent_NONE,
-            MessageContent_MAX = MessageContent_result
-        };
-
-        inline const MessageContent (&EnumValuesMessageContent())[3]
-        {
-            static const MessageContent values[] = {MessageContent_NONE,
-                MessageContent_query,
-                MessageContent_result};
-            return values;
+            return false;
         }
+    }
+    return true;
+}
 
-        inline const char* const* EnumNamesMessageContent()
-        {
-            static const char* const names[4] = {"NONE",
-                "query",
-                "result",
-                nullptr};
-            return names;
-        }
-
-        inline const char* EnumNameMessageContent(MessageContent e)
-        {
-            if (flatbuffers::IsOutRange(e,
-                    MessageContent_NONE,
-                    MessageContent_result))
-                return "";
-            const size_t index = static_cast<size_t>(e);
-            return EnumNamesMessageContent()[index];
-        }
-
-        template<typename T>
-        struct MessageContentTraits
-        {
-            static const MessageContent enum_value = MessageContent_NONE;
-        };
-
-        template<>
-        struct MessageContentTraits<melinda::mdbnet::Query>
-        {
-            static const MessageContent enum_value = MessageContent_query;
-        };
-
-        template<>
-        struct MessageContentTraits<melinda::mdbnet::QueryResult>
-        {
-            static const MessageContent enum_value = MessageContent_result;
-        };
-
-        bool VerifyMessageContent(flatbuffers::Verifier& verifier,
-            const void* obj,
-            MessageContent type);
-        bool VerifyMessageContentVector(flatbuffers::Verifier& verifier,
-            const flatbuffers::Vector<flatbuffers::Offset<void>>* values,
-            const flatbuffers::Vector<uint8_t>* types);
-
-        struct Query FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table
-        {
-            typedef QueryBuilder Builder;
-            enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE
-            {
-                VT_CONTENT = 4
-            };
-            const flatbuffers::String* content() const
-            {
-                return GetPointer<const flatbuffers::String*>(VT_CONTENT);
-            }
-            flatbuffers::String* mutable_content()
-            {
-                return GetPointer<flatbuffers::String*>(VT_CONTENT);
-            }
-            bool Verify(flatbuffers::Verifier& verifier) const
-            {
-                return VerifyTableStart(verifier) &&
-                    VerifyOffset(verifier, VT_CONTENT) &&
-                    verifier.VerifyString(content()) && verifier.EndTable();
-            }
-        };
-
-        struct QueryBuilder
-        {
-            typedef Query Table;
-            flatbuffers::FlatBufferBuilder& fbb_;
-            flatbuffers::uoffset_t start_;
-            void add_content(flatbuffers::Offset<flatbuffers::String> content)
-            {
-                fbb_.AddOffset(Query::VT_CONTENT, content);
-            }
-            explicit QueryBuilder(flatbuffers::FlatBufferBuilder& _fbb)
-                : fbb_(_fbb)
-            {
-                start_ = fbb_.StartTable();
-            }
-            QueryBuilder& operator=(const QueryBuilder&);
-            flatbuffers::Offset<Query> Finish()
-            {
-                const auto end = fbb_.EndTable(start_);
-                auto o = flatbuffers::Offset<Query>(end);
-                return o;
-            }
-        };
-
-        inline flatbuffers::Offset<Query> CreateQuery(
-            flatbuffers::FlatBufferBuilder& _fbb,
-            flatbuffers::Offset<flatbuffers::String> content = 0)
-        {
-            QueryBuilder builder_(_fbb);
-            builder_.add_content(content);
-            return builder_.Finish();
-        }
-
-        inline flatbuffers::Offset<Query> CreateQueryDirect(
-            flatbuffers::FlatBufferBuilder& _fbb,
-            const char* content = nullptr)
-        {
-            auto content__ = content ? _fbb.CreateString(content) : 0;
-            return melinda::mdbnet::CreateQuery(_fbb, content__);
-        }
-
-        struct QueryResult FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table
-        {
-            typedef QueryResultBuilder Builder;
-            enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE
-            {
-                VT_LENGTH = 4,
-                VT_OFFSETS = 6,
-                VT_RAW_VALUES = 8
-            };
-            uint32_t length() const { return GetField<uint32_t>(VT_LENGTH, 0); }
-            bool mutate_length(uint32_t _length)
-            {
-                return SetField<uint32_t>(VT_LENGTH, _length, 0);
-            }
-            const flatbuffers::Vector<uint32_t>* offsets() const
-            {
-                return GetPointer<const flatbuffers::Vector<uint32_t>*>(
-                    VT_OFFSETS);
-            }
-            flatbuffers::Vector<uint32_t>* mutable_offsets()
-            {
-                return GetPointer<flatbuffers::Vector<uint32_t>*>(VT_OFFSETS);
-            }
-            const flatbuffers::Vector<uint8_t>* raw_values() const
-            {
-                return GetPointer<const flatbuffers::Vector<uint8_t>*>(
-                    VT_RAW_VALUES);
-            }
-            flatbuffers::Vector<uint8_t>* mutable_raw_values()
-            {
-                return GetPointer<flatbuffers::Vector<uint8_t>*>(VT_RAW_VALUES);
-            }
-            bool Verify(flatbuffers::Verifier& verifier) const
-            {
-                return VerifyTableStart(verifier) &&
-                    VerifyField<uint32_t>(verifier, VT_LENGTH) &&
-                    VerifyOffset(verifier, VT_OFFSETS) &&
-                    verifier.VerifyVector(offsets()) &&
-                    VerifyOffset(verifier, VT_RAW_VALUES) &&
-                    verifier.VerifyVector(raw_values()) && verifier.EndTable();
-            }
-        };
-
-        struct QueryResultBuilder
-        {
-            typedef QueryResult Table;
-            flatbuffers::FlatBufferBuilder& fbb_;
-            flatbuffers::uoffset_t start_;
-            void add_length(uint32_t length)
-            {
-                fbb_.AddElement<uint32_t>(QueryResult::VT_LENGTH, length, 0);
-            }
-            void add_offsets(
-                flatbuffers::Offset<flatbuffers::Vector<uint32_t>> offsets)
-            {
-                fbb_.AddOffset(QueryResult::VT_OFFSETS, offsets);
-            }
-            void add_raw_values(
-                flatbuffers::Offset<flatbuffers::Vector<uint8_t>> raw_values)
-            {
-                fbb_.AddOffset(QueryResult::VT_RAW_VALUES, raw_values);
-            }
-            explicit QueryResultBuilder(flatbuffers::FlatBufferBuilder& _fbb)
-                : fbb_(_fbb)
-            {
-                start_ = fbb_.StartTable();
-            }
-            QueryResultBuilder& operator=(const QueryResultBuilder&);
-            flatbuffers::Offset<QueryResult> Finish()
-            {
-                const auto end = fbb_.EndTable(start_);
-                auto o = flatbuffers::Offset<QueryResult>(end);
-                return o;
-            }
-        };
-
-        inline flatbuffers::Offset<QueryResult> CreateQueryResult(
-            flatbuffers::FlatBufferBuilder& _fbb,
-            uint32_t length = 0,
-            flatbuffers::Offset<flatbuffers::Vector<uint32_t>> offsets = 0,
-            flatbuffers::Offset<flatbuffers::Vector<uint8_t>> raw_values = 0)
-        {
-            QueryResultBuilder builder_(_fbb);
-            builder_.add_raw_values(raw_values);
-            builder_.add_offsets(offsets);
-            builder_.add_length(length);
-            return builder_.Finish();
-        }
-
-        inline flatbuffers::Offset<QueryResult> CreateQueryResultDirect(
-            flatbuffers::FlatBufferBuilder& _fbb,
-            uint32_t length = 0,
-            const std::vector<uint32_t>* offsets = nullptr,
-            const std::vector<uint8_t>* raw_values = nullptr)
-        {
-            auto offsets__ =
-                offsets ? _fbb.CreateVector<uint32_t>(*offsets) : 0;
-            auto raw_values__ =
-                raw_values ? _fbb.CreateVector<uint8_t>(*raw_values) : 0;
-            return melinda::mdbnet::CreateQueryResult(_fbb,
-                length,
-                offsets__,
-                raw_values__);
-        }
-
-        struct Message FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table
-        {
-            typedef MessageBuilder Builder;
-            enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE
-            {
-                VT_CLIENT = 4,
-                VT_CONTENT_TYPE = 6,
-                VT_CONTENT = 8
-            };
-            const flatbuffers::String* client() const
-            {
-                return GetPointer<const flatbuffers::String*>(VT_CLIENT);
-            }
-            flatbuffers::String* mutable_client()
-            {
-                return GetPointer<flatbuffers::String*>(VT_CLIENT);
-            }
-            melinda::mdbnet::MessageContent content_type() const
-            {
-                return static_cast<melinda::mdbnet::MessageContent>(
-                    GetField<uint8_t>(VT_CONTENT_TYPE, 0));
-            }
-            const void* content() const
-            {
-                return GetPointer<const void*>(VT_CONTENT);
-            }
-            template<typename T>
-            const T* content_as() const;
-            const melinda::mdbnet::Query* content_as_query() const
-            {
-                return content_type() == melinda::mdbnet::MessageContent_query
-                    ? static_cast<const melinda::mdbnet::Query*>(content())
-                    : nullptr;
-            }
-            const melinda::mdbnet::QueryResult* content_as_result() const
-            {
-                return content_type() == melinda::mdbnet::MessageContent_result
-                    ? static_cast<const melinda::mdbnet::QueryResult*>(
-                          content())
-                    : nullptr;
-            }
-            void* mutable_content() { return GetPointer<void*>(VT_CONTENT); }
-            bool Verify(flatbuffers::Verifier& verifier) const
-            {
-                return VerifyTableStart(verifier) &&
-                    VerifyOffset(verifier, VT_CLIENT) &&
-                    verifier.VerifyString(client()) &&
-                    VerifyField<uint8_t>(verifier, VT_CONTENT_TYPE) &&
-                    VerifyOffset(verifier, VT_CONTENT) &&
-                    VerifyMessageContent(verifier, content(), content_type()) &&
-                    verifier.EndTable();
-            }
-        };
-
-        template<>
-        inline const melinda::mdbnet::Query*
-        Message::content_as<melinda::mdbnet::Query>() const
-        {
-            return content_as_query();
-        }
-
-        template<>
-        inline const melinda::mdbnet::QueryResult*
-        Message::content_as<melinda::mdbnet::QueryResult>() const
-        {
-            return content_as_result();
-        }
-
-        struct MessageBuilder
-        {
-            typedef Message Table;
-            flatbuffers::FlatBufferBuilder& fbb_;
-            flatbuffers::uoffset_t start_;
-            void add_client(flatbuffers::Offset<flatbuffers::String> client)
-            {
-                fbb_.AddOffset(Message::VT_CLIENT, client);
-            }
-            void add_content_type(melinda::mdbnet::MessageContent content_type)
-            {
-                fbb_.AddElement<uint8_t>(Message::VT_CONTENT_TYPE,
-                    static_cast<uint8_t>(content_type),
-                    0);
-            }
-            void add_content(flatbuffers::Offset<void> content)
-            {
-                fbb_.AddOffset(Message::VT_CONTENT, content);
-            }
-            explicit MessageBuilder(flatbuffers::FlatBufferBuilder& _fbb)
-                : fbb_(_fbb)
-            {
-                start_ = fbb_.StartTable();
-            }
-            MessageBuilder& operator=(const MessageBuilder&);
-            flatbuffers::Offset<Message> Finish()
-            {
-                const auto end = fbb_.EndTable(start_);
-                auto o = flatbuffers::Offset<Message>(end);
-                return o;
-            }
-        };
-
-        inline flatbuffers::Offset<Message> CreateMessage(
-            flatbuffers::FlatBufferBuilder& _fbb,
-            flatbuffers::Offset<flatbuffers::String> client = 0,
-            melinda::mdbnet::MessageContent content_type =
-                melinda::mdbnet::MessageContent_NONE,
-            flatbuffers::Offset<void> content = 0)
-        {
-            MessageBuilder builder_(_fbb);
-            builder_.add_content(content);
-            builder_.add_client(client);
-            builder_.add_content_type(content_type);
-            return builder_.Finish();
-        }
-
-        inline flatbuffers::Offset<Message> CreateMessageDirect(
-            flatbuffers::FlatBufferBuilder& _fbb,
-            const char* client = nullptr,
-            melinda::mdbnet::MessageContent content_type =
-                melinda::mdbnet::MessageContent_NONE,
-            flatbuffers::Offset<void> content = 0)
-        {
-            auto client__ = client ? _fbb.CreateString(client) : 0;
-            return melinda::mdbnet::CreateMessage(_fbb,
-                client__,
-                content_type,
-                content);
-        }
-
-        inline bool VerifyMessageContent(flatbuffers::Verifier& verifier,
-            const void* obj,
-            MessageContent type)
-        {
-            switch (type)
-            {
-            case MessageContent_NONE:
-            {
-                return true;
-            }
-            case MessageContent_query:
-            {
-                auto ptr = reinterpret_cast<const melinda::mdbnet::Query*>(obj);
-                return verifier.VerifyTable(ptr);
-            }
-            case MessageContent_result:
-            {
-                auto ptr =
-                    reinterpret_cast<const melinda::mdbnet::QueryResult*>(obj);
-                return verifier.VerifyTable(ptr);
-            }
-            default:
-                return true;
-            }
-        }
-
-        inline bool VerifyMessageContentVector(flatbuffers::Verifier& verifier,
-            const flatbuffers::Vector<flatbuffers::Offset<void>>* values,
-            const flatbuffers::Vector<uint8_t>* types)
-        {
-            if (!values || !types)
-                return !values && !types;
-            if (values->size() != types->size())
-                return false;
-            for (flatbuffers::uoffset_t i = 0; i < values->size(); ++i)
-            {
-                if (!VerifyMessageContent(verifier,
-                        values->Get(i),
-                        types->GetEnum<MessageContent>(i)))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-    } // namespace mdbnet
+} // namespace mdbnet
 } // namespace melinda
 
 #endif // FLATBUFFERS_GENERATED_MDBNETWIRE_MELINDA_MDBNET_H_

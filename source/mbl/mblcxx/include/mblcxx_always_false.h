@@ -3,8 +3,9 @@
 
 namespace melinda::mblcxx
 {
-    template<class>
-    inline constexpr bool always_false_v = false;
+template<class>
+inline constexpr bool always_false_v = false;
+
 }
 
 #endif

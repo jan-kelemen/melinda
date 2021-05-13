@@ -1,7 +1,8 @@
 #include <mdbnet_serialization.h>
 
-flatbuffers::FlatBufferBuilder melinda::mdbnet::serialization::query(
-    std::string const& identity,
+namespace melinda::mdbnet
+{
+flatbuffers::FlatBufferBuilder serialization::query(std::string const& identity,
     std::string const& query)
 {
     flatbuffers::FlatBufferBuilder raw_builder;
@@ -21,7 +22,7 @@ flatbuffers::FlatBufferBuilder melinda::mdbnet::serialization::query(
     return raw_builder;
 }
 
-flatbuffers::FlatBufferBuilder melinda::mdbnet::serialization::query_result(
+flatbuffers::FlatBufferBuilder serialization::query_result(
     std::string const& identity,
     std::uint32_t length,
     std::span<uint32_t> const& offsets,
@@ -56,3 +57,4 @@ flatbuffers::FlatBufferBuilder melinda::mdbnet::serialization::query_result(
 
     return raw_builder;
 }
+} // namespace melinda::mdbnet

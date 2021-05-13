@@ -7,7 +7,7 @@
 
 namespace melinda::mdbnet
 {
-    zmq::context_t& context();
+zmq::context_t& context();
 } // namespace melinda::mdbnet
 
 #endif

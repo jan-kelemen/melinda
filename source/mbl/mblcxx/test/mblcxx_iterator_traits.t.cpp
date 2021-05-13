@@ -11,11 +11,11 @@ using namespace melinda;
 
 namespace
 {
-    using input_iterator = std::istream_iterator<char>;
-    using forward_iterator = std::forward_list<char>::const_iterator;
-    using bidirectional_iterator = std::list<char>::const_iterator;
-    using random_access_iterator = std::vector<char>::const_iterator;
-    using output_iterator = std::ostream_iterator<char>;
+using input_iterator = std::istream_iterator<char>;
+using forward_iterator = std::forward_list<char>::const_iterator;
+using bidirectional_iterator = std::list<char>::const_iterator;
+using random_access_iterator = std::vector<char>::const_iterator;
+using output_iterator = std::ostream_iterator<char>;
 } // namespace
 
 TEST_CASE("Input iterator tests")

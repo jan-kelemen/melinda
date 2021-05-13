@@ -9,8 +9,9 @@
 
 #include "mdbnet_internal.h"
 
-melinda::mblcxx::result<zmq::socket_t> melinda::mdbnet::server::bind(
-    zmq::context_t& context,
+namespace melinda::mdbnet
+{
+mblcxx::result<zmq::socket_t> server::bind(zmq::context_t& context,
     std::string const& address)
 {
     zmq::socket_t socket = zmq::socket_t(context, zmq::socket_type::router);
@@ -37,8 +38,7 @@ melinda::mblcxx::result<zmq::socket_t> melinda::mdbnet::server::bind(
     return mblcxx::res<zmq::socket_t>::ok(std::move(socket));
 }
 
-melinda::mdbnet::result<zmq::send_result_t> melinda::mdbnet::server::send(
-    zmq::socket_t& socket,
+result<zmq::send_result_t> server::send(zmq::socket_t& socket,
     std::string const& client,
     std::span<std::byte> bytes,
     zmq::send_flags flags)
@@ -66,9 +66,8 @@ melinda::mdbnet::result<zmq::send_result_t> melinda::mdbnet::server::send(
     }
 }
 
-melinda::mdbnet::result<
-    melinda::mdbnet::recv_response<melinda::mdbnet::client_message>>
-melinda::mdbnet::server::recv(zmq::socket_t& socket, zmq::recv_flags flags)
+result<recv_response<client_message>> server::recv(zmq::socket_t& socket,
+    zmq::recv_flags flags)
 {
     std::vector<zmq::message_t> messages;
     try
@@ -85,10 +84,10 @@ melinda::mdbnet::server::recv(zmq::socket_t& socket, zmq::recv_flags flags)
 
             // clang-format off
             return res<recv_response<client_message>>::ok(
-                recv_response<melinda::mdbnet::client_message> 
+                recv_response<client_message> 
                 {
                     .received = result,
-                    .message = melinda::mdbnet::client_message 
+                    .message = client_message 
                     {
                         .identity = messages[0].to_string(),
                         .content = std::move(messages.back())
@@ -99,7 +98,7 @@ melinda::mdbnet::server::recv(zmq::socket_t& socket, zmq::recv_flags flags)
 
         // clang-format off
         return res<recv_response<client_message>>::ok(
-            recv_response<melinda::mdbnet::client_message> 
+            recv_response<client_message> 
             {
                 .received = result,
                 .message = std::nullopt
@@ -115,3 +114,4 @@ melinda::mdbnet::server::recv(zmq::socket_t& socket, zmq::recv_flags flags)
         return res<recv_response<client_message>>::error(ex);
     }
 }
+} // namespace melinda::mdbnet
