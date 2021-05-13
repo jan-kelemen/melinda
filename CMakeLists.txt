@@ -31,4 +31,3 @@ if (NOT SETUP_DEPENDENCIES_ONLY)
 
     add_subdirectory(source)
 endif()
-
