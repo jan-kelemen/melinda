@@ -25,6 +25,10 @@ include(cmake/dependencies.cmake)
 set(FLATBUFFERS_FLATC_EXECUTABLE ${CONAN_BIN_DIRS_FLATC}/flatc)
 
 if (NOT SETUP_DEPENDENCIES_ONLY)
+    enable_testing()
+
+    add_compile_options(-W -Wall -Wextra -pedantic)
+
     add_subdirectory(source)
 endif()
 
