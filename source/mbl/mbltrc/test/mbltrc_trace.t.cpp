@@ -1,5 +1,3 @@
-#include <catch2/catch.hpp>
-
 #include <mbltrc_trace.h>
 
 using namespace melinda;
