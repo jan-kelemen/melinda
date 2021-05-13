@@ -9,6 +9,7 @@
 #include <variant>
 
 #include <mblcxx_always_false.h>
+#include <mblcxx_sops.h>
 
 namespace melinda::mblcxx::detail
 {
@@ -30,7 +31,7 @@ template<typename T, typename E = std::error_code>
 class result;
 
 template<typename T, typename E = std::error_code>
-struct res final
+struct res final : sops::none
 {
 public:
     template<typename... Args>
@@ -40,21 +41,6 @@ public:
     template<typename... Args>
     static result<T, E> error(Args&&... args) noexcept(noexcept(
         result<T, E>(std::in_place_index<1>, std::forward<Args>(args)...)));
-
-public:
-    res() = delete;
-
-    res(res const&) = delete;
-
-    res(res&&) noexcept = delete;
-
-public:
-    ~res() = delete;
-
-public:
-    res& operator=(res const&) = delete;
-
-    res& operator=(res&&) = delete;
 };
 
 template<typename T, typename E>

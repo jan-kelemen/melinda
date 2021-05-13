@@ -7,7 +7,8 @@ add_library(${TARGET_NAME} STATIC
     src/mblcxx_scope_exit.cpp
     src/mblcxx_unused.cpp
     src/mblcxx_always_false.cpp
-    src/mblcxx_result.cpp)
+    src/mblcxx_result.cpp
+    src/mblcxx_sops.cpp)
 add_dependencies(${TARGET_NAME} clang-format)
 target_include_directories(${TARGET_NAME} SYSTEM PUBLIC include)
 
@@ -17,7 +18,8 @@ add_executable(${TARGET_NAME}_test
     test/mblcxx_scope_exit.t.cpp
     test/mblcxx_unused.t.cpp
     test/mblcxx_always_false.t.cpp
-    test/mblcxx_result.t.cpp)
+    test/mblcxx_result.t.cpp
+    test/mblcxx_sops.t.cpp)
 target_link_libraries(
     ${TARGET_NAME}_test
     PRIVATE

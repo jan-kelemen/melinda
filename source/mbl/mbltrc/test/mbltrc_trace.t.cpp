@@ -3,12 +3,10 @@
 #include <mbltrc_trace.h>
 
 using namespace melinda;
+using namespace mbltrc;
 
-TEST_CASE("Trace level always is larger than any other level")
-{
-    static_assert(mbltrc::trace_level::debug < mbltrc::trace_level::always);
-    static_assert(mbltrc::trace_level::info < mbltrc::trace_level::always);
-    static_assert(mbltrc::trace_level::warn < mbltrc::trace_level::always);
-    static_assert(mbltrc::trace_level::error < mbltrc::trace_level::always);
-    static_assert(mbltrc::trace_level::fatal < mbltrc::trace_level::always);
-}
+static_assert(trace_level::debug < trace_level::always);
+static_assert(trace_level::info < trace_level::always);
+static_assert(trace_level::warn < trace_level::always);
+static_assert(trace_level::error < trace_level::always);
+static_assert(trace_level::fatal < trace_level::always);
