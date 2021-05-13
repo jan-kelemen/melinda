@@ -49,4 +49,4 @@ namespace
     static_assert(!mblcxx::is_bidirectional_iterator_v<output_iterator>);
     static_assert(!mblcxx::is_random_access_iterator_v<output_iterator>);
     static_assert(mblcxx::is_output_iterator_v<output_iterator>);
-}
+} // namespace

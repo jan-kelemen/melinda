@@ -3,32 +3,22 @@
 
 namespace melinda::mblcxx::detail
 {
-    struct nondefconstructible
-    {
-    public:
-        nondefconstructible() = delete;
-    };
-
-    struct nondestructible
-    {
-    public:
-        ~nondestructible() = delete;
-    };
-
     struct noncopyable
     {
     public:
         noncopyable(noncopyable const&) = delete;
-
-    public:
         noncopyable& operator=(noncopyable const&) = delete;
+
+    protected:
+        constexpr noncopyable() noexcept = default;
+        ~noncopyable() noexcept = default;
     };
 
-    struct none
-        : nondefconstructible
-        , nondestructible
-        , noncopyable
+    struct none : public noncopyable
     {
+    public:
+        constexpr none() = delete;
+        ~none() noexcept = delete;
     };
 } // namespace melinda::mblcxx::detail
 namespace melinda::mblcxx
@@ -36,8 +26,6 @@ namespace melinda::mblcxx
     struct sops final : detail::none
     {
     public:
-        using nondefconstructible = detail::nondestructible;
-        using nondestructible = detail::nondestructible;
         using noncopyable = detail::noncopyable;
         using none = detail::none;
     };

@@ -7,17 +7,6 @@ using namespace mblcxx;
 
 namespace
 {
-    struct inh_from_nondefconstructible final : sops::nondefconstructible
-    {
-    };
-    static_assert(
-        !std::is_default_constructible_v<inh_from_nondefconstructible>);
-
-    struct inh_from_nondestructible final : sops::nondestructible
-    {
-    };
-    static_assert(!std::is_destructible_v<inh_from_nondestructible>);
-
     struct inh_from_noncopyable final : sops::noncopyable
     {
     };

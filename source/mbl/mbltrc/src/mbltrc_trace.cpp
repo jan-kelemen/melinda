@@ -18,6 +18,7 @@
 #include <date/date.h>
 
 #include <mblcxx_scope_exit.h>
+#include <mblcxx_sops.h>
 
 namespace
 {
@@ -27,18 +28,15 @@ namespace
 namespace melinda::mbltrc
 {
     class [[nodiscard]] trace_handle::impl final
+        : public mblcxx::sops::noncopyable
     {
-    public: // Types
-        using class_name = impl;
-
     public: // Construction
         impl() = delete;
 
         impl(trace_options const& options);
 
-        impl(impl const&) = delete;
-
-        impl(impl&& other) noexcept = delete;
+    public: // Destruction
+        ~impl() noexcept;
 
     public: // Interface
         [[nodiscard]] auto should_trace_message(
@@ -47,14 +45,6 @@ namespace melinda::mbltrc
         void trace_level(enum trace_level new_level) noexcept;
 
         void trace(std::string_view message) const noexcept;
-
-    public: // Operators
-        impl& operator=(impl const&) = delete;
-
-        impl& operator=(impl&&) noexcept = delete;
-
-    public: // Destruction
-        ~impl() noexcept;
 
     private: // Constants
         static constexpr int bad_file_descriptor = -1;
