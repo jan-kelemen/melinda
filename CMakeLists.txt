@@ -22,8 +22,6 @@ include(cmake/clang-format.cmake)
 
 include(cmake/dependencies.cmake)
 
-set(FLATBUFFERS_FLATC_EXECUTABLE ${CONAN_BIN_DIRS_FLATC}/flatc)
-
 if (NOT SETUP_DEPENDENCIES_ONLY)
     enable_testing()
 

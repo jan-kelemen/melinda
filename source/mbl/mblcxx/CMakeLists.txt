@@ -10,6 +10,7 @@ add_library(${TARGET_NAME} STATIC
     src/mblcxx_result.cpp
     src/mblcxx_sops.cpp)
 add_dependencies(${TARGET_NAME} clang-format)
+
 target_include_directories(${TARGET_NAME} SYSTEM PUBLIC include)
 
 add_executable(${TARGET_NAME}_test 
@@ -24,7 +25,7 @@ target_link_libraries(
     ${TARGET_NAME}_test
     PRIVATE
         ${TARGET_NAME}
-        CONAN_PKG::catch2
+        Catch2
 )
 add_dependencies(${TARGET_NAME}_test clang-format)
 catch_discover_tests(${TARGET_NAME}_test)
