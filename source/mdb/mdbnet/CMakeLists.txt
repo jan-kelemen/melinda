@@ -24,11 +24,11 @@ add_library(${TARGET_NAME} SHARED
 add_dependencies(${TARGET_NAME} mdbnet_generate_fb clang-format)
 target_link_libraries(${TARGET_NAME}
     PUBLIC
-        Flatbuffers
-        cppzmq
+        flatbuffers::flatbuffers
+        cppzmq::cppzmq
         mblcxx
     PRIVATE
-        boost
+        Boost::Boost
         mbltrc
 )
 target_include_directories(${TARGET_NAME} SYSTEM PUBLIC include)
@@ -45,7 +45,7 @@ target_link_libraries(
     ${TARGET_NAME}_test
     PRIVATE
         ${TARGET_NAME}
-        Catch2
+        Catch2::Catch2
 )
 add_dependencies(${TARGET_NAME}_test clang-format)
 catch_discover_tests(${TARGET_NAME}_test)

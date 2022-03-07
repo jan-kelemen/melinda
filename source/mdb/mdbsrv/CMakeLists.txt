@@ -7,7 +7,7 @@ add_executable(${TARGET_NAME}
 add_dependencies(${TARGET_NAME} clang-format)
 target_link_libraries(${TARGET_NAME}
     PRIVATE
-        cppzmq
+        cppzmq::cppzmq
         mblcxx
         mbltrc
         mdbnet

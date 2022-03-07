@@ -25,7 +25,7 @@ target_link_libraries(
     ${TARGET_NAME}_test
     PRIVATE
         ${TARGET_NAME}
-        Catch2
+        Catch2::Catch2
 )
 add_dependencies(${TARGET_NAME}_test clang-format)
 catch_discover_tests(${TARGET_NAME}_test)
