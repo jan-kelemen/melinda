@@ -1,26 +1,30 @@
 include(${PROJECT_SOURCE_DIR}/cmake/conan.cmake)
 
 # Conan and dependencies configuration
-conan_add_remote(
-    NAME
-        bincrafters
-    URL
-        https://bincrafters.jfrog.io/artifactory/api/conan/public-conan
+
+conan_cmake_configure(
+    REQUIRES
+        catch2/2.13.8
+        fmt/8.1.1
+        date/3.0.1
+        boost/1.78.0
+        cppzmq/4.8.1
+        flatbuffers/2.0.0
+    OPTIONS
+        zeromq:encryption=tweetnacl
+    GENERATORS
+        cmake_find_package
 )
 
-conan_cmake_run(
-    REQUIRES
-        catch2/2.13.6
-        fmt/7.1.3
-        date/3.0.0
-        boost/1.76.0
-        cppzmq/4.7.1
-        flatc/1.12.0
-        flatbuffers/1.12.0
-    OPTIONS
-        boost:header_only=True
-    BASIC_SETUP
-        CMAKE_TARGETS
-    BUILD
-        missing
-)
+conan_cmake_autodetect(settings)
+
+conan_cmake_install(PATH_OR_REFERENCE .
+                    BUILD missing
+                    SETTINGS ${settings})
+
+find_package(Catch2 REQUIRED)
+find_package(fmt REQUIRED)
+find_package(date REQUIRED)
+find_package(Boost REQUIRED)
+find_package(cppzmq REQUIRED)
+find_package(Flatbuffers REQUIRED)

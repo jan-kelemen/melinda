@@ -1,4 +1,4 @@
-# melinda [![Build Status](https://circleci.com/gh/jan-kelemen/melinda.svg?style=shield)](https://app.circleci.com/pipelines/github/jan-kelemen/melinda)
+# melinda
 Melinda - Relational Database Management System
 
 # Develpment environment setup
@@ -10,13 +10,13 @@ Melinda - Relational Database Management System
 
 #### Supported compilers:
 * GCC-11
-* Clang-12
+* Clang-13
 
 #### Steps:
 * Install required packages
 * Install conan, https://docs.conan.io/en/latest/installation.html
 
-# Building [![Build Status](https://circleci.com/gh/jan-kelemen/melinda.svg?style=shield)](https://app.circleci.com/pipelines/github/jan-kelemen/melinda)
+# Building
 * Run scripts/build.sh
   * Script supports optional configuration parameter (-c) with options Debug, RelWithDebInfo, Release
   * Script supports optional setup parameter (-s) which sets up the dependencies only

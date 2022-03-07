@@ -236,7 +236,7 @@ namespace melinda::mbltrc::detail
             format,
             filename,
             line);
-        return fmt::format(real_format, std::forward<T>(args)...);
+        return fmt::format(fmt::runtime(real_format), std::forward<T>(args)...);
     }
 
     [[nodiscard]] trace_handle const* process_trace_handle() noexcept;
