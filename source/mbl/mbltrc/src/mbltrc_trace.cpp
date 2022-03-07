@@ -23,7 +23,7 @@
 namespace
 {
     std::unique_ptr<melinda::mbltrc::trace_handle> process_trace_handle;
-}
+} // namespace
 
 namespace melinda::mbltrc
 {

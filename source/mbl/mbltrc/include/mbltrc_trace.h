@@ -202,27 +202,18 @@ struct fmt::formatter<melinda::mbltrc::trace_level>
 
 namespace melinda::mbltrc::detail
 {
-    // https://stackoverflow.com/a/29921055
-    constexpr char const* strend(char const* const str)
+    constexpr std::string_view file_name_only(std::string_view path)
     {
-        return *str ? strend(str + 1) : str;
-    }
-
-    constexpr char const* from_last_slash(char const* const start,
-        char const* const end)
-    {
-        return (end >= start && *end != '/' && *end != '\\')
-            ? from_last_slash(start, end - 1)
-            : (end + 1);
-    }
-
-    constexpr char const* file_name_only(char const* const path)
-    {
-        return from_last_slash(path, strend(path));
+        if (auto last_slash = path.find_last_of('/');
+            last_slash != std::string_view::npos)
+        {
+            return path.substr(last_slash + 1);
+        }
+        return path;
     }
 
     template<typename... T>
-    [[nodiscard]] std::string format_message(char const* const filename,
+    [[nodiscard]] std::string format_message(std::string_view filename,
         uintmax_t const line,
         melinda::mbltrc::trace_level const level,
         std::string_view format,
@@ -269,9 +260,8 @@ namespace melinda::mbltrc::detail
 #define MBLTRC_TRACE(f, l, level, handle, ...) \
     do \
     { \
-        constexpr char const* const \
-            filename_b015cf7e_932f_4d99_822a_b863763c6e23 = \
-                melinda::mbltrc::detail::file_name_only(f); \
+        std::string_view filename_b015cf7e_932f_4d99_822a_b863763c6e23 = \
+            melinda::mbltrc::detail::file_name_only(f); \
         if (melinda::mbltrc::detail::should_trace_message(handle, level)) \
         { \
             melinda::mbltrc::detail::trace(handle, \
