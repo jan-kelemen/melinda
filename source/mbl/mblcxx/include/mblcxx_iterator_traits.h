@@ -12,7 +12,7 @@ namespace melinda::mblcxx
     using iterator_category =
         typename std::iterator_traits<Iterator>::iterator_category;
 
-}
+} // namespace melinda::mblcxx
 
 namespace melinda::mblcxx::detail
 {
