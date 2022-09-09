@@ -14,7 +14,8 @@
 
 namespace melinda::mbltrc
 {
-    enum class [[nodiscard]] trace_level : uint8_t {
+    enum class [[nodiscard]] trace_level : uint8_t
+    {
         debug = 1,
         info = 2,
         warn = 3,

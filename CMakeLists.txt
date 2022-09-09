@@ -3,8 +3,6 @@ cmake_minimum_required(VERSION 3.4)
 set(TARGET_NAME melinda)
 project(${TARGET_NAME} VERSION 0.1)
 
-option(SETUP_DEPENDENCIES_ONLY "Build dependencies and not the sources" OFF)
-
 # Export compile_commands.json during build for integration with other tools
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -18,14 +16,12 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 include(${PROJECT_SOURCE_DIR}/cmake/clang-format.cmake)
-# include(cmake/clang-tidy.cmake)
 
 include(${PROJECT_SOURCE_DIR}/cmake/dependencies.cmake)
 
-if (NOT SETUP_DEPENDENCIES_ONLY)
-    enable_testing()
+include(${PROJECT_SOURCE_DIR}/cmake/project-options.cmake)
 
-    add_compile_options(-W -Wall -Wextra -pedantic)
+enable_testing()
 
-    add_subdirectory(source)
-endif()
+add_subdirectory(source)
+

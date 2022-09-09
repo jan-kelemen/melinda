@@ -1,16 +1,14 @@
 #!/bin/bash
 
 CONFIGURATION=Debug
-SETUP_DEPENDENCIES_ONLY=OFF
 
-optstring=":c:s"
+optstring=":c"
 
 while getopts ${optstring} option
 do
     case "${option}"
     in
         c) CONFIGURATION=${OPTARG};;
-        s) SETUP_DEPENDENCIES_ONLY="ON";;
     esac
 done
 
@@ -21,7 +19,7 @@ fi
 
 mkdir build && \
     cd build && \
-    cmake .. -DCMAKE_BUILD_TYPE=${CONFIGURATION} -DSETUP_DEPENDENCIES_ONLY=${SETUP_DEPENDENCIES_ONLY} && \
+    cmake .. -DCMAKE_BUILD_TYPE=${CONFIGURATION} && \
     cmake --build . && \
     cd ..
 

@@ -21,6 +21,7 @@ namespace melinda::mblcxx::detail
         ~none() noexcept = delete;
     };
 } // namespace melinda::mblcxx::detail
+
 namespace melinda::mblcxx
 {
     struct sops final : detail::none

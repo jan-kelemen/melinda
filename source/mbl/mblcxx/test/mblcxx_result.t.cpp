@@ -1,6 +1,6 @@
 #include <string>
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include <mblcxx_result.h>
 
@@ -80,6 +80,7 @@ TEST_CASE("Special member functions are propagated from containing type")
     static_assert(std::is_copy_constructible_v<mblcxx::result<copyable>>);
     // static_assert(!std::is_move_constructible_v<mblcxx::result<copyable>>);
     static_assert(std::is_copy_assignable_v<mblcxx::result<copyable>>);
+
     // static_assert(!std::is_move_assignable_v<mblcxx::result<copyable>>);
 
     struct moveable final
