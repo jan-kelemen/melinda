@@ -183,6 +183,7 @@ namespace melinda::mbltrc
         struct stat64 file_stats
         {
         };
+
         bool const have_filesize =
             fstat64(file_descriptor, std::addressof(file_stats)) == 0;
 

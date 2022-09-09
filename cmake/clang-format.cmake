@@ -4,5 +4,5 @@ file(GLOB_RECURSE ALL_SOURCE_FILES *.cpp *.h)
     
 add_custom_target(clang-format 
         COMMAND 
-            clang-format-13 -style=file -i ${ALL_SOURCE_FILES})
+            clang-format-15 -style=file -i ${ALL_SOURCE_FILES})
 

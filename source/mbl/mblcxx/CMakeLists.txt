@@ -10,11 +10,14 @@ add_library(${TARGET_NAME} STATIC
     src/mblcxx_result.cpp
     src/mblcxx_sops.cpp)
 add_dependencies(${TARGET_NAME} clang-format)
+target_link_libraries(${TARGET_NAME}
+    PRIVATE
+        project-options
+)
 
 target_include_directories(${TARGET_NAME} SYSTEM PUBLIC include)
 
 add_executable(${TARGET_NAME}_test 
-    test/mblcxx_test.m.cpp
     test/mblcxx_iterator_traits.t.cpp
     test/mblcxx_scope_exit.t.cpp
     test/mblcxx_unused.t.cpp
@@ -25,7 +28,8 @@ target_link_libraries(
     ${TARGET_NAME}_test
     PRIVATE
         ${TARGET_NAME}
-        Catch2::Catch2
+        Catch2::Catch2WithMain
+        project-options
 )
 add_dependencies(${TARGET_NAME}_test clang-format)
 catch_discover_tests(${TARGET_NAME}_test)

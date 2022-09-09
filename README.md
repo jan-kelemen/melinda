@@ -10,7 +10,7 @@ Melinda - Relational Database Management System
 
 #### Supported compilers:
 * GCC-11
-* Clang-13
+* Clang-15
 
 #### Steps:
 * Install required packages
@@ -19,5 +19,4 @@ Melinda - Relational Database Management System
 # Building
 * Run scripts/build.sh
   * Script supports optional configuration parameter (-c) with options Debug, RelWithDebInfo, Release
-  * Script supports optional setup parameter (-s) which sets up the dependencies only
 

@@ -30,11 +30,11 @@ target_link_libraries(${TARGET_NAME}
     PRIVATE
         Boost::Boost
         mbltrc
+        project-options
 )
 target_include_directories(${TARGET_NAME} SYSTEM PUBLIC include)
 
 add_executable(${TARGET_NAME}_test
-    test/mdbnet_test.m.cpp
     test/mdbnet_client.t.cpp
     test/mdbnet_server.t.cpp
     test/mdbnet_types.t.cpp
@@ -45,7 +45,8 @@ target_link_libraries(
     ${TARGET_NAME}_test
     PRIVATE
         ${TARGET_NAME}
-        Catch2::Catch2
+        Catch2::Catch2WithMain
+        project-options
 )
 add_dependencies(${TARGET_NAME}_test clang-format)
 catch_discover_tests(${TARGET_NAME}_test)

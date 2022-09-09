@@ -49,6 +49,7 @@ IndentPPDirectives: None
 IndentRequires: 'false'
 IndentWidth: '4'
 IndentWrappedFunctionNames: 'false'
+InsertBraces: 'false'
 KeepEmptyLinesAtTheStartOfBlocks: 'false'
 Language: Cpp
 LambdaBodyIndentation: Signature
@@ -57,7 +58,9 @@ NamespaceIndentation: All
 PenaltyBreakBeforeFirstCallParameter: '0'
 PPIndentWidth: '-1'
 PointerAlignment: Left
+QualifierAlignment: Leave
 ReflowComments: 'true'
+SeparateDefinitionBlocks: Always
 ShortNamespaceLines: '0'
 SortIncludes: 'true'
 SortUsingDeclarations: 'false'
