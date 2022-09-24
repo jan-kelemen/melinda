@@ -18,8 +18,6 @@ do
     esac
 done
 
-echo "TD = ${TEST_DIRECTORY}"
-
 cd build && \
     MELINDA_TEST_DIRECTORY=${TEST_DIRECTORY} ctest -V -W && \
     cd ..
