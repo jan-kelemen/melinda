@@ -13,6 +13,7 @@ conan_cmake_configure(
         zlib/1.2.12
     OPTIONS
         zeromq:encryption=tweetnacl
+        boost:without_test=True
     GENERATORS
         cmake_find_package
 )
