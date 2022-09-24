@@ -2,7 +2,7 @@
 
 CONFIGURATION=Debug
 
-optstring=":c"
+optstring="c:"
 
 while getopts ${optstring} option
 do

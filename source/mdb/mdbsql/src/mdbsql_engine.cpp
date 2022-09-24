@@ -5,6 +5,11 @@
 #include <mbltrc_trace.h>
 #include <mdbsql_grammar.h>
 
+melinda::mdbsql::engine::engine(std::filesystem::path data_directory)
+    : data_directory_ {std::move(data_directory)}
+{
+}
+
 bool melinda::mdbsql::engine::execute(std::string_view query)
 {
     std::optional<statement> parsed;

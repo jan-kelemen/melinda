@@ -12,16 +12,26 @@
 #include <mdbnet_serialization.h>
 #include <mdbnet_server.h>
 
-int main()
+#include <mdbsrv_options.h>
+
+int main(int argc, char** argv)
 {
-    melinda::mbltrc::trace_options trace_config(std::filesystem::path("../log"),
+    std::optional<melinda::mdbsrv::options> const options {
+        melinda::mdbsrv::parse_options(argc, argv)};
+    if (!options)
+    {
+        return EXIT_FAILURE;
+    }
+
+    melinda::mbltrc::trace_options trace_config(
+        std::filesystem::path(options->data_directory),
         std::filesystem::path("server"));
     trace_config.level = melinda::mbltrc::trace_level::info;
 
     melinda::mbltrc::initialize_process_trace_handle(
         melinda::mbltrc::create_trace_handle(trace_config));
 
-    melinda::mdbsql::engine engine;
+    melinda::mdbsql::engine engine {options->data_directory};
 
     zmq::context_t ctx;
     constexpr char const* const address = "tcp://*:22365";

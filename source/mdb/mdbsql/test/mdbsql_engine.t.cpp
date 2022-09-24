@@ -2,17 +2,19 @@
 
 #include <mdbsql_engine.h>
 
+#include <mdbsql.t.h>
+
 using namespace melinda;
 
 TEST_CASE("Creating a database succeeds", "[exec]")
 {
-    mdbsql::engine engine;
+    mdbsql::engine engine {mdbsql::t::runtime_directory()};
     REQUIRE(engine.execute("CREATE DATABASE books;"));
 }
 
 TEST_CASE("Creating a already existing dabase fails", "[exec]")
 {
-    mdbsql::engine engine;
+    mdbsql::engine engine {mdbsql::t::runtime_directory()};
     REQUIRE(engine.execute("CREATE DATABASE books;"));
     REQUIRE_FALSE(engine.execute("CREATE DATABASE books;"));
 }
