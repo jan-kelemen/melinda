@@ -7,6 +7,8 @@
 
 #include <mbltrc_trace.h>
 
+#include <mdbsql_engine.h>
+
 #include <mdbnet_serialization.h>
 #include <mdbnet_server.h>
 
@@ -18,6 +20,8 @@ int main()
 
     melinda::mbltrc::initialize_process_trace_handle(
         melinda::mbltrc::create_trace_handle(trace_config));
+
+    melinda::mdbsql::engine engine;
 
     zmq::context_t ctx;
     constexpr char const* const address = "tcp://*:22365";
@@ -32,9 +36,6 @@ int main()
 
     zmq::socket_t& socket = bind_result.ok();
     MBLCXX_ON_SCOPE_EXIT(socket.unbind(address));
-
-    flatbuffers::FlatBufferBuilder query_result =
-        melinda::mdbnet::serialization::query_result(address, 0, {}, {});
 
     while (true)
     {
@@ -63,6 +64,16 @@ int main()
         MBLTRC_TRACE_INFO("Recevied query {} from {}",
             query->content()->c_str(),
             success.message->identity);
+
+        bool const result = engine.execute(query->content()->c_str());
+
+        std::array<uint32_t, 1> offsets {0};
+        std::array<std::byte, 1> raw_values {std::byte {result}};
+        flatbuffers::FlatBufferBuilder query_result =
+            melinda::mdbnet::serialization::query_result(address,
+                1,
+                offsets,
+                raw_values);
 
         MBLTRC_TRACE_INFO("Sending response to {}", success.message->identity);
         melinda::mdbnet::result<zmq::send_result_t> const send_result =

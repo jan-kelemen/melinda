@@ -11,5 +11,6 @@ target_link_libraries(${TARGET_NAME}
         mblcxx
         mbltrc
         mdbnet
+        mdbsql
         project-options
 )

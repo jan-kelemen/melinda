@@ -38,15 +38,22 @@ int main()
 
     std::string const identity = socket.get(zmq::sockopt::routing_id, 256);
 
-    flatbuffers::FlatBufferBuilder const query =
-        melinda::mdbnet::serialization::query(identity, "SELECT * FROM v$sql");
+    std::vector<std::string> queries {
+        "CREATE DATABASE books;",
+        "CREATE DATABASE books;",
+        "SELECT * FROM v$sql",
+        "CREATE DATABASE books2",
+    };
 
-    while (true)
+    for (auto const& query : queries)
     {
+        flatbuffers::FlatBufferBuilder const q =
+            melinda::mdbnet::serialization::query(identity, query);
+
         melinda::mdbnet::result<zmq::send_result_t> const send_result =
             melinda::mdbnet::client::send(socket,
-                {reinterpret_cast<std::byte*>(query.GetBufferPointer()),
-                    query.GetSize()});
+                {reinterpret_cast<std::byte*>(q.GetBufferPointer()),
+                    q.GetSize()});
 
         if (!send_result || !send_result.ok())
         {
@@ -74,6 +81,14 @@ int main()
                         message->content_as_result();
                     MBLTRC_TRACE_INFO("Returned {} rows.",
                         query_result->length());
+
+                    for (std::size_t i = 0; i != query_result->length(); ++i)
+                    {
+                        uint32_t const offset = (*query_result->offsets())[i];
+                        MBLTRC_TRACE_INFO("Row {} value {}",
+                            i,
+                            (*query_result->raw_values())[offset]);
+                    }
                 }
             }
         }

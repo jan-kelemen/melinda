@@ -18,7 +18,11 @@ namespace melinda::mdbsql
     struct [[nodiscard]] statement_parser final
         : detail::qi::grammar<Iterator, statement(), detail::qi::blank_type>
     {
-    public:
+    private: // Types
+        template<typename T, typename Skipper>
+        using rule_t = detail::qi::rule<Iterator, T(), Skipper>;
+
+    public: // Construction
         statement_parser() : statement_parser::base_type(start)
         {
             database_name %= detail::qi::lexeme[+(detail::qi::alnum)];
@@ -29,11 +33,10 @@ namespace melinda::mdbsql
             start %= create_statement >> -detail::qi::lit(';');
         }
 
-    private:
-        template<typename T, typename Skipper>
-        using rule_t = detail::qi::rule<Iterator, T(), Skipper>;
+    public: // Destruction
+        ~statement_parser() = default;
 
-    private:
+    private: // Data
         rule_t<std::string, detail::qi::blank_type> database_name;
         rule_t<statement::create, detail::qi::blank_type> create_statement;
         rule_t<statement, detail::qi::blank_type> start;
