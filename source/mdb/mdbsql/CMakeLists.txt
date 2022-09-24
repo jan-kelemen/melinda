@@ -19,6 +19,7 @@ target_link_libraries(${TARGET_NAME}
 target_include_directories(${TARGET_NAME} PUBLIC include)
 
 add_executable(${TARGET_NAME}_test
+    test/mdbsql.t.cpp
     test/mdbsql_engine.t.cpp
     test/mdbsql_grammar.t.cpp
     test/mdbsql_statement.t.cpp
@@ -30,5 +31,6 @@ target_link_libraries(
         Catch2::Catch2WithMain
         project-options
 )
+target_include_directories(${TARGET_NAME}_test PRIVATE test)
 add_dependencies(${TARGET_NAME}_test clang-format)
 catch_discover_tests(${TARGET_NAME}_test)

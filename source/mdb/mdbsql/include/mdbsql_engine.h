@@ -1,6 +1,7 @@
 #ifndef MELINDA_MDBSQL_ENGINE_INCLUDED
 #define MELINDA_MDBSQL_ENGINE_INCLUDED
 
+#include <filesystem>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -12,7 +13,7 @@ namespace melinda::mdbsql
     class [[nodiscard]] engine final : public mblcxx::sops::noncopyable
     {
     public: // Construction
-        engine() = default;
+        engine(std::filesystem::path data_directory);
 
     public: // Destruction
         ~engine() = default;
@@ -21,6 +22,7 @@ namespace melinda::mdbsql
         bool execute(std::string_view query);
 
     private: // Data
+        std::filesystem::path data_directory_;
         std::vector<std::string> databases_;
     };
 } // namespace melinda::mdbsql

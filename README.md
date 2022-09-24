@@ -20,3 +20,6 @@ Melinda - Relational Database Management System
 * Run scripts/build.sh
   * Script supports optional configuration parameter (-c) with options Debug, RelWithDebInfo, Release
 
+# Testing
+* Run scripts/test.sh
+  * Script supports optional testing directory parameter (-d), specify the filesystem location used for tests, defaults to value of MELINDA\_TEST\_DIRECTORY or /tmp if not set
