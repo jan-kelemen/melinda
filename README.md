@@ -9,7 +9,7 @@ Melinda - Relational Database Management System
 * cmake
 
 #### Supported compilers:
-* GCC-11
+* GCC-12
 * Clang-15
 
 #### Steps:

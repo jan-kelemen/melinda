@@ -3,13 +3,12 @@ include(${PROJECT_SOURCE_DIR}/cmake/conan.cmake)
 # Conan and dependencies configuration
 conan_cmake_configure(
     REQUIRES
-        catch2/3.1.0
+        catch2/3.2.1
         fmt/9.1.0
         date/3.0.1
-        boost/1.79.0
-        cppzmq/4.8.1
-        flatbuffers/2.0.5
-        zlib/1.2.12
+        boost/1.81.0
+        cppzmq/4.9.0
+        flatbuffers/22.12.06
     OPTIONS
         zeromq:encryption=tweetnacl
         boost:without_atomic=True
@@ -42,6 +41,7 @@ conan_cmake_configure(
         boost:without_thread=True
         boost:without_timer=True
         boost:without_type_erasure=True
+        boost:without_url=True
         boost:without_wave=True
     GENERATORS
         cmake_find_package
@@ -58,4 +58,4 @@ find_package(fmt REQUIRED)
 find_package(date REQUIRED)
 find_package(Boost REQUIRED)
 find_package(cppzmq REQUIRED)
-find_package(FlatBuffers REQUIRED)
+find_package(flatbuffers REQUIRED)
