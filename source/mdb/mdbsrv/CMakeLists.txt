@@ -9,6 +9,7 @@ add_dependencies(${TARGET_NAME} clang-format)
 target_include_directories(${TARGET_NAME} PUBLIC include)
 target_link_libraries(${TARGET_NAME}
     PRIVATE
+        Boost::Boost
         cppzmq::cppzmq
         mblcxx
         mbltrc
