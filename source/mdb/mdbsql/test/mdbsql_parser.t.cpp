@@ -14,7 +14,7 @@ using namespace melinda;
 TEST_CASE("<SQL executable statement>", "[sql-grammar]")
 {
     std::u8string const input {
-        u8"CREATE/* fdsa*/SCHEMA melinda.mirko.kirko AUTHORIZATion mirko PATHS melinda.mirko, melinda.kirko default character set melinda.en_US CREATE global temporary table krokodil.mirko (foobar int, truebar varchar, kooobar boolean, kib.fda real)"};
+        u8"CREATE/* fdsa*/SCHEMA melinda.mirko.kirko AUTHORIZATion mirko PATH melinda.mirko, melinda.pear default character set melinda.en_US CREATE global temporary table krokodil.mirko (foobar it, truebar vachar, kooobar bolean, kib.fda ral)"};
     lexy::range_input<lexy::utf8_encoding, std::u8string::const_iterator> const
         range {std::cbegin(input), std::cend(input)};
 
