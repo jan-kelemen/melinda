@@ -11,7 +11,8 @@ add_dependencies(${TARGET_NAME} clang-format)
 target_link_libraries(${TARGET_NAME}
     PUBLIC
         foonathan::lexy_core
-        foonathan::lexy_unicode 
+        foonathan::lexy_unicode
+        foonathan::lexy_ext
         mblcxx
         mbltrc
     PRIVATE
