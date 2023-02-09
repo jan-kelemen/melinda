@@ -4,13 +4,15 @@ set(TARGET_NAME mdbsql)
 
 add_library(${TARGET_NAME}
     src/mdbsql_engine.cpp
-    src/mdbsql_grammar.cpp
-    src/mdbsql_statement.cpp
+    src/mdbsql_ast.cpp
+    src/mdbsql_parser.cpp
 )
 add_dependencies(${TARGET_NAME} clang-format)
 target_link_libraries(${TARGET_NAME}
     PUBLIC
-        Boost::Boost
+        foonathan::lexy_core
+        foonathan::lexy_unicode
+        foonathan::lexy_ext
         mblcxx
         mbltrc
     PRIVATE
@@ -21,8 +23,8 @@ target_include_directories(${TARGET_NAME} PUBLIC include)
 add_executable(${TARGET_NAME}_test
     test/mdbsql.t.cpp
     test/mdbsql_engine.t.cpp
-    test/mdbsql_grammar.t.cpp
-    test/mdbsql_statement.t.cpp
+    test/mdbsql_ast.t.cpp
+    test/mdbsql_parser.t.cpp
 )
 target_link_libraries(
     ${TARGET_NAME}_test

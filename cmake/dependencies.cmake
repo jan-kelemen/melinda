@@ -9,6 +9,7 @@ conan_cmake_configure(
         boost/1.81.0
         cppzmq/4.9.0
         flatbuffers/22.12.06
+        foonathan-lexy/2022.12.1
     OPTIONS
         zeromq:encryption=tweetnacl
         boost:without_atomic=True
@@ -59,3 +60,4 @@ find_package(date REQUIRED)
 find_package(Boost REQUIRED)
 find_package(cppzmq REQUIRED)
 find_package(flatbuffers REQUIRED)
+find_package(lexy REQUIRED)
