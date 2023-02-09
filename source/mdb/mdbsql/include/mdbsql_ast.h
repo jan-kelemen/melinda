@@ -8,23 +8,23 @@
 
 namespace melinda::mdbsql::ast
 {
-    struct identifier
+    struct identifier final
     {
         std::vector<std::string> parts;
     };
 
-    struct column_definition
+    struct column_definition final
     {
         identifier name;
         std::string data_type;
     };
 
-    struct table_elements
+    struct table_elements final
     {
         std::vector<column_definition> elements;
     };
 
-    struct table_definition
+    struct table_definition final
     {
         using table_contents_source = std::variant<table_elements>;
 
@@ -35,7 +35,7 @@ namespace melinda::mdbsql::ast
 
     using schema_element = std::variant<table_definition>;
 
-    struct schema_definition
+    struct schema_definition final
     {
         using character_set_or_path_spec =
             std::variant<identifier, std::vector<identifier>>;
@@ -47,7 +47,8 @@ namespace melinda::mdbsql::ast
         std::optional<schema_element> elements;
     };
 
-    using sql_schema_statement = std::variant<schema_definition>;
+    using sql_schema_statement =
+        std::variant<schema_definition, table_definition>;
 
     using sql_executable_statement = std::variant<sql_schema_statement>;
 
