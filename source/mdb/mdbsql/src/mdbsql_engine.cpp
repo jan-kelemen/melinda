@@ -33,8 +33,7 @@ bool melinda::mdbsql::engine::execute(std::string_view query)
             }
 
             databases_.push_back(statement.schema_name->parts.back());
-            MBLTRC_TRACE_INFO("Created schema '{}'",
-                statement.schema_name->parts.back());
+            MBLTRC_TRACE_INFO("Created schema '{}'", *statement.schema_name);
             return true;
         }
         else if constexpr (std::is_same_v<T, ast::table_definition>)
@@ -64,7 +63,16 @@ bool melinda::mdbsql::engine::execute(std::string_view query)
     };
 
     std::optional<ast::sql_executable_statement> const statement {parse(query)};
+    if (!statement.has_value())
+    {
+        return false;
+    }
 
-    return statement.has_value() &&
-        std::visit(sql_executable_statement_visitor, *statement);
+    if (!std::visit(sql_executable_statement_visitor, *statement))
+    {
+        MBLTRC_TRACE_ERROR("Execution of statement '{}' failed", *statement);
+        return false;
+    }
+
+    return true;
 }

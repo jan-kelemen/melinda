@@ -1,4 +1,3 @@
-#include "mdbsql_ast.h"
 #include <mdbsql_parser.h>
 
 #include <algorithm>

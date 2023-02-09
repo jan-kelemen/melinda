@@ -39,10 +39,10 @@ int main()
     std::string const identity = socket.get(zmq::sockopt::routing_id, 256);
 
     std::vector<std::string> queries {
-        "CREATE DATABASE books;",
-        "CREATE DATABASE books;",
-        "SELECT * FROM v$sql",
-        "CREATE DATABASE books2",
+        "CREATE SCHEMA books;",
+        "CREATE SCHEMA books;",
+        "SELECT * FROM vsql",
+        "CREATE SCHEMA books2",
     };
 
     for (auto const& query : queries)

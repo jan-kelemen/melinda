@@ -1,11 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include <lexy/action/parse.hpp>
-#include <lexy/action/trace.hpp>
-#include <lexy/encoding.hpp>
-#include <lexy/input/range_input.hpp>
-#include <lexy_ext/report_error.hpp>
-
 #include <mblcxx_always_false.h>
 
 #include <mdbsql_ast.h>
@@ -42,9 +36,8 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 {
                     auto const& schema_definition =
                         as_schema_definition(*result);
-                    REQUIRE(schema_definition.schema_name.has_value());
-                    REQUIRE(schema_definition.schema_name.value().parts ==
-                        unqualified_schema_name.parts);
+                    REQUIRE(schema_definition.schema_name ==
+                        unqualified_schema_name);
                     REQUIRE_FALSE(schema_definition.authorization);
                     REQUIRE_FALSE(schema_definition.character_set_or_path1);
                     REQUIRE_FALSE(schema_definition.character_set_or_path2);
@@ -65,9 +58,8 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 {
                     auto const& schema_definition =
                         as_schema_definition(*result);
-                    REQUIRE(schema_definition.schema_name.has_value());
-                    REQUIRE(schema_definition.schema_name.value().parts ==
-                        qualified_schema_name.parts);
+                    REQUIRE(
+                        schema_definition.schema_name == qualified_schema_name);
                     REQUIRE_FALSE(schema_definition.authorization);
                     REQUIRE_FALSE(schema_definition.character_set_or_path1);
                     REQUIRE_FALSE(schema_definition.character_set_or_path2);
@@ -95,12 +87,8 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 {
                     auto const& schema_definition =
                         as_schema_definition(*result);
-                    REQUIRE(schema_definition.schema_name.has_value());
-                    REQUIRE(schema_definition.schema_name.value().parts ==
-                        schema_name.parts);
-                    REQUIRE(schema_definition.authorization);
-                    REQUIRE(schema_definition.authorization.value() ==
-                        authorization);
+                    REQUIRE(schema_definition.schema_name == schema_name);
+                    REQUIRE(schema_definition.authorization == authorization);
                     REQUIRE_FALSE(schema_definition.character_set_or_path1);
                     REQUIRE_FALSE(schema_definition.character_set_or_path2);
                     REQUIRE_FALSE(schema_definition.elements);
@@ -123,8 +111,7 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                         as_schema_definition(*result);
                     REQUIRE_FALSE(schema_definition.schema_name);
                     REQUIRE(schema_definition.authorization);
-                    REQUIRE(schema_definition.authorization.value() ==
-                        authorization);
+                    REQUIRE(schema_definition.authorization == authorization);
                     REQUIRE_FALSE(schema_definition.character_set_or_path1);
                     REQUIRE_FALSE(schema_definition.character_set_or_path2);
                     REQUIRE_FALSE(schema_definition.elements);
@@ -154,14 +141,12 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 {
                     auto const& schema_definition =
                         as_schema_definition(*result);
-                    REQUIRE(schema_definition.schema_name.has_value());
-                    REQUIRE(schema_definition.schema_name.value().parts ==
-                        schema_name.parts);
+                    REQUIRE(schema_definition.schema_name == schema_name);
                     REQUIRE_FALSE(schema_definition.authorization);
                     REQUIRE(schema_definition.character_set_or_path1);
                     auto const& chset = std::get<mdbsql::ast::identifier>(
                         schema_definition.character_set_or_path1.value());
-                    REQUIRE(chset.parts == qualified_character_set.parts);
+                    REQUIRE(chset == qualified_character_set);
                     REQUIRE_FALSE(schema_definition.character_set_or_path2);
                     REQUIRE_FALSE(schema_definition.elements);
                 }
@@ -181,14 +166,12 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 {
                     auto const& schema_definition =
                         as_schema_definition(*result);
-                    REQUIRE(schema_definition.schema_name.has_value());
-                    REQUIRE(schema_definition.schema_name.value().parts ==
-                        schema_name.parts);
+                    REQUIRE(schema_definition.schema_name == schema_name);
                     REQUIRE_FALSE(schema_definition.authorization);
                     REQUIRE(schema_definition.character_set_or_path1);
                     auto const& chset = std::get<mdbsql::ast::identifier>(
                         schema_definition.character_set_or_path1.value());
-                    REQUIRE(chset.parts == unqualified_character_set.parts);
+                    REQUIRE(chset == unqualified_character_set);
                     REQUIRE_FALSE(schema_definition.character_set_or_path2);
                     REQUIRE_FALSE(schema_definition.elements);
                 }
@@ -216,17 +199,15 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 {
                     auto const& schema_definition =
                         as_schema_definition(*result);
-                    REQUIRE(schema_definition.schema_name.has_value());
-                    REQUIRE(schema_definition.schema_name.value().parts ==
-                        schema_name.parts);
+                    REQUIRE(schema_definition.schema_name == schema_name);
                     REQUIRE_FALSE(schema_definition.authorization);
                     REQUIRE(schema_definition.character_set_or_path1);
                     auto const& path =
                         std::get<std::vector<mdbsql::ast::identifier>>(
                             schema_definition.character_set_or_path1.value());
                     REQUIRE(path.size() == 2);
-                    REQUIRE(path[0].parts == path_specification[0].parts);
-                    REQUIRE(path[1].parts == path_specification[1].parts);
+                    REQUIRE(path[0] == path_specification[0]);
+                    REQUIRE(path[1] == path_specification[1]);
                     REQUIRE_FALSE(schema_definition.character_set_or_path2);
                     REQUIRE_FALSE(schema_definition.elements);
                 }
@@ -250,14 +231,14 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 using T = std::decay_t<decltype(v)>;
                 if constexpr (std::is_same_v<T, mdbsql::ast::identifier>)
                 {
-                    REQUIRE(v.parts == character_set.parts);
+                    REQUIRE(v == character_set);
                 }
                 else if constexpr (std::is_same_v<T,
                                        std::vector<mdbsql::ast::identifier>>)
                 {
                     REQUIRE(v.size() == 2);
-                    REQUIRE(v[0].parts == path_specification[0].parts);
-                    REQUIRE(v[1].parts == path_specification[1].parts);
+                    REQUIRE(v[0] == path_specification[0]);
+                    REQUIRE(v[1] == path_specification[1]);
                 }
                 else
                 {
@@ -276,9 +257,7 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 {
                     auto const& schema_definition =
                         as_schema_definition(*result);
-                    REQUIRE(schema_definition.schema_name.has_value());
-                    REQUIRE(schema_definition.schema_name.value().parts ==
-                        schema_name.parts);
+                    REQUIRE(schema_definition.schema_name == schema_name);
                     REQUIRE_FALSE(schema_definition.authorization);
                     REQUIRE(schema_definition.character_set_or_path1);
                     std::visit(visitor,
@@ -311,16 +290,14 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 {
                     auto const& schema_definition =
                         as_schema_definition(*result);
-                    REQUIRE(schema_definition.schema_name.has_value());
-                    REQUIRE(schema_definition.schema_name.value().parts ==
-                        schema_name.parts);
+                    REQUIRE(schema_definition.schema_name == schema_name);
                     REQUIRE_FALSE(schema_definition.authorization);
                     REQUIRE_FALSE(schema_definition.character_set_or_path1);
                     REQUIRE_FALSE(schema_definition.character_set_or_path2);
                     REQUIRE(schema_definition.elements);
                     auto const& table = std::get<mdbsql::ast::table_definition>(
                         schema_definition.elements.value());
-                    REQUIRE(table.name.parts == qualified_table_name.parts);
+                    REQUIRE(table.name == qualified_table_name);
                 }
                 else
                 {
@@ -338,16 +315,14 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 {
                     auto const& schema_definition =
                         as_schema_definition(*result);
-                    REQUIRE(schema_definition.schema_name.has_value());
-                    REQUIRE(schema_definition.schema_name.value().parts ==
-                        schema_name.parts);
+                    REQUIRE(schema_definition.schema_name == schema_name);
                     REQUIRE_FALSE(schema_definition.authorization);
                     REQUIRE_FALSE(schema_definition.character_set_or_path1);
                     REQUIRE_FALSE(schema_definition.character_set_or_path2);
                     REQUIRE(schema_definition.elements);
                     auto const& table = std::get<mdbsql::ast::table_definition>(
                         schema_definition.elements.value());
-                    REQUIRE(table.name.parts == unqualified_table_name.parts);
+                    REQUIRE(table.name == unqualified_table_name);
                 }
                 else
                 {
@@ -381,8 +356,7 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 if (auto const result = mdbsql::parse(query); result)
                 {
                     auto const& table_definition = as_table_definition(*result);
-                    REQUIRE(table_definition.name.parts ==
-                        qualified_table_name.parts);
+                    REQUIRE(table_definition.name == qualified_table_name);
                 }
                 else
                 {
@@ -399,8 +373,7 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 if (auto const result = mdbsql::parse(query); result)
                 {
                     auto const& table_definition = as_table_definition(*result);
-                    REQUIRE(table_definition.name.parts ==
-                        unqualified_table_name.parts);
+                    REQUIRE(table_definition.name == unqualified_table_name);
                 }
                 else
                 {
