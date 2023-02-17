@@ -16,7 +16,7 @@
 
 int main(int argc, char** argv)
 {
-    std::optional<melinda::mdbsrv::options> const options {
+    std::optional<melinda::mdbsrv::options> const options{
         melinda::mdbsrv::parse_options(argc, argv)};
     if (!options)
     {
@@ -31,7 +31,7 @@ int main(int argc, char** argv)
     melinda::mbltrc::initialize_process_trace_handle(
         melinda::mbltrc::create_trace_handle(trace_config));
 
-    melinda::mdbsql::engine engine {options->data_directory};
+    melinda::mdbsql::engine engine{options->data_directory};
 
     zmq::context_t ctx;
     constexpr char const* const address = "tcp://*:22365";
@@ -77,8 +77,8 @@ int main(int argc, char** argv)
 
         bool const result = engine.execute(query->content()->c_str());
 
-        std::array<uint32_t, 1> offsets {0};
-        std::array<std::byte, 1> raw_values {std::byte {result}};
+        std::array<uint32_t, 1> offsets{0};
+        std::array<std::byte, 1> raw_values{std::byte{result}};
         flatbuffers::FlatBufferBuilder query_result =
             melinda::mdbnet::serialization::query_result(address,
                 1,

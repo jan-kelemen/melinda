@@ -17,8 +17,9 @@ namespace melinda::mblcxx::detail
     using either = std::variant<T1, T2>;
 
     template<typename Callable, typename... Args>
-    concept nothrow_invocable = std::invocable<Callable, Args...>&& noexcept(
-        std::invoke(std::declval<Callable>(), std::declval<Args>()...));
+    concept nothrow_invocable = std::invocable<Callable, Args...> &&
+        noexcept(
+            std::invoke(std::declval<Callable>(), std::declval<Args>()...));
 
     template<typename T>
     concept move_assignable = std::is_move_assignable_v<T>;
@@ -63,9 +64,9 @@ namespace melinda::mblcxx
         template<typename U, typename... Args>
         result(std::in_place_type_t<U> alternative, Args&&... value) noexcept(
             std::is_nothrow_constructible_v<T, Args...>)
-            requires(std::constructible_from<T, Args...> &&
-                (!std::same_as<T, E> &&
-                    (std::same_as<U, T> || std::same_as<U, E>) ))
+        requires(std::constructible_from<T, Args...> &&
+            (!std::same_as<T, E> &&
+                (std::same_as<U, T> || std::same_as<U, E>) ))
             : value_(alternative, std::forward<Args>(value)...)
         {
         }
@@ -75,11 +76,11 @@ namespace melinda::mblcxx
             std::is_nothrow_constructible_v<
                 std::variant_alternative_t<I, either_t>,
                 Args...>)
-            requires(
-                std::constructible_from<std::variant_alternative_t<I, either_t>,
-                    Args...> &&
-                (std::same_as<std::variant_alternative_t<I, either_t>, T> ||
-                    std::same_as<std::variant_alternative_t<I, either_t>, E>) )
+        requires(
+            std::constructible_from<std::variant_alternative_t<I, either_t>,
+                Args...> &&
+            (std::same_as<std::variant_alternative_t<I, either_t>, T> ||
+                std::same_as<std::variant_alternative_t<I, either_t>, E>) )
             : value_(index, std::forward<Args>(value)...)
         {
         }
@@ -87,12 +88,14 @@ namespace melinda::mblcxx
         result(result const& other) = default;
 
         result(result&& other) noexcept
-            requires(std::move_constructible<T>) = default;
+        requires(std::move_constructible<T>)
+        = default;
 
     public: // Interface
         template<typename OnSuccess>
         result<std::invoke_result_t<OnSuccess, T>, E> map(
-            OnSuccess on_success) const requires(std::invocable<OnSuccess, T>)
+            OnSuccess on_success) const
+        requires(std::invocable<OnSuccess, T>)
         {
             using success_t = std::invoke_result_t<OnSuccess, T>;
 
@@ -106,7 +109,7 @@ namespace melinda::mblcxx
         template<typename OnSuccess, typename DefaultT>
         std::common_type_t<std::invoke_result_t<OnSuccess, T>, DefaultT>
         map_or(OnSuccess on_success, DefaultT&& default_value) const
-            requires(std::invocable<OnSuccess, T>)
+        requires(std::invocable<OnSuccess, T>)
         {
             using rv_t = std::common_type_t<std::invoke_result_t<OnSuccess, T>,
                 DefaultT>;
@@ -122,7 +125,7 @@ namespace melinda::mblcxx
         std::common_type_t<std::invoke_result_t<OnSuccess, T>,
             std::invoke_result_t<OnError, E>>
         map_or_else(OnSuccess on_success, OnError on_error) const
-            requires(std::invocable<OnSuccess, T>&& std::invocable<OnError, E>)
+        requires(std::invocable<OnSuccess, T> && std::invocable<OnError, E>)
         {
             using rv_t = std::common_type_t<std::invoke_result_t<OnSuccess, T>,
                 std::invoke_result_t<OnError, E>>;
@@ -146,7 +149,8 @@ namespace melinda::mblcxx
         result& operator=(result const& other) = default;
 
         result& operator=(result&& other) noexcept
-            requires(detail::move_assignable<T>) = default;
+        requires(detail::move_assignable<T>)
+        = default;
 
     public: // Conversions
         operator bool() const noexcept { return value_.index() == ok_index; }

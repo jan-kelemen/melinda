@@ -40,8 +40,8 @@ namespace melinda::mblcxx
 #define MBLCXX_TOKEN_PASTE(x, y) MBLCXX_TOKEN_PASTEx(x, y)
 
 #define MBLCXX_ON_SCOPE_EXIT_INTERNAL1(lname, aname, ...) \
-    auto const lname {[&]() { __VA_ARGS__; }}; \
-    melinda::mblcxx::on_scope_exit<decltype(lname)> const aname {lname};
+    auto const lname{[&]() { __VA_ARGS__; }}; \
+    melinda::mblcxx::on_scope_exit<decltype(lname)> const aname{lname};
 
 #define MBLCXX_ON_SCOPE_EXIT_INTERNAL2(ctr, ...) \
     MBLCXX_ON_SCOPE_EXIT_INTERNAL1( \

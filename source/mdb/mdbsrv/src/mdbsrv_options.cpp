@@ -12,7 +12,7 @@ std::optional<melinda::mdbsrv::options> melinda::mdbsrv::parse_options(int argc,
     // https://stackoverflow.com/a/14940678
     try
     {
-        bpo::options_description cmd_options {"Allowed options"};
+        bpo::options_description cmd_options{"Allowed options"};
         cmd_options.add_options()("help", "produce help message")(
             "data-directory,D",
             bpo::value<std::string>()->required(),

@@ -11,7 +11,7 @@
 #include <mdbsql_parser.h>
 
 melinda::mdbsql::engine::engine(std::filesystem::path data_directory)
-    : data_directory_ {std::move(data_directory)}
+    : data_directory_{std::move(data_directory)}
 {
 }
 
@@ -62,7 +62,7 @@ bool melinda::mdbsql::engine::execute(std::string_view query)
         }
     };
 
-    std::optional<ast::sql_executable_statement> const statement {parse(query)};
+    std::optional<ast::sql_executable_statement> const statement{parse(query)};
     if (!statement.has_value())
     {
         return false;

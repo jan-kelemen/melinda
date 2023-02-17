@@ -23,8 +23,8 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
 
         SECTION("Basic <schema definition>")
         {
-            mdbsql::ast::identifier const unqualified_schema_name {{"schm"s}};
-            mdbsql::ast::identifier const qualified_schema_name {
+            mdbsql::ast::identifier const unqualified_schema_name{{"schm"s}};
+            mdbsql::ast::identifier const qualified_schema_name{
                 {"ctlg"s, "schm"s}};
 
             auto queries_with_unqualified_name = {"CREATE SCHEMA schm"sv,
@@ -74,8 +74,8 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
 
         SECTION("<schema definition> with AUTHORIZATION clause")
         {
-            mdbsql::ast::identifier const schema_name {{"schm"s}};
-            std::string const authorization {"auth"s};
+            mdbsql::ast::identifier const schema_name{{"schm"s}};
+            std::string const authorization{"auth"s};
 
             auto queries_with_schema_name = {
                 "CREATE SCHEMA schm AUTHORIZATION auth"sv,
@@ -125,11 +125,10 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
 
         SECTION("<schema definition> with character set specification")
         {
-            mdbsql::ast::identifier const schema_name {{"schm"s}};
-            mdbsql::ast::identifier const qualified_character_set {
+            mdbsql::ast::identifier const schema_name{{"schm"s}};
+            mdbsql::ast::identifier const qualified_character_set{
                 {"schm2"s, "chset"s}};
-            mdbsql::ast::identifier const unqualified_character_set {
-                {"chset"s}};
+            mdbsql::ast::identifier const unqualified_character_set{{"chset"s}};
 
             auto queries_with_qualified_character_set = {
                 "CREATE SCHEMA schm DEFAULT CHARACTER SET schm2.chset"sv,
@@ -184,10 +183,10 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
 
         SECTION("<schema definition> with path specification")
         {
-            mdbsql::ast::identifier const schema_name {{"schm"s}};
-            std::vector<mdbsql::ast::identifier> const path_specification {
-                mdbsql::ast::identifier {{"schm1"s}},
-                mdbsql::ast::identifier {{"ctlg"s, "schm2"s}}};
+            mdbsql::ast::identifier const schema_name{{"schm"s}};
+            std::vector<mdbsql::ast::identifier> const path_specification{
+                mdbsql::ast::identifier{{"schm1"s}},
+                mdbsql::ast::identifier{{"ctlg"s, "schm2"s}}};
 
             auto queries_with_path_specification = {
                 "CREATE SCHEMA schm PATH schm1, ctlg.schm2"sv,
@@ -220,11 +219,11 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
 
         SECTION("<schema definition> with character set and path specification")
         {
-            mdbsql::ast::identifier const schema_name {{"schm"s}};
-            mdbsql::ast::identifier const character_set {{"schm2"s, "chset"s}};
-            std::vector<mdbsql::ast::identifier> const path_specification {
-                mdbsql::ast::identifier {{"schm1"s}},
-                mdbsql::ast::identifier {{"ctlg"s, "schm2"s}}};
+            mdbsql::ast::identifier const schema_name{{"schm"s}};
+            mdbsql::ast::identifier const character_set{{"schm2"s, "chset"s}};
+            std::vector<mdbsql::ast::identifier> const path_specification{
+                mdbsql::ast::identifier{{"schm1"s}},
+                mdbsql::ast::identifier{{"ctlg"s, "schm2"s}}};
 
             auto const visitor = [&character_set, &path_specification](auto&& v)
             {
@@ -275,10 +274,10 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
 
         SECTION("<schema definition> with <table definition>")
         {
-            mdbsql::ast::identifier const schema_name {{"schm"s}};
-            mdbsql::ast::identifier const qualified_table_name {
+            mdbsql::ast::identifier const schema_name{{"schm"s}};
+            mdbsql::ast::identifier const qualified_table_name{
                 {"ctlg"s, "schm"s, "tbl"s}};
-            mdbsql::ast::identifier const unqualified_table_name {{"tbl"s}};
+            mdbsql::ast::identifier const unqualified_table_name{{"tbl"s}};
 
             auto queries_with_qualified_table_name = {
                 "CREATE SCHEMA schm CREATE TABLE ctlg.schm.tbl(col1 integer, col2 integer)"sv,
@@ -343,9 +342,9 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
 
         SECTION("Basic <table definition>")
         {
-            mdbsql::ast::identifier const qualified_table_name {
+            mdbsql::ast::identifier const qualified_table_name{
                 {"ctlg"s, "schm"s, "tbl"s}};
-            mdbsql::ast::identifier const unqualified_table_name {{"tbl"s}};
+            mdbsql::ast::identifier const unqualified_table_name{{"tbl"s}};
 
             auto queries_with_qualified_table_name = {
                 "CREATE TABLE ctlg.schm.tbl(col1 integer, col2 integer)"sv,

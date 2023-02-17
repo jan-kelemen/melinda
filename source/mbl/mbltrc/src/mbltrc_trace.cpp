@@ -272,8 +272,12 @@ namespace melinda::mbltrc
         {
             bool const regular_file =
                 std::filesystem::is_regular_file(entry.status());
-            bool const matches_stem = entry.path().filename().native().compare(
-                                          base_filename_.native()) > 0;
+
+            std::string const stem = base_filename_.native();
+            bool const matches_stem =
+                entry.path().filename().native().compare(0,
+                    std::clamp(stem.length(), size_t{0}, stem.size()),
+                    stem) == 0;
 
             if (regular_file && matches_stem)
             {

@@ -1439,7 +1439,7 @@ namespace
         { return dsl::list(dsl::p<identifier_part>, dsl::sep(dsl::period)); }();
 
         static constexpr auto value = lexy::fold_inplace<ast::identifier>(
-            ast::identifier {},
+            ast::identifier{},
             [](auto& rv, std::string i) { rv.parts.push_back(std::move(i)); });
     };
 
@@ -1536,7 +1536,7 @@ std::optional<melinda::mdbsql::ast::sql_executable_statement>
 melinda::mdbsql::parse(std::string_view statement)
 {
     lexy::range_input<lexy::utf8_char_encoding,
-        std::string_view::const_iterator> const range {std::cbegin(statement),
+        std::string_view::const_iterator> const range{std::cbegin(statement),
         std::cend(statement)};
 
     auto result =
