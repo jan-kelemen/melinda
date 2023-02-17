@@ -1,5 +1,0 @@
-﻿---
-Checks: 'bugprone-*,cppcoreguidelines-*,-cppcoreguidelines-avoid-magic-numbers,clang-analyzer-*,misc-*,modernize-*,-modernize-use-trailing-return-type,-modernize-use-auto,performance-*,portability-*,readability-*,-readability-redundant-access-specifiers,-readability-magic-numbers,-readability-convert-member-functions-to-static'
-HeaderFilterRegex: '*'
-FormatStyle: 'file'
-

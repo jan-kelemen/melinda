@@ -261,7 +261,7 @@ namespace melinda::mbltrc::detail
 #define MBLTRC_TRACE(f, l, level, handle, ...) \
     do \
     { \
-        std::string_view filename_b015cf7e_932f_4d99_822a_b863763c6e23 = \
+        std::string_view const filename_b015cf7e_932f_4d99_822a_b863763c6e23 = \
             melinda::mbltrc::detail::file_name_only(f); \
         if (melinda::mbltrc::detail::should_trace_message(handle, level)) \
         { \

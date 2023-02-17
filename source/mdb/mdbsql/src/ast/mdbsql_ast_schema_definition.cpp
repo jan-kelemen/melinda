@@ -9,16 +9,16 @@ std::string melinda::mdbsql::ast::to_string(
 {
     using namespace std::string_literals;
 
-    auto const ch_or_path_visitor = [](auto&& value)
+    auto const ch_or_path_visitor = [](auto&& v)
     {
-        using T = std::decay_t<decltype(value)>;
+        using T = std::decay_t<decltype(v)>;
         if constexpr (std::is_same_v<T, identifier>)
         {
-            return fmt::format("DEFAULT CHARACTER SET {}", value);
+            return fmt::format("DEFAULT CHARACTER SET {}", v);
         }
         else if constexpr (std::is_same_v<T, std::vector<identifier>>)
         {
-            return fmt::format("PATH {}", fmt::join(value, ", "));
+            return fmt::format("PATH {}", fmt::join(v, ", "));
         }
         else
         {

@@ -5,23 +5,33 @@ build_flatbuffers(
     "" # Schema include directories 
     "mdbnet_generate_fb" # Target name 
     "" # Additional dependencies
-    "${CMAKE_CURRENT_SOURCE_DIR}/include" # Generated includes directory
+    "${CMAKE_CURRENT_BINARY_DIR}/include" # Generated includes directory
     "" # Binary schema directory
     "" # Text schemas directory
 )
 
-
 set(TARGET_NAME mdbnet)
 
-add_library(${TARGET_NAME} SHARED 
-    src/mdbnet_client.cpp
-    src/mdbnet_internal.cpp
-    src/mdbnet_server.cpp
-    src/mdbnet_types.cpp
-    src/mdbnet_serialization.cpp
-    src/mdbnet_wire_generated.cpp
+add_library(${TARGET_NAME} SHARED)
+
+target_sources(${TARGET_NAME}
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/mdbnet_client.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/mdbnet_server.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/mdbnet_types.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/mdbnet_serialization.h
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbnet_internal.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbnet_client.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbnet_internal.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbnet_server.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbnet_types.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbnet_serialization.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbnet_wire_generated.cpp
 )
+
 add_dependencies(${TARGET_NAME} mdbnet_generate_fb clang-format)
+
 target_link_libraries(${TARGET_NAME}
     PUBLIC
         flatbuffers::flatbuffers
@@ -32,21 +42,32 @@ target_link_libraries(${TARGET_NAME}
         mbltrc
         project-options
 )
-target_include_directories(${TARGET_NAME} SYSTEM PUBLIC include)
 
-add_executable(${TARGET_NAME}_test
-    test/mdbnet_client.t.cpp
-    test/mdbnet_server.t.cpp
-    test/mdbnet_types.t.cpp
-    test/mdbnet_serialization.t.cpp
-    test/mdbnet_wire_generated.t.cpp
+target_include_directories(${TARGET_NAME} 
+    PUBLIC 
+        include
+    PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}/include
 )
-target_link_libraries(
-    ${TARGET_NAME}_test
+
+add_executable(${TARGET_NAME}_test)
+
+target_sources(${TARGET_NAME}_test
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/mdbnet_client.t.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/mdbnet_server.t.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/mdbnet_types.t.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/mdbnet_serialization.t.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/mdbnet_wire_generated.t.cpp
+)
+
+target_link_libraries(${TARGET_NAME}_test
     PRIVATE
         ${TARGET_NAME}
         Catch2::Catch2WithMain
         project-options
 )
+
 add_dependencies(${TARGET_NAME}_test clang-format)
+
 catch_discover_tests(${TARGET_NAME}_test)

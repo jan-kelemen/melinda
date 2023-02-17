@@ -25,7 +25,9 @@ TEST_CASE(
     {
         test_class(int trivial, std::string&& str)
             : trivial_(trivial)
-            , str_(std::move(str)) {};
+            , str_(std::move(str))
+        {
+        }
 
         int trivial_;
         std::string str_;
