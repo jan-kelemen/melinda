@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <vector>
 
+#include <boost/numeric/conversion/cast.hpp>
+
 #include <mblcxx_scope_exit.h>
 
 #include <mbltrc_trace.h>
@@ -84,7 +86,8 @@ int main()
 
                     for (std::size_t i = 0; i != query_result->length(); ++i)
                     {
-                        uint32_t const offset = (*query_result->offsets())[i];
+                        uint32_t const offset = (*query_result->offsets())
+                            [boost::numeric_cast<flatbuffers::uoffset_t>(i)];
                         MBLTRC_TRACE_INFO("Row {} value {}",
                             i,
                             (*query_result->raw_values())[offset]);

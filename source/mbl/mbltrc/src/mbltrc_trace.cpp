@@ -296,10 +296,10 @@ namespace melinda::mbltrc
         }
     }
 
-    trace_options::trace_options(std::filesystem::path trace_directory,
-        std::filesystem::path base_filename)
-        : trace_directory(std::move(trace_directory))
-        , base_filename(std::move(base_filename))
+    trace_options::trace_options(std::filesystem::path directory,
+        std::filesystem::path filename)
+        : trace_directory(std::move(directory))
+        , base_filename(std::move(filename))
     {
     }
 

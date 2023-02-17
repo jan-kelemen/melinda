@@ -16,7 +16,7 @@ namespace melinda::mblcxx
     public: // Construction
         on_scope_exit() = delete;
 
-        on_scope_exit(Action& action) noexcept : action(action) { }
+        on_scope_exit(Action& action) noexcept : action_(action) { }
 
         on_scope_exit(on_scope_exit const&) = delete;
 
@@ -28,10 +28,10 @@ namespace melinda::mblcxx
         on_scope_exit& operator=(on_scope_exit&&) noexcept = delete;
 
     public: // Destruction
-        ~on_scope_exit() { action(); }
+        ~on_scope_exit() { action_(); }
 
     private: // Data
-        Action& action;
+        Action& action_;
     };
 
 } // namespace melinda::mblcxx
@@ -40,8 +40,8 @@ namespace melinda::mblcxx
 #define MBLCXX_TOKEN_PASTE(x, y) MBLCXX_TOKEN_PASTEx(x, y)
 
 #define MBLCXX_ON_SCOPE_EXIT_INTERNAL1(lname, aname, ...) \
-    auto lname = [&]() { __VA_ARGS__; }; \
-    melinda::mblcxx::on_scope_exit<decltype(lname)> aname(lname);
+    auto const lname {[&]() { __VA_ARGS__; }}; \
+    melinda::mblcxx::on_scope_exit<decltype(lname)> const aname {lname};
 
 #define MBLCXX_ON_SCOPE_EXIT_INTERNAL2(ctr, ...) \
     MBLCXX_ON_SCOPE_EXIT_INTERNAL1( \

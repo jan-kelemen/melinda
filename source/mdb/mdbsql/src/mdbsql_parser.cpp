@@ -1495,9 +1495,10 @@ namespace
                 kw_default >> kw_character >> kw_set >> dsl::p<identifier>;
             auto path_spec = nrkw_path >> dsl::p<path_specification>;
 
-            return (kw_authorization >> dsl::nullopt + dsl::p<identifier_part> |
+            return (kw_authorization >>
+                           (dsl::nullopt + dsl::p<identifier_part>) |
                        dsl::else_ >>
-                           dsl::p<identifier> + dsl::opt(authorization)) +
+                           (dsl::p<identifier> + dsl::opt(authorization))) +
                 dsl::opt(character_set | path_spec) +
                 dsl::opt(character_set | path_spec) +
                 dsl::opt(kw_create >> dsl::p<table_definition>);
@@ -1548,4 +1549,4 @@ melinda::mdbsql::parse(std::string_view statement)
     }
 
     return {std::move(result).value()};
-};
+}

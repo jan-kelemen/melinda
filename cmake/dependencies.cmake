@@ -3,12 +3,12 @@ include(${PROJECT_SOURCE_DIR}/cmake/conan.cmake)
 # Conan and dependencies configuration
 conan_cmake_configure(
     REQUIRES
-        catch2/3.2.1
+        catch2/3.3.1
         fmt/9.1.0
         date/3.0.1
         boost/1.81.0
         cppzmq/4.9.0
-        flatbuffers/22.12.06
+        flatbuffers/23.1.21
         foonathan-lexy/2022.12.1
     OPTIONS
         zeromq:encryption=tweetnacl
@@ -46,6 +46,9 @@ conan_cmake_configure(
         boost:without_wave=True
     GENERATORS
         cmake_find_package
+    IMPORTS
+        "bin, *.dll -> ./bin"
+        "lib, *.so* -> ./lib"
 )
 
 conan_cmake_autodetect(settings)
@@ -61,3 +64,4 @@ find_package(Boost REQUIRED)
 find_package(cppzmq REQUIRED)
 find_package(flatbuffers REQUIRED)
 find_package(lexy REQUIRED)
+
