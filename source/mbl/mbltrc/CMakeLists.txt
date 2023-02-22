@@ -7,16 +7,18 @@ add_library(${TARGET_NAME} SHARED)
 target_sources(${TARGET_NAME}
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mbltrc_trace.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/mbltrc_trace_handle.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mbltrc_trace_level.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/mbltrc_trace_options.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mbltrc_timestamp.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/sinks/mbltrc_sink.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/sinks/mbltrc_sink_composite.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/sinks/mbltrc_stream_sink.h
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mbltrc_trace.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/mbltrc_trace_handle.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mbltrc_trace_level.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/mbltrc_trace_options.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mbltrc_timestamp.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/sinks/mbltrc_sink.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/sinks/mbltrc_sink_composite.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/sinks/mbltrc_stream_sink.cpp
 )
 
 target_link_libraries(${TARGET_NAME}
@@ -29,7 +31,7 @@ target_link_libraries(${TARGET_NAME}
 )
 add_dependencies(${TARGET_NAME} clang-format)
 
-target_include_directories(${TARGET_NAME} PUBLIC include)
+target_include_directories(${TARGET_NAME} PUBLIC include include/sinks)
 
 add_executable(${TARGET_NAME}_test)
 

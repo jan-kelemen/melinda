@@ -1,3 +1,6 @@
+#include "mbltrc_sink_composite.h"
+#include "mbltrc_stream_sink.h"
+#include "mbltrc_trace_level.h"
 #include <algorithm>
 #include <array>
 #include <iostream>
@@ -5,6 +8,8 @@
 
 #include <mblcxx_scope_exit.h>
 
+#include <mbltrc_sink_composite.h>
+#include <mbltrc_stream_sink.h>
 #include <mbltrc_trace.h>
 
 #include <mdbsql_engine.h>
@@ -23,13 +28,15 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-    melinda::mbltrc::trace_options trace_config(
-        std::filesystem::path(options->data_directory),
-        std::filesystem::path("server"));
-    trace_config.level = melinda::mbltrc::trace_level::info;
-
-    melinda::mbltrc::initialize_process_trace_handle(
-        melinda::mbltrc::create_trace_handle(trace_config));
+    std::shared_ptr<melinda::mbltrc::sink_composite> sink{
+        new melinda::mbltrc::sink_composite{
+            std::make_shared<melinda::mbltrc::stream_sink>(
+                melinda::mbltrc::trace_level::debug,
+                std::ref(std::cout)),
+            std::make_shared<melinda::mbltrc::stream_sink>(
+                melinda::mbltrc::trace_level::debug,
+                std::ref(std::cerr))}};
+    melinda::mbltrc::register_process_sink(sink);
 
     melinda::mdbsql::engine engine{options->data_directory};
 
