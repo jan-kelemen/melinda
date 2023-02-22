@@ -7,8 +7,16 @@ add_library(${TARGET_NAME} SHARED)
 target_sources(${TARGET_NAME}
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mbltrc_trace.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/mbltrc_trace_handle.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/mbltrc_trace_level.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/mbltrc_trace_options.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/mbltrc_timestamp.h
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mbltrc_trace.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/mbltrc_trace_handle.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/mbltrc_trace_level.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/mbltrc_trace_options.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/mbltrc_timestamp.cpp
 )
 
 target_link_libraries(${TARGET_NAME}
@@ -28,6 +36,7 @@ add_executable(${TARGET_NAME}_test)
 target_sources(${TARGET_NAME}_test
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/test/mbltrc_trace.t.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/mbltrc_timestamp.t.cpp
 )
 
 target_link_libraries(${TARGET_NAME}_test
