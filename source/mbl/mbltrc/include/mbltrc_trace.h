@@ -7,6 +7,7 @@
 #include <thread>
 #include <type_traits>
 
+#include <boost/predef.h>
 #include <fmt/format.h>
 
 #include <mbltrc_sink.h>
@@ -22,7 +23,15 @@ namespace melinda::mbltrc::detail
     [[nodiscard]] constexpr std::string_view file_name_only(
         std::string_view path)
     {
-        if (auto last_slash = path.find_last_of('/');
+#if BOOST_COMP_GNUC || BOOST_COMP_CLANG
+        char const separator{'/'};
+#elif BOOST_COMP_MSVC
+        char const separator{'\\'};
+#else
+#error "Unsupported compiler"
+#endif
+
+        if (auto last_slash = path.find_last_of(separator);
             last_slash != std::string_view::npos)
         {
             return path.substr(last_slash + 1);
@@ -37,20 +46,20 @@ namespace melinda::mbltrc::detail
         return fmt::format(fmt::runtime(format), std::forward<T>(args)...);
     }
 
-    [[nodiscard]] inline bool should_trace_message(sink const& sink,
+    [[nodiscard]] constexpr bool should_trace_message(sink const& sink,
         trace_level const level) noexcept
     {
         return sink.should_trace_message(level);
     }
 
     template<sink_ptr T>
-    [[nodiscard]] inline bool should_trace_message(T sink,
+    [[nodiscard]] constexpr bool should_trace_message(T sink,
         trace_level const level) noexcept
     {
         return sink && should_trace_message(*sink, level);
     }
 
-    inline void trace(sink const& sink,
+    constexpr void trace(sink const& sink,
         message_origin const& origin,
         timestamp const& time,
         trace_level level,
