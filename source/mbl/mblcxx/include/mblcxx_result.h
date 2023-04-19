@@ -17,9 +17,8 @@ namespace melinda::mblcxx::detail
     using either = std::variant<T1, T2>;
 
     template<typename Callable, typename... Args>
-    concept nothrow_invocable = std::invocable<Callable, Args...> &&
-        noexcept(
-            std::invoke(std::declval<Callable>(), std::declval<Args>()...));
+    concept nothrow_invocable = std::invocable<Callable, Args...>&& noexcept(
+        std::invoke(std::declval<Callable>(), std::declval<Args>()...));
 
     template<typename T>
     concept move_assignable = std::is_move_assignable_v<T>;

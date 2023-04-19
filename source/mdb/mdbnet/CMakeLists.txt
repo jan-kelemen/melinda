@@ -46,7 +46,6 @@ target_link_libraries(${TARGET_NAME}
 target_include_directories(${TARGET_NAME} 
     PUBLIC 
         include
-    PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}/include
 )
 

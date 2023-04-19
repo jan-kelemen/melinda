@@ -10,7 +10,7 @@ Melinda - Relational Database Management System
 
 #### Supported compilers:
 * GCC-12
-* Clang-15
+* Clang-16
 
 #### Steps:
 * Install required packages
