@@ -1,15 +1,12 @@
-#include "mbltrc_sink_composite.h"
-#include "mbltrc_stream_sink.h"
-#include "mbltrc_trace_level.h"
 #include <algorithm>
 #include <array>
 #include <iostream>
+#include <signal.h>
 #include <vector>
 
 #include <mblcxx_scope_exit.h>
 
-#include <mbltrc_sink_composite.h>
-#include <mbltrc_stream_sink.h>
+#include <mbltrc_memory_mapped_sink.h>
 #include <mbltrc_trace.h>
 
 #include <mdbsql_engine.h>
@@ -19,8 +16,20 @@
 
 #include <mdbsrv_options.h>
 
+bool run{true};
+
+void sighandler(int sig)
+{
+    MBLTRC_TRACE_INFO("Signal {} caught. Stopping execution", sig);
+    run = false;
+}
+
 int main(int argc, char** argv)
 {
+    signal(SIGABRT, &sighandler);
+    signal(SIGTERM, &sighandler);
+    signal(SIGINT, &sighandler);
+
     std::optional<melinda::mdbsrv::options> const options{
         melinda::mdbsrv::parse_options(argc, argv)};
     if (!options)
@@ -28,14 +37,12 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-    std::shared_ptr<melinda::mbltrc::sink_composite> sink{
-        new melinda::mbltrc::sink_composite{
-            std::make_shared<melinda::mbltrc::stream_sink>(
-                melinda::mbltrc::trace_level::debug,
-                std::ref(std::cout)),
-            std::make_shared<melinda::mbltrc::stream_sink>(
-                melinda::mbltrc::trace_level::debug,
-                std::ref(std::cerr))}};
+    std::shared_ptr<melinda::mbltrc::memory_mapped_sink> sink{
+        std::make_shared<melinda::mbltrc::memory_mapped_sink>(
+            melinda::mbltrc::trace_level::debug,
+            options->data_directory,
+            "mdbsrv",
+            10 * 1024 * 1024)};
     melinda::mbltrc::register_process_sink(sink);
 
     melinda::mdbsql::engine engine{options->data_directory};
@@ -54,7 +61,7 @@ int main(int argc, char** argv)
     zmq::socket_t& socket = bind_result.ok();
     MBLCXX_ON_SCOPE_EXIT(socket.unbind(address));
 
-    while (true)
+    while (run)
     {
         melinda::mdbnet::result<melinda::mdbnet::recv_response<
             melinda::mdbnet::client_message>> const recv_result =

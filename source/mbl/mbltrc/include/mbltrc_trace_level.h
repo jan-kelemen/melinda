@@ -50,7 +50,7 @@ struct fmt::formatter<melinda::mbltrc::trace_level>
             }
         }();
 
-        return format_to(ctx.out(), "[{}]", marker);
+        return format_to(ctx.out(), "{}", marker);
     }
 };
 

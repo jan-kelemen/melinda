@@ -3,11 +3,11 @@
 
 #include <concepts>
 #include <memory>
+#include <source_location>
 #include <string_view>
 #include <thread>
 #include <type_traits>
 
-#include <boost/predef.h>
 #include <fmt/format.h>
 
 #include <mbltrc_sink.h>
@@ -19,25 +19,6 @@ namespace melinda::mbltrc::detail
     template<typename T>
     concept sink_ptr = std::convertible_to<T, sink const*> ||
         std::convertible_to<decltype(*std::declval<T>()), sink&>;
-
-    [[nodiscard]] constexpr std::string_view file_name_only(
-        std::string_view path)
-    {
-#if BOOST_COMP_GNUC || BOOST_COMP_CLANG
-        char const separator{'/'};
-#elif BOOST_COMP_MSVC
-        char const separator{'\\'};
-#else
-#error "Unsupported compiler"
-#endif
-
-        if (auto last_slash = path.find_last_of(separator);
-            last_slash != std::string_view::npos)
-        {
-            return path.substr(last_slash + 1);
-        }
-        return path;
-    }
 
     template<typename... T>
     [[nodiscard]] constexpr std::string format_message(std::string_view format,
@@ -94,9 +75,8 @@ namespace melinda::mbltrc
                 melinda::mbltrc::current_timestamp()}; \
         melinda::mbltrc::message_origin const \
             origin_b015cf7e_932f_4d99_822a_b863763c6e23{ \
-                .thread_id = std::this_thread::get_id(), \
-                .file = melinda::mbltrc::detail::file_name_only(f), \
-                .line = l}; \
+                .source = std::source_location::current(), \
+                .thread_id = std::this_thread::get_id()}; \
         if (melinda::mbltrc::detail::should_trace_message(sink, level)) \
         { \
             melinda::mbltrc::detail::trace(sink, \
@@ -149,7 +129,9 @@ namespace melinda::mbltrc
         sink, \
         __VA_ARGS__)
 
-#define MBLTRC_TRACE_DEBUG(...) MBLTRC_TRACE_SINK_DEBUG(__VA_ARGS__)
+#define MBLTRC_TRACE_DEBUG(...) \
+    MBLTRC_TRACE_SINK_DEBUG(melinda::mbltrc::detail::process_sink(), \
+        __VA_ARGS__)
 
 #define MBLTRC_TRACE_INFO(...) \
     MBLTRC_TRACE_SINK_INFO(melinda::mbltrc::detail::process_sink(), __VA_ARGS__)

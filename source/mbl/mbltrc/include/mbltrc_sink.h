@@ -1,6 +1,7 @@
 #ifndef MELINDA_MBLTRC_TRACE_SINK_INCLUDED
 #define MELINDA_MBLTRC_TRACE_SINK_INCLUDED
 
+#include <source_location>
 #include <string_view>
 #include <thread>
 
@@ -9,11 +10,10 @@
 
 namespace melinda::mbltrc
 {
-    struct message_origin final
+    struct [[nodiscard]] message_origin final
     {
+        std::source_location source;
         std::thread::id thread_id;
-        std::string_view file;
-        uint_least32_t line;
     };
 
     class [[nodiscard]] sink
@@ -21,13 +21,16 @@ namespace melinda::mbltrc
     public: // Interface
         virtual void change_level(trace_level new_level) noexcept = 0;
 
+        [[nodiscard]] virtual bool should_trace_message(
+            trace_level level) const noexcept = 0;
+
         virtual void trace(message_origin const& origin,
             timestamp const& time,
             trace_level level,
             std::string_view message) const noexcept = 0;
 
     public: // Destruction
-        virtual ~sink() noexcept;
+        virtual ~sink() noexcept = default;
     };
 } // namespace melinda::mbltrc
 

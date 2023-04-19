@@ -1,6 +1,7 @@
 #include <array>
 #include <chrono>
 #include <iostream>
+#include <memory>
 #include <thread>
 #include <unistd.h>
 #include <vector>
@@ -9,8 +10,7 @@
 
 #include <mblcxx_scope_exit.h>
 
-#include <mbltrc_sink_composite.h>
-#include <mbltrc_stream_sink.h>
+#include <mbltrc_memory_mapped_sink.h>
 #include <mbltrc_trace.h>
 
 #include <mdbnet_client.h>
@@ -18,14 +18,13 @@
 
 int main()
 {
-    std::shared_ptr<melinda::mbltrc::sink_composite> sink{
-        new melinda::mbltrc::sink_composite{
-            std::make_shared<melinda::mbltrc::stream_sink>(
-                melinda::mbltrc::trace_level::debug,
-                std::ref(std::cout)),
-            std::make_shared<melinda::mbltrc::stream_sink>(
-                melinda::mbltrc::trace_level::debug,
-                std::ref(std::cerr))}};
+    std::shared_ptr<melinda::mbltrc::memory_mapped_sink> sink{
+        std::make_shared<melinda::mbltrc::memory_mapped_sink>(
+            melinda::mbltrc::trace_level::debug,
+            "../log",
+            "mclxmp",
+            10 * 1024 * 1024)};
+
     melinda::mbltrc::register_process_sink(sink);
 
     zmq::context_t ctx;
