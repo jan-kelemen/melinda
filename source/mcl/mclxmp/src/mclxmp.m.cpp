@@ -1,6 +1,7 @@
 #include <array>
 #include <chrono>
 #include <iostream>
+#include <memory>
 #include <thread>
 #include <unistd.h>
 #include <vector>
@@ -9,6 +10,7 @@
 
 #include <mblcxx_scope_exit.h>
 
+#include <mbltrc_memory_mapped_sink.h>
 #include <mbltrc_trace.h>
 
 #include <mdbnet_client.h>
@@ -16,12 +18,14 @@
 
 int main()
 {
-    melinda::mbltrc::trace_options trace_config(std::filesystem::path("../log"),
-        std::filesystem::path("example_client"));
-    trace_config.level = melinda::mbltrc::trace_level::info;
+    std::shared_ptr<melinda::mbltrc::memory_mapped_sink> sink{
+        std::make_shared<melinda::mbltrc::memory_mapped_sink>(
+            melinda::mbltrc::trace_level::debug,
+            "../log",
+            "mclxmp",
+            10 * 1024 * 1024)};
 
-    melinda::mbltrc::initialize_process_trace_handle(
-        melinda::mbltrc::create_trace_handle(trace_config));
+    melinda::mbltrc::register_process_sink(sink);
 
     zmq::context_t ctx;
     constexpr char const* const address = "tcp://localhost:22365";
