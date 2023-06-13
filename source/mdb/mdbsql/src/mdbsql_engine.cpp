@@ -62,17 +62,15 @@ bool melinda::mdbsql::engine::execute(std::string_view query)
         }
     };
 
-    std::optional<ast::sql_executable_statement> const statement{parse(query)};
-    if (!statement.has_value())
+    if (parse_result const statement{parse(query)})
     {
-        return false;
+        if (!std::visit(sql_executable_statement_visitor, statement.ok()))
+        {
+            MBLTRC_TRACE_ERROR("Execution of statement '{}' failed.",
+                statement.ok());
+            return false;
+        }
+        return true;
     }
-
-    if (!std::visit(sql_executable_statement_visitor, *statement))
-    {
-        MBLTRC_TRACE_ERROR("Execution of statement '{}' failed", *statement);
-        return false;
-    }
-
-    return true;
+    return false;
 }

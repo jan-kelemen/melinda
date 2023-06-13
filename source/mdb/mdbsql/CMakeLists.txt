@@ -41,7 +41,6 @@ target_link_libraries(${TARGET_NAME}
     PRIVATE
         foonathan::lexy_core
         foonathan::lexy_unicode
-        foonathan::lexy_ext
         project-options
 )
 

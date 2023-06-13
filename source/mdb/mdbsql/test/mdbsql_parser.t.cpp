@@ -35,7 +35,7 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 if (auto const result = mdbsql::parse(query); result)
                 {
                     auto const& schema_definition =
-                        as_schema_definition(*result);
+                        as_schema_definition(result.ok());
                     REQUIRE(schema_definition.schema_name ==
                         unqualified_schema_name);
                     REQUIRE_FALSE(schema_definition.authorization);
@@ -57,7 +57,7 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 if (auto const result = mdbsql::parse(query); result)
                 {
                     auto const& schema_definition =
-                        as_schema_definition(*result);
+                        as_schema_definition(result.ok());
                     REQUIRE(
                         schema_definition.schema_name == qualified_schema_name);
                     REQUIRE_FALSE(schema_definition.authorization);
@@ -86,7 +86,7 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 if (auto const result = mdbsql::parse(query); result)
                 {
                     auto const& schema_definition =
-                        as_schema_definition(*result);
+                        as_schema_definition(result.ok());
                     REQUIRE(schema_definition.schema_name == schema_name);
                     REQUIRE(schema_definition.authorization == authorization);
                     REQUIRE_FALSE(schema_definition.character_set_or_path1);
@@ -108,7 +108,7 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 if (auto const result = mdbsql::parse(query); result)
                 {
                     auto const& schema_definition =
-                        as_schema_definition(*result);
+                        as_schema_definition(result.ok());
                     REQUIRE_FALSE(schema_definition.schema_name);
                     REQUIRE(schema_definition.authorization);
                     REQUIRE(schema_definition.authorization == authorization);
@@ -139,7 +139,7 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 if (auto const result = mdbsql::parse(query); result)
                 {
                     auto const& schema_definition =
-                        as_schema_definition(*result);
+                        as_schema_definition(result.ok());
                     REQUIRE(schema_definition.schema_name == schema_name);
                     REQUIRE_FALSE(schema_definition.authorization);
                     REQUIRE(schema_definition.character_set_or_path1);
@@ -164,7 +164,7 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 if (auto const result = mdbsql::parse(query); result)
                 {
                     auto const& schema_definition =
-                        as_schema_definition(*result);
+                        as_schema_definition(result.ok());
                     REQUIRE(schema_definition.schema_name == schema_name);
                     REQUIRE_FALSE(schema_definition.authorization);
                     REQUIRE(schema_definition.character_set_or_path1);
@@ -197,7 +197,7 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 if (auto const result = mdbsql::parse(query); result)
                 {
                     auto const& schema_definition =
-                        as_schema_definition(*result);
+                        as_schema_definition(result.ok());
                     REQUIRE(schema_definition.schema_name == schema_name);
                     REQUIRE_FALSE(schema_definition.authorization);
                     REQUIRE(schema_definition.character_set_or_path1);
@@ -255,7 +255,7 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 if (auto const result = mdbsql::parse(query); result)
                 {
                     auto const& schema_definition =
-                        as_schema_definition(*result);
+                        as_schema_definition(result.ok());
                     REQUIRE(schema_definition.schema_name == schema_name);
                     REQUIRE_FALSE(schema_definition.authorization);
                     REQUIRE(schema_definition.character_set_or_path1);
@@ -288,7 +288,7 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 if (auto const result = mdbsql::parse(query); result)
                 {
                     auto const& schema_definition =
-                        as_schema_definition(*result);
+                        as_schema_definition(result.ok());
                     REQUIRE(schema_definition.schema_name == schema_name);
                     REQUIRE_FALSE(schema_definition.authorization);
                     REQUIRE_FALSE(schema_definition.character_set_or_path1);
@@ -313,7 +313,7 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
                 if (auto const result = mdbsql::parse(query); result)
                 {
                     auto const& schema_definition =
-                        as_schema_definition(*result);
+                        as_schema_definition(result.ok());
                     REQUIRE(schema_definition.schema_name == schema_name);
                     REQUIRE_FALSE(schema_definition.authorization);
                     REQUIRE_FALSE(schema_definition.character_set_or_path1);
@@ -354,7 +354,8 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
             {
                 if (auto const result = mdbsql::parse(query); result)
                 {
-                    auto const& table_definition = as_table_definition(*result);
+                    auto const& table_definition =
+                        as_table_definition(result.ok());
                     REQUIRE(table_definition.name == qualified_table_name);
                 }
                 else
@@ -371,7 +372,8 @@ TEST_CASE("<SQL executable statement>", "[sql-grammar]")
             {
                 if (auto const result = mdbsql::parse(query); result)
                 {
-                    auto const& table_definition = as_table_definition(*result);
+                    auto const& table_definition =
+                        as_table_definition(result.ok());
                     REQUIRE(table_definition.name == unqualified_table_name);
                 }
                 else

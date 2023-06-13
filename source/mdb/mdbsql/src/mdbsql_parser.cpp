@@ -9,9 +9,7 @@
 #include <lexy/callback.hpp>
 #include <lexy/dsl.hpp>
 #include <lexy/encoding.hpp>
-#include <lexy/input/range_input.hpp>
-
-#include <lexy_ext/report_error.hpp>
+#include <lexy/input/string_input.hpp>
 
 #include <mbltrc_trace.h>
 
@@ -1526,27 +1524,122 @@ namespace
     struct sql_executable_statement
     {
         static constexpr auto whitespace = separator;
-        static constexpr auto rule = dsl::p<sql_schema_statement>;
+        static constexpr auto rule = dsl::p<sql_schema_statement> + dsl::eof;
         static constexpr auto value =
             lexy::construct<ast::sql_executable_statement>;
     };
 } // namespace
 
-std::optional<melinda::mdbsql::ast::sql_executable_statement>
-melinda::mdbsql::parse(std::string_view statement)
+namespace
 {
-    lexy::range_input<lexy::utf8_char_encoding,
-        std::string_view::const_iterator> const range{std::cbegin(statement),
-        std::cend(statement)};
-
-    auto result =
-        lexy::parse<sql_executable_statement>(range, lexy_ext::report_error);
-    if (!result || !result.has_value())
+    struct error_callback
     {
-        lexy::trace<sql_executable_statement>(stdout, range);
-        MBLTRC_TRACE_ERROR("Parsing of statement '{}' failed", statement);
-        return std::nullopt;
-    }
+        using return_type = melinda::mdbsql::parse_error_detail;
 
-    return {std::move(result).value()};
+        template<typename Input, typename Tag>
+        melinda::mdbsql::parse_error_detail operator()(
+            lexy::error_context<Input> const& context,
+            lexy::error_for<Input, Tag> const& error)
+        {
+            lexy::input_location const context_location{
+                lexy::get_input_location(context.input(), context.position())};
+            lexy::input_location const location{
+                lexy::get_input_location(context.input(),
+                    error.position(),
+                    context_location.anchor())};
+
+            std::size_t const line_number{location.line_nr() - 1};
+            std::size_t const column_number{location.column_nr() - 1};
+
+            if constexpr (std::is_same_v<Tag, lexy::expected_literal>)
+            {
+                return {line_number,
+                    column_number,
+                    context.production(),
+                    melinda::mdbsql::parse_error_kind::expected_literal};
+            }
+            else if constexpr (std::is_same_v<Tag, lexy::expected_keyword>)
+            {
+                return {line_number,
+                    column_number,
+                    context.production(),
+                    melinda::mdbsql::parse_error_kind::expected_keyword};
+            }
+            else if constexpr (std::is_same_v<Tag, lexy::expected_char_class>)
+            {
+                return {line_number,
+                    column_number,
+                    context.production(),
+                    melinda::mdbsql::parse_error_kind::expected_char_class};
+            }
+            else
+            {
+                return {line_number,
+                    column_number,
+                    context.production(),
+                    melinda::mdbsql::parse_error_kind::generic};
+            }
+        }
+    };
+} // namespace
+
+template<>
+struct fmt::formatter<melinda::mdbsql::parse_error_detail>
+{
+    constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
+
+    template<typename FormatContext>
+    auto format(melinda::mdbsql::parse_error_detail const& value,
+        FormatContext& ctx) const
+    {
+        return format_to(ctx.out(),
+            "Line number: {}, Column number: {}, Production: {}, Reason: {}",
+            value.line_number,
+            value.column_number,
+            value.production,
+            static_cast<uint8_t>(value.kind));
+    }
+};
+
+template<>
+struct fmt::formatter<melinda::mdbsql::parse_error>
+{
+    constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
+
+    template<typename FormatContext>
+    auto format(melinda::mdbsql::parse_error const& value,
+        FormatContext& ctx) const
+    {
+        if (!value.details.empty())
+        {
+            return format_to(ctx.out(),
+                "Number of errors {}. Details:\n{}",
+                value.details.size(),
+                fmt::join(value.details, "\n\t"));
+        }
+        else
+        {
+            return format_to(ctx.out(), "No errors reported.");
+        }
+    }
+};
+
+melinda::mdbsql::parse_result melinda::mdbsql::parse(std::string_view statement)
+{
+    lexy::string_input<lexy::utf8_char_encoding> const range{statement};
+
+    if (auto result{lexy::parse<sql_executable_statement>(range,
+            lexy::collect<std::vector<parse_error_detail>>(error_callback{}))};
+        result.has_value())
+    {
+        return {std::in_place_index<0>, std::move(result).value()};
+    }
+    else
+    {
+        parse_error error{std::move(result).errors()};
+        MBLTRC_TRACE_ERROR("Parsing of statement '{}' failed. {}",
+            statement,
+            error);
+        return {std::in_place_index<1>, std::move(error)};
+    }
 }
