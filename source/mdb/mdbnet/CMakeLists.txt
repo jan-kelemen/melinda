@@ -35,10 +35,10 @@ add_dependencies(${TARGET_NAME} mdbnet_generate_fb clang-format)
 target_link_libraries(${TARGET_NAME}
     PUBLIC
         flatbuffers::flatbuffers
-        cppzmq::cppzmq
+        cppzmq
         mblcxx
     PRIVATE
-        Boost::Boost
+        boost::boost
         mbltrc
         project-options
 )

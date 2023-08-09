@@ -17,9 +17,19 @@ set(CMAKE_SKIP_BUILD_RPATH FALSE)
 set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 set(CMAKE_INSTALL_RPATH $ORIGIN $ORIGIN/../lib)
 
+get_cmake_property(_variableNames VARIABLES)
+foreach (_variableName ${_variableNames})
+    message("${_variableName}=${${_variableName}}")
+endforeach()
+
 include(${PROJECT_SOURCE_DIR}/cmake/clang-format.cmake)
 
 include(${PROJECT_SOURCE_DIR}/cmake/dependencies.cmake)
+
+get_cmake_property(_variableNames VARIABLES)
+foreach (_variableName ${_variableNames})
+    message("${_variableName}=${${_variableName}}")
+endforeach()
 
 include(${PROJECT_SOURCE_DIR}/cmake/project-options.cmake)
 

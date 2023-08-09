@@ -19,7 +19,7 @@ target_include_directories(${TARGET_NAME} PRIVATE include)
 target_link_libraries(${TARGET_NAME}
     PRIVATE
         Boost::program_options
-        cppzmq::cppzmq
+        cppzmq
         mblcxx
         mbltrc
         mdbnet

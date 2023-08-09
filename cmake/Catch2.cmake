@@ -1,2 +1,2 @@
-include(${catch2_LIB_DIRS}/cmake/Catch2/Catch.cmake)
+include(${catch2_LIB_DIRS_RELEASE}/cmake/Catch2/Catch.cmake)
 

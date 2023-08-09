@@ -11,7 +11,7 @@ add_dependencies(${TARGET_NAME} clang-format)
 
 target_link_libraries(${TARGET_NAME}
     PRIVATE
-        Boost::Boost
+        Boost::boost
         mblcxx
         mbltrc
         mdbnet

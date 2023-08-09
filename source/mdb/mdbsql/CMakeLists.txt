@@ -39,8 +39,9 @@ target_link_libraries(${TARGET_NAME}
         mblcxx
         mbltrc
     PRIVATE
-        foonathan::lexy_core
-        foonathan::lexy_unicode
+        foonathan::lexy::lexy_core
+        lexy::lexy_unicode
+        lexy::lexy_ext
         project-options
 )
 
