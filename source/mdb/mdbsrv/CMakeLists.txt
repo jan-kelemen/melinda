@@ -1,6 +1,7 @@
-include(${PROJECT_SOURCE_DIR}/cmake/Catch2.cmake)
-
 set(TARGET_NAME mdbsrv)
+
+find_package(Boost REQUIRED)
+find_package(cppzmq REQUIRED)
 
 add_executable(${TARGET_NAME})
 
@@ -19,7 +20,7 @@ target_include_directories(${TARGET_NAME} PRIVATE include)
 target_link_libraries(${TARGET_NAME}
     PRIVATE
         Boost::program_options
-        cppzmq::cppzmq
+        cppzmq
         mblcxx
         mbltrc
         mdbnet

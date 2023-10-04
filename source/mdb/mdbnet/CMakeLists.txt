@@ -1,4 +1,8 @@
-include(${PROJECT_SOURCE_DIR}/cmake/Catch2.cmake)
+set(TARGET_NAME mdbnet)
+
+find_package(flatbuffers CONFIG REQUIRED)
+find_package(cppzmq REQUIRED)
+find_package(Boost REQUIRED)
 
 build_flatbuffers(
     "mdbnet_wire.fbs" # Schema files
@@ -9,8 +13,6 @@ build_flatbuffers(
     "" # Binary schema directory
     "" # Text schemas directory
 )
-
-set(TARGET_NAME mdbnet)
 
 add_library(${TARGET_NAME} SHARED)
 
@@ -35,10 +37,10 @@ add_dependencies(${TARGET_NAME} mdbnet_generate_fb clang-format)
 target_link_libraries(${TARGET_NAME}
     PUBLIC
         flatbuffers::flatbuffers
-        cppzmq::cppzmq
+        cppzmq
         mblcxx
     PRIVATE
-        Boost::Boost
+        Boost::headers
         mbltrc
         project-options
 )
@@ -69,4 +71,5 @@ target_link_libraries(${TARGET_NAME}_test
 
 add_dependencies(${TARGET_NAME}_test clang-format)
 
+include(Catch)
 catch_discover_tests(${TARGET_NAME}_test)

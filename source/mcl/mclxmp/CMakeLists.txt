@@ -1,5 +1,7 @@
 set(TARGET_NAME mclxmp)
 
+find_package(Boost REQUIRED)
+
 add_executable(${TARGET_NAME})
 
 target_sources(${TARGET_NAME}
@@ -11,7 +13,7 @@ add_dependencies(${TARGET_NAME} clang-format)
 
 target_link_libraries(${TARGET_NAME}
     PRIVATE
-        Boost::Boost
+        Boost::headers
         mblcxx
         mbltrc
         mdbnet

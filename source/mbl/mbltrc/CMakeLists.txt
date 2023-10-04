@@ -1,5 +1,3 @@
-include(${PROJECT_SOURCE_DIR}/cmake/Catch2.cmake)
-
 set(TARGET_NAME mbltrc)
 
 add_library(${TARGET_NAME} SHARED)
@@ -25,6 +23,7 @@ target_link_libraries(${TARGET_NAME}
     PRIVATE
         mblcxx
         Boost::iostreams
+        Boost::headers
         date::date
         project-options
 )
@@ -51,5 +50,6 @@ target_link_libraries(${TARGET_NAME}_test
 )
 add_dependencies(${TARGET_NAME}_test clang-format)
 
+include(Catch)
 catch_discover_tests(${TARGET_NAME}_test)
 

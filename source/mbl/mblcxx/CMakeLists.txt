@@ -1,5 +1,3 @@
-include(${PROJECT_SOURCE_DIR}/cmake/Catch2.cmake)
-
 set(TARGET_NAME mblcxx)
 
 add_library(${TARGET_NAME} STATIC)
@@ -51,5 +49,6 @@ target_link_libraries(${TARGET_NAME}_test
 
 add_dependencies(${TARGET_NAME}_test clang-format)
 
+include(Catch)
 catch_discover_tests(${TARGET_NAME}_test)
 

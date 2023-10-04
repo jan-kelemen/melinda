@@ -3,22 +3,27 @@ Melinda - Relational Database Management System
 
 # Develpment environment setup
 #### Required packages:
-* python3
-* python3-pip
-* python3-setuptools
 * cmake
 
+#### Required third party dependencies
+* See cmake/dependencies.cmake for up to date information
+```
+find_package(Catch2 REQUIRED)
+find_package(fmt REQUIRED)
+find_package(date REQUIRED)
+find_package(Boost REQUIRED COMPONENTS iostreams program_options)
+find_package(cppzmq REQUIRED)
+find_package(flatbuffers REQUIRED)
+find_package(lexy REQUIRED)
+```
+
 #### Supported compilers:
-* GCC-12
+* GCC-13
 * Clang-16
 
-#### Steps:
-* Install required packages
-* Install conan, https://docs.conan.io/en/latest/installation.html
-
-# Building
-* Run scripts/build.sh
-  * Script supports optional configuration parameter (-c) with options Debug, RelWithDebInfo, Release
+# Building with vcpkg
+* cmake -B [build directory] -S . -DCMAKE\_TOOLCHAIN\_FILE=[path to vcpkg]/scripts/buildsystems/vcpkg.cmake -DCMAKE\_BUILD\_TYPE=Release
+* cmake --build [build directory] -j16
 
 # Testing
 * Run scripts/test.sh

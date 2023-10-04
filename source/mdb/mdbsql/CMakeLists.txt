@@ -1,6 +1,7 @@
-include(${PROJECT_SOURCE_DIR}/cmake/Catch2.cmake)
-
 set(TARGET_NAME mdbsql)
+
+find_package(lexy REQUIRED)
+find_package(fmt REQUIRED)
 
 add_library(${TARGET_NAME})
 
@@ -39,8 +40,7 @@ target_link_libraries(${TARGET_NAME}
         mblcxx
         mbltrc
     PRIVATE
-        foonathan::lexy_core
-        foonathan::lexy_unicode
+        foonathan::lexy
         project-options
 )
 
@@ -81,5 +81,6 @@ target_include_directories(${TARGET_NAME}_test
 
 add_dependencies(${TARGET_NAME}_test clang-format)
 
+include(Catch)
 catch_discover_tests(${TARGET_NAME}_test)
 

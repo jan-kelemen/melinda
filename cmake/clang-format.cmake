@@ -1,6 +1,6 @@
 # https://arcanis.me/en/2015/10/17/cppcheck-and-clang-format
 
-file(GLOB_RECURSE ALL_SOURCE_FILES *.cpp *.h)
+file(GLOB_RECURSE ALL_SOURCE_FILES source/*.cpp source/*.h)
     
 add_custom_target(clang-format 
         COMMAND 
