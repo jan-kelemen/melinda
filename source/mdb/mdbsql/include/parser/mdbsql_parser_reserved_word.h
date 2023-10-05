@@ -2,40 +2,48 @@
 #define MELINDA_MDBSQL_PARSER_RESERVED_WORD_INCLUDED
 
 #include <lexy/dsl/ascii.hpp>
-#include <lexy/dsl/identifier.hpp>
 #include <lexy/dsl/case_folding.hpp>
+#include <lexy/dsl/identifier.hpp>
 
 namespace melinda::mdbsql::parser
 {
     constexpr auto kw = lexy::dsl::identifier(lexy::dsl::ascii::alpha,
         lexy::dsl::ascii::alpha_underscore / LEXY_LIT("-"));
 
-    constexpr auto kw_abs = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"abs", kw));
-    constexpr auto kw_all = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"all", kw));
+    constexpr auto kw_abs =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"abs", kw));
+    constexpr auto kw_all =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"all", kw));
     constexpr auto kw_allocate =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"allocate", kw));
     constexpr auto kw_alter =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"alter", kw));
-    constexpr auto kw_and = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"and", kw));
-    constexpr auto kw_any = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"any", kw));
-    constexpr auto kw_are = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"are", kw));
+    constexpr auto kw_and =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"and", kw));
+    constexpr auto kw_any =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"any", kw));
+    constexpr auto kw_are =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"are", kw));
     constexpr auto kw_array =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"array", kw));
     constexpr auto kw_array_agg =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"array_agg", kw));
-    constexpr auto kw_array_max_cardinality =
-        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"array_max_cardinality", kw));
-    constexpr auto kw_as = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"as", kw));
+    constexpr auto kw_array_max_cardinality = lexy::dsl::ascii::case_folding(
+        LEXY_KEYWORD(u8"array_max_cardinality", kw));
+    constexpr auto kw_as =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"as", kw));
     constexpr auto kw_asensitive =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"asensitive", kw));
     constexpr auto kw_asymmetric =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"asymmetric", kw));
-    constexpr auto kw_at = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"at", kw));
+    constexpr auto kw_at =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"at", kw));
     constexpr auto kw_atomic =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"atomic", kw));
     constexpr auto kw_authorization =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"authorization", kw));
-    constexpr auto kw_avg = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"avg", kw));
+    constexpr auto kw_avg =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"avg", kw));
     constexpr auto kw_begin =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"begin", kw));
     constexpr auto kw_begin_frame =
@@ -54,7 +62,8 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"boolean", kw));
     constexpr auto kw_both =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"both", kw));
-    constexpr auto kw_by = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"by", kw));
+    constexpr auto kw_by =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"by", kw));
     constexpr auto kw_call =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"call", kw));
     constexpr auto kw_called =
@@ -155,10 +164,12 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"cycle", kw));
     constexpr auto kw_date =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"date", kw));
-    constexpr auto kw_day = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"day", kw));
+    constexpr auto kw_day =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"day", kw));
     constexpr auto kw_deallocate =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"deallocate", kw));
-    constexpr auto kw_dec = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"dec", kw));
+    constexpr auto kw_dec =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"dec", kw));
     constexpr auto kw_decimal =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"decimal", kw));
     constexpr auto kw_declare =
@@ -191,7 +202,8 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"element", kw));
     constexpr auto kw_else =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"else", kw));
-    constexpr auto kw_end = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"end", kw));
+    constexpr auto kw_end =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"end", kw));
     constexpr auto kw_end_exec =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"end-exec", kw));
     constexpr auto kw_end_frame =
@@ -212,7 +224,8 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"execute", kw));
     constexpr auto kw_exists =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"exists", kw));
-    constexpr auto kw_exp = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"exp", kw));
+    constexpr auto kw_exp =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"exp", kw));
     constexpr auto kw_external =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"external", kw));
     constexpr auto kw_extract =
@@ -229,7 +242,8 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"float", kw));
     constexpr auto kw_floor =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"floor", kw));
-    constexpr auto kw_for = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"for", kw));
+    constexpr auto kw_for =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"for", kw));
     constexpr auto kw_foreign =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"foreign", kw));
     constexpr auto kw_frame_row =
@@ -244,7 +258,8 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"function", kw));
     constexpr auto kw_fusion =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"fusion", kw));
-    constexpr auto kw_get = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"get", kw));
+    constexpr auto kw_get =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"get", kw));
     constexpr auto kw_global =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"global", kw));
     constexpr auto kw_grant =
@@ -263,7 +278,8 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"hour", kw));
     constexpr auto kw_identity =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"identity", kw));
-    constexpr auto kw_in = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"in", kw));
+    constexpr auto kw_in =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"in", kw));
     constexpr auto kw_indicator =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"indicator", kw));
     constexpr auto kw_inner =
@@ -274,7 +290,8 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"insensitive", kw));
     constexpr auto kw_insert =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"insert", kw));
-    constexpr auto kw_int = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"int", kw));
+    constexpr auto kw_int =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"int", kw));
     constexpr auto kw_integer =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"integer", kw));
     constexpr auto kw_intersect =
@@ -285,10 +302,12 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"interval", kw));
     constexpr auto kw_into =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"into", kw));
-    constexpr auto kw_is = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"is", kw));
+    constexpr auto kw_is =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"is", kw));
     constexpr auto kw_join =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"join", kw));
-    constexpr auto kw_lag = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"lag", kw));
+    constexpr auto kw_lag =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"lag", kw));
     constexpr auto kw_language =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"language", kw));
     constexpr auto kw_large =
@@ -307,7 +326,8 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"like", kw));
     constexpr auto kw_like_regex =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"like_regex", kw));
-    constexpr auto kw_ln = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"ln", kw));
+    constexpr auto kw_ln =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"ln", kw));
     constexpr auto kw_local =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"local", kw));
     constexpr auto kw_localtime =
@@ -318,17 +338,20 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"lower", kw));
     constexpr auto kw_match =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"match", kw));
-    constexpr auto kw_max = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"max", kw));
+    constexpr auto kw_max =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"max", kw));
     constexpr auto kw_member =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"member", kw));
     constexpr auto kw_merge =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"merge", kw));
     constexpr auto kw_method =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"method", kw));
-    constexpr auto kw_min = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"min", kw));
+    constexpr auto kw_min =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"min", kw));
     constexpr auto kw_minute =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"minute", kw));
-    constexpr auto kw_mod = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"mod", kw));
+    constexpr auto kw_mod =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"mod", kw));
     constexpr auto kw_modifies =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"modifies", kw));
     constexpr auto kw_module =
@@ -345,13 +368,16 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"nchar", kw));
     constexpr auto kw_nclob =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"nclob", kw));
-    constexpr auto kw_new = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"new", kw));
-    constexpr auto kw_no = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"no", kw));
+    constexpr auto kw_new =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"new", kw));
+    constexpr auto kw_no =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"no", kw));
     constexpr auto kw_none =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"none", kw));
     constexpr auto kw_normalize =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"normalize", kw));
-    constexpr auto kw_not = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"not", kw));
+    constexpr auto kw_not =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"not", kw));
     constexpr auto kw_nth_value =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"nth_value", kw));
     constexpr auto kw_ntile =
@@ -366,19 +392,24 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"occurrences_regex", kw));
     constexpr auto kw_octet_length =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"octet_length", kw));
-    constexpr auto kw_of = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"of", kw));
+    constexpr auto kw_of =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"of", kw));
     constexpr auto kw_offset =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"offset", kw));
-    constexpr auto kw_old = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"old", kw));
-    constexpr auto kw_on = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"on", kw));
+    constexpr auto kw_old =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"old", kw));
+    constexpr auto kw_on =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"on", kw));
     constexpr auto kw_only =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"only", kw));
     constexpr auto kw_open =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"open", kw));
-    constexpr auto kw_or = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"or", kw));
+    constexpr auto kw_or =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"or", kw));
     constexpr auto kw_order =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"order", kw));
-    constexpr auto kw_out = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"out", kw));
+    constexpr auto kw_out =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"out", kw));
     constexpr auto kw_outer =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"outer", kw));
     constexpr auto kw_over =
@@ -429,7 +460,8 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"real", kw));
     constexpr auto kw_recursive =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"recursive", kw));
-    constexpr auto kw_ref = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"ref", kw));
+    constexpr auto kw_ref =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"ref", kw));
     constexpr auto kw_references =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"references", kw));
     constexpr auto kw_referencing =
@@ -468,7 +500,8 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"rollback", kw));
     constexpr auto kw_rollup =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"rollup", kw));
-    constexpr auto kw_row = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"row", kw));
+    constexpr auto kw_row =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"row", kw));
     constexpr auto kw_rows =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"rows", kw));
     constexpr auto kw_row_number =
@@ -489,7 +522,8 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"sensitive", kw));
     constexpr auto kw_session_user =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"session_user", kw));
-    constexpr auto kw_set = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"set", kw));
+    constexpr auto kw_set =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"set", kw));
     constexpr auto kw_similar =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"similar", kw));
     constexpr auto kw_smallint =
@@ -500,7 +534,8 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"specific", kw));
     constexpr auto kw_specifictype =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"specifictype", kw));
-    constexpr auto kw_sql = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"sql", kw));
+    constexpr auto kw_sql =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"sql", kw));
     constexpr auto kw_sqlexception =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"sqlexception", kw));
     constexpr auto kw_sqlstate =
@@ -525,7 +560,8 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"substring_regex", kw));
     constexpr auto kw_succeeds =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"succeeds", kw));
-    constexpr auto kw_sum = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"sum", kw));
+    constexpr auto kw_sum =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"sum", kw));
     constexpr auto kw_symmetric =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"symmetric", kw));
     constexpr auto kw_system =
@@ -548,7 +584,8 @@ namespace melinda::mdbsql::parser
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"timezone_hour", kw));
     constexpr auto kw_timezone_minute =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"timezone_minute", kw));
-    constexpr auto kw_to = lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"to", kw));
+    constexpr auto kw_to =
+        lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"to", kw));
     constexpr auto kw_trailing =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"trailing", kw));
     constexpr auto kw_translate =
@@ -949,5 +986,5 @@ namespace melinda::mdbsql::parser
         kw_within,
         kw_without,
         kw_year);
-}
+} // namespace melinda::mdbsql::parser
 #endif

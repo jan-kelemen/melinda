@@ -1,5 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <fmt/core.h>
+
 #include <lexy/action/parse.hpp>
 #include <lexy/action/trace.hpp>
 #include <lexy/action/validate.hpp>
@@ -9,8 +11,8 @@
 #include <mblcxx_result.h>
 
 #include <mdbsql_ast_regular_identifier.h>
+#include <mdbsql_parser_delimited_identifier.h>
 #include <mdbsql_parser_parse_error.h>
-#include <mdbsql_parser_regular_identifier.h>
 
 using namespace melinda;
 
@@ -21,7 +23,7 @@ namespace
     {
         lexy::string_input<lexy::utf8_char_encoding> const range{value};
 
-        if (auto result{lexy::parse<mdbsql::parser::regular_identifier>(range,
+        if (auto result{lexy::parse<mdbsql::parser::delimited_identifier>(range,
                 lexy::collect<std::vector<mdbsql::parser::parse_error_detail>>(
                     mdbsql::parser::error_callback{}))};
             result.has_value() && result.is_success())
@@ -36,153 +38,16 @@ namespace
     }
 } // namespace
 
-TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
+TEST_CASE("<delimited identifer> escapes double quote symbol")
 {
     using namespace std::string_view_literals;
 
-    SECTION("<identifier start> includes Uppercase Letter character class")
-    {
-        auto uppercase_identifiers = {"A"sv, "Σ"sv};
-        for (auto&& id : uppercase_identifiers)
-        {
-            auto result = parse(id);
-
-            REQUIRE(result);
-            REQUIRE(result.ok().body == id);
-        }
-    }
-
-    SECTION("<identifier start> includes Lowercase Letter character class")
-    {
-        auto lowercase_identifiers = {"a"sv, "ȹ"sv};
-        for (auto&& id : lowercase_identifiers)
-        {
-            auto result = parse(id);
-
-            REQUIRE(result);
-            REQUIRE(result.ok().body == id);
-        }
-    }
-
-    SECTION("<identifier start> includes Titlecase Letter character class")
-    {
-        auto titlecase_identifiers = {"ῼ"sv, "ǈ"sv};
-        for (auto&& id : titlecase_identifiers)
-        {
-            auto result = parse(id);
-
-            REQUIRE(result);
-            REQUIRE(result.ok().body == id);
-        }
-    }
-
-    SECTION("<identifier start> includes Modifier Letter character class")
-    {
-        auto titlecase_identifiers = {"ᵝ"sv, "ꟹ"sv};
-        for (auto&& id : titlecase_identifiers)
-        {
-            auto result = parse(id);
-
-            REQUIRE(result);
-            REQUIRE(result.ok().body == id);
-        }
-    }
-
-    SECTION("<identifier start> includes Other Letter character class")
-    {
-        auto titlecase_identifiers = {"ګ"sv, "ܤ"sv};
-        for (auto&& id : titlecase_identifiers)
-        {
-            auto result = parse(id);
-
-            REQUIRE(result);
-            REQUIRE(result.ok().body == id);
-        }
-    }
-
-    SECTION("<identifier start> includes Letter Number character class")
-    {
-        auto titlecase_identifiers = {"ⅻ"sv, "〥"sv};
-        for (auto&& id : titlecase_identifiers)
-        {
-            auto result = parse(id);
-
-            REQUIRE(result);
-            REQUIRE(result.ok().body == id);
-        }
-    }
-
-    SECTION("<identifier extend> includes Middle Dot character")
-    {
-        auto id = "a·"sv;
-
-        auto result = parse(id);
-
-        REQUIRE(result);
-        REQUIRE(result.ok().body == id);
-    }
-
-    SECTION("<identifier extend> includes Letter Number character class")
-    {
-        auto id = "a\xCC\x83"sv;
-
-        auto result = parse(id);
-
-        REQUIRE(result);
-        REQUIRE(result.ok().body == id);
-    }
-
-    SECTION("<identifier extend> includes Spacing Mark character class")
-    {
-        auto id = "a\xE0\xA7\x80"sv;
-
-        auto result = parse(id);
-
-        REQUIRE(result);
-        REQUIRE(result.ok().body == id);
-    }
-
-    SECTION("<identifier extend> includes Decimal Number character class")
-    {
-        auto id = "a\xE0\xB9\x90"sv;
-
-        auto result = parse(id);
-
-        REQUIRE(result);
-        REQUIRE(result.ok().body == id);
-    }
-
-    SECTION(
-        "<identifier extend> includes Connector Punctuation character class")
-    {
-        auto id = "a\xEF\xB9\x8F"sv;
-
-        auto result = parse(id);
-
-        REQUIRE(result);
-        REQUIRE(result.ok().body == id);
-    }
-
-    SECTION("<identifier extend> includes Format character class")
-    {
-        auto id = "a\xF3\xA0\x80\xB0"sv;
-
-        auto result = parse(id);
-
-        REQUIRE(result);
-        REQUIRE(result.ok().body == id);
-    }
-
-    auto identifier_with_all_character_classes =
-        "Aaǈꟹܤ〥·\xCC\x83\xE0\xA7\x80\xE0\xB9\x90\xEF\xB9\x8F\xF3\xA0\x80\xB0"sv;
-
-    auto result = parse(identifier_with_all_character_classes);
+    auto result = parse(R"("before""after")"sv);
     REQUIRE(result);
-    REQUIRE(result.ok().body ==
-        "Aaǈꟹܤ〥·\xCC\x83\xE0\xA7\x80\xE0\xB9\x90\xEF\xB9\x8F\xF3\xA0\x80\xB0");
+    REQUIRE(result.ok().body == "before\"after");
 }
 
-TEST_CASE("<regular identifier> does not match a reserved word")
+TEST_CASE("<delimited identifier> allows usage of reserved word")
 {
     auto reserved_words = {"ABS",
         "ALL",
@@ -511,13 +376,14 @@ TEST_CASE("<regular identifier> does not match a reserved word")
 
     for (auto&& reserved_word : reserved_words)
     {
-        auto result{parse(reserved_word)};
+        auto result{parse(fmt::format("\"{}\"", reserved_word))};
 
-        if (result)
+        if (!result)
         {
-            FAIL("Parsing succeed for reserved word: " << reserved_word);
+            FAIL("Parsing failed for reserved word: " << reserved_word);
         }
 
-        REQUIRE_FALSE(result);
+        REQUIRE(result);
+        REQUIRE(result.ok().body == reserved_word);
     }
 }

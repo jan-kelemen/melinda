@@ -2,7 +2,6 @@
 #define MELINDA_MDBSQL_PARSER_REGULAR_IDENTIFIER_INCLUDED
 
 #include <lexy/callback/adapter.hpp>
-#include <lexy/callback/object.hpp>
 #include <lexy/code_point.hpp>
 #include <lexy/dsl/code_point.hpp>
 #include <lexy/dsl/identifier.hpp>
@@ -34,7 +33,7 @@ namespace melinda::mdbsql::parser
 
             auto identifier_part = identifier_start / identifier_extend;
 
-            // TODO-JK: Limit the number of <identifier parts> to < 128
+            // TODO-JK: Limit the number of <identifier part> to < 128
             return lexy::dsl::identifier(identifier_start, identifier_part)
                 .reserve(reserved_set1)
                 .reserve(reserved_set2);
@@ -42,7 +41,8 @@ namespace melinda::mdbsql::parser
 
         static constexpr auto value = lexy::callback<ast::regular_identifier>(
             [](auto lexeme) {
-                return ast::regular_identifier{{lexeme.begin(), lexeme.end()}};
+                return ast::regular_identifier{{lexeme.begin(), lexeme.end()},
+                    false};
             });
     };
 } // namespace melinda::mdbsql::parser

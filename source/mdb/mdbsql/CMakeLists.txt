@@ -21,6 +21,7 @@ target_sources(${TARGET_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/include/ast/mdbsql_ast_table_elements.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/parser/mdbsql_parser_parse_error.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/parser/mdbsql_parser_regular_identifier.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/parser/mdbsql_parser_delimited_identifier.h
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbsql_engine.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbsql_ast.cpp
@@ -72,6 +73,7 @@ target_sources(${TARGET_NAME}_test
         ${CMAKE_CURRENT_SOURCE_DIR}/test/ast/mdbsql_ast_table_definition.t.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/ast/mdbsql_ast_table_elements.t.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/parser/mdbsql_parser_regular_identifier.t.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/parser/mdbsql_parser_delimited_identifier.t.cpp
 )
 
 target_link_libraries(${TARGET_NAME}_test
