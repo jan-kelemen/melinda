@@ -13,15 +13,18 @@ target_sources(${TARGET_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/include/ast/mdbsql_ast_column_definition.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/ast/mdbsql_ast_identifier.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/ast/mdbsql_ast_regular_identifier.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/ast/mdbsql_ast_unicode_delimited_identifier.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/ast/mdbsql_ast_schema_definition.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/ast/mdbsql_ast_schema_element.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/ast/mdbsql_ast_sql_executable_statement.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/ast/mdbsql_ast_sql_schema_statement.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/ast/mdbsql_ast_table_definition.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/ast/mdbsql_ast_table_elements.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/parser/mdbsql_parser_common.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/parser/mdbsql_parser_parse_error.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/parser/mdbsql_parser_regular_identifier.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/parser/mdbsql_parser_delimited_identifier.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/parser/mdbsql_parser_unicode_delimited_identifier.h
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbsql_engine.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbsql_ast.cpp
@@ -74,6 +77,7 @@ target_sources(${TARGET_NAME}_test
         ${CMAKE_CURRENT_SOURCE_DIR}/test/ast/mdbsql_ast_table_elements.t.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/parser/mdbsql_parser_regular_identifier.t.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/parser/mdbsql_parser_delimited_identifier.t.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/parser/mdbsql_parser_unicode_delimited_identifier.t.cpp
 )
 
 target_link_libraries(${TARGET_NAME}_test

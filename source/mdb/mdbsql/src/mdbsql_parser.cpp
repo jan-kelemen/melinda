@@ -13,6 +13,7 @@
 
 #include <mbltrc_trace.h>
 
+#include <mdbsql_parser_common.h>
 #include <mdbsql_parser_reserved_word.h>
 
 using namespace melinda::mdbsql::parser;
@@ -21,9 +22,6 @@ namespace
 {
     namespace ast = melinda::mdbsql::ast;
     namespace dsl = lexy::dsl;
-
-    constexpr auto separator = LEXY_LIT("/*") >> dsl::until(LEXY_LIT("*/")) |
-        LEXY_LIT("--") >> dsl::until(dsl::newline) | dsl::unicode::space;
 
     [[maybe_unused]] constexpr auto nrkw_a =
         dsl::ascii::case_folding(LEXY_KEYWORD(u8"a", kw));

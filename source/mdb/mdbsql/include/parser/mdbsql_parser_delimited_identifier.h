@@ -24,7 +24,6 @@ namespace melinda::mdbsql::parser
             auto everything_except_doublequote =
                 lexy::dsl::capture(-lexy::dsl::lit_c<'"'>);
 
-            // Parse the initial quote.
             scanner.parse(lexy::dsl::lit_c<'"'>);
             if (!scanner)
             {

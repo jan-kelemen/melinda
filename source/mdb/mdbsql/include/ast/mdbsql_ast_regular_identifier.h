@@ -2,7 +2,6 @@
 #define MELINDA_MDBSQL_AST_REGULAR_IDENTIFIER_INCLUDED
 
 #include <string>
-#include <vector>
 
 namespace melinda::mdbsql::ast
 {
