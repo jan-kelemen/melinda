@@ -1,34 +1,20 @@
 #ifndef MELINDA_MDBSQL_AST_IDENTIFIER_INCLUDED
 #define MELINDA_MDBSQL_AST_IDENTIFIER_INCLUDED
 
-#include <string>
+#include <variant>
 #include <vector>
 
-#include <fmt/format.h>
+#include <mdbsql_ast_delimited_identifier.h>
+#include <mdbsql_ast_regular_identifier.h>
+#include <mdbsql_ast_unicode_delimited_identifier.h>
 
 namespace melinda::mdbsql::ast
 {
-    struct [[nodiscard]] identifier final
-    {
-        std::vector<std::string> parts;
+    using identifier = std::variant<regular_identifier,
+        delimited_identifier,
+        unicode_delimited_identifier>;
 
-        bool operator==(const identifier&) const = default;
-    };
-
-    std::string to_string(const identifier& value);
+    using multipart_identifier = std::vector<identifier>;
 } // namespace melinda::mdbsql::ast
-
-template<>
-struct fmt::formatter<melinda::mdbsql::ast::identifier>
-{
-    constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
-
-    template<typename FormatContext>
-    auto format(melinda::mdbsql::ast::identifier const& value,
-        FormatContext& ctx) const
-    {
-        return format_to(ctx.out(), "{}", to_string(value));
-    }
-};
 
 #endif

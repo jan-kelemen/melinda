@@ -13,31 +13,17 @@ namespace melinda::mdbsql::ast
 {
     struct [[nodiscard]] schema_definition final
     {
-        using character_set_or_path_spec =
-            std::variant<identifier, std::vector<identifier>>;
+        using character_set_or_path_spec = std::variant<multipart_identifier,
+            std::vector<multipart_identifier>>;
 
-        std::optional<identifier> schema_name;
-        std::optional<std::string> authorization;
+        std::optional<multipart_identifier> schema_name;
+        std::optional<identifier> authorization;
         std::optional<character_set_or_path_spec> character_set_or_path1;
         std::optional<character_set_or_path_spec> character_set_or_path2;
         std::optional<schema_element> elements;
 
         bool operator==(schema_definition const&) const = default;
     };
-
-    std::string to_string(schema_definition const& value);
 } // namespace melinda::mdbsql::ast
 
-template<>
-struct fmt::formatter<melinda::mdbsql::ast::schema_definition>
-{
-    constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
-
-    template<typename FormatContext>
-    auto format(melinda::mdbsql::ast::schema_definition const& value,
-        FormatContext& ctx) const
-    {
-        return format_to(ctx.out(), "{}", to_string(value));
-    }
-};
 #endif
