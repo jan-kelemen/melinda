@@ -14,6 +14,7 @@
 #include <mbltrc_trace.h>
 
 #include <mdbsql_parser_common.h>
+#include <mdbsql_parser_identifier.h>
 #include <mdbsql_parser_reserved_word.h>
 
 using namespace melinda::mdbsql::parser;
@@ -474,36 +475,25 @@ namespace
                                          .map<LEXY_SYMBOL("local")>("local")
                                          .case_folding(dsl::ascii::case_folding);
 
-    struct identifier_part
+    struct multipart_identifier
     {
         static constexpr auto rule = []
         {
-            auto lead_char = dsl::ascii::alpha;
-            auto trailing_char =
-                dsl::ascii::alpha_digit_underscore / LEXY_LIT("-");
-            auto id = dsl::identifier(lead_char, trailing_char);
-
-            return id.reserve(reserved_set1).reserve(reserved_set2);
+            return dsl::list(dsl::p<melinda::mdbsql::parser::identifier>,
+                dsl::sep(dsl::period));
         }();
 
         static constexpr auto value =
-            lexy::as_string<std::string, lexy::utf8_encoding>;
-    };
-
-    struct identifier
-    {
-        static constexpr auto rule = []
-        { return dsl::list(dsl::p<identifier_part>, dsl::sep(dsl::period)); }();
-
-        static constexpr auto value = lexy::fold_inplace<ast::identifier>(
-            ast::identifier{},
-            [](auto& rv, std::string i) { rv.parts.push_back(std::move(i)); });
+            lexy::fold_inplace<ast::multipart_identifier>(
+                ast::multipart_identifier{},
+                [](auto& rv, ast::identifier i)
+                { rv.push_back(std::move(i)); });
     };
 
     struct column_definition
     {
         static constexpr auto rule = []
-        { return dsl::p<identifier> + kw_integer; }();
+        { return dsl::p<multipart_identifier> + kw_integer; }();
         static constexpr auto value = lexy::construct<ast::column_definition>;
     };
 
@@ -526,19 +516,22 @@ namespace
         static constexpr auto rule = []
         {
             return dsl::opt(dsl::symbol<table_scope>(kw) >> nrkw_temporary) +
-                kw_table + dsl::p<identifier> + dsl::p<table_elements>;
+                kw_table + dsl::p<multipart_identifier> +
+                dsl::p<table_elements>;
         }();
         static constexpr auto value = lexy::construct<ast::table_definition>;
     };
 
     struct path_specification
     {
-        static constexpr auto rule = []
-        { return dsl::list(dsl::p<identifier>, dsl::sep(dsl::comma)); }();
+        static constexpr auto rule = [] {
+            return dsl::list(dsl::p<multipart_identifier>,
+                dsl::sep(dsl::comma));
+        }();
 
         static constexpr auto value =
-            lexy::fold_inplace<std::vector<ast::identifier>>({},
-                [](auto& rv, ast::identifier v)
+            lexy::fold_inplace<std::vector<ast::multipart_identifier>>({},
+                [](auto& rv, ast::multipart_identifier v)
                 { rv.push_back(std::move(v)); });
     };
 
@@ -546,16 +539,15 @@ namespace
     {
         static constexpr auto rule = []
         {
-            auto authorization = kw_authorization >> dsl::p<identifier_part>;
+            auto authorization = kw_authorization >> dsl::p<identifier>;
 
-            auto character_set =
-                kw_default >> kw_character >> kw_set >> dsl::p<identifier>;
+            auto character_set = kw_default >> kw_character >> kw_set >>
+                dsl::p<multipart_identifier>;
             auto path_spec = nrkw_path >> dsl::p<path_specification>;
 
-            return (kw_authorization >>
-                           (dsl::nullopt + dsl::p<identifier_part>) |
-                       dsl::else_ >>
-                           (dsl::p<identifier> + dsl::opt(authorization))) +
+            return (kw_authorization >> (dsl::nullopt + dsl::p<identifier>) |
+                       dsl::else_ >> (dsl::p<multipart_identifier> +
+                                         dsl::opt(authorization))) +
                 dsl::opt(character_set | path_spec) +
                 dsl::opt(character_set | path_spec) +
                 dsl::opt(kw_create >> dsl::p<table_definition>);

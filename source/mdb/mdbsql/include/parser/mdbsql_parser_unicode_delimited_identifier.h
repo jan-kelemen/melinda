@@ -1,7 +1,6 @@
 #ifndef MELINDA_MDBSQL_PARSER_UNICODE_DELIMITED_IDENTIFIER_INCLUDED
 #define MELINDA_MDBSQL_PARSER_UNICODE_DELIMITED_IDENTIFIER_INCLUDED
 
-#include "mdbsql_parser_parse_error.h"
 #include <lexy/action/parse.hpp>
 #include <lexy/callback/adapter.hpp>
 #include <lexy/callback/container.hpp>
@@ -26,6 +25,7 @@
 
 #include <mdbsql_ast_unicode_delimited_identifier.h>
 #include <mdbsql_parser_common.h>
+#include <mdbsql_parser_parse_error.h>
 #include <mdbsql_parser_reserved_word.h>
 
 namespace melinda::mdbsql::parser
@@ -106,6 +106,9 @@ namespace melinda::mdbsql::parser
         : lexy::scan_production<ast::unicode_delimited_identifier>
         , lexy::token_production
     {
+        static constexpr auto rule =
+            lexy::dsl::ascii::case_folding(LEXY_LIT("u&\"")) >> lexy::dsl::scan;
+
         template<typename Context, typename Reader>
         static constexpr scan_result scan(
             lexy::rule_scanner<Context, Reader>& scanner)
@@ -116,18 +119,6 @@ namespace melinda::mdbsql::parser
                 lexy::dsl::capture(-(lexy::dsl::digit<lexy::dsl::hex> /
                     lexy::dsl::hyphen / lexy::dsl::apostrophe /
                     lexy::dsl::lit_c<'"'> / lexy::dsl::unicode::space));
-
-            scanner.parse(lexy::dsl::ascii::case_folding(LEXY_LIT("u&")));
-            if (!scanner)
-            {
-                return lexy::scan_failed;
-            }
-
-            scanner.parse(lexy::dsl::lit_c<'"'>);
-            if (!scanner)
-            {
-                return lexy::scan_failed;
-            }
 
             std::string intermediate_result;
 

@@ -10,26 +10,22 @@
 #include <lexy/grammar.hpp>
 #include <lexy/lexeme.hpp>
 
-#include <mdbsql_ast_regular_identifier.h>
+#include <mdbsql_ast_delimited_identifier.h>
 
 namespace melinda::mdbsql::parser
 {
     struct [[nodiscard]] delimited_identifier final
-        : lexy::scan_production<ast::regular_identifier>
+        : lexy::scan_production<ast::delimited_identifier>
         , lexy::token_production
     {
+        static constexpr auto rule = lexy::dsl::lit_c<'"'> >> lexy::dsl::scan;
+
         template<typename Context, typename Reader>
         static constexpr scan_result scan(
             lexy::rule_scanner<Context, Reader>& scanner)
         {
             auto everything_except_doublequote =
                 lexy::dsl::capture(-lexy::dsl::lit_c<'"'>);
-
-            scanner.parse(lexy::dsl::lit_c<'"'>);
-            if (!scanner)
-            {
-                return lexy::scan_failed;
-            }
 
             std::string result;
 
@@ -57,11 +53,10 @@ namespace melinda::mdbsql::parser
                     scanner.parse(scan_result, everything_except_doublequote);
                     result.append(scan_result.value().begin(),
                         scan_result.value().end());
-                    //                    std::cout << current.value() << '\n';
                 }
             }
 
-            return ast::regular_identifier{std::move(result), true};
+            return ast::delimited_identifier{std::move(result)};
         }
     };
 } // namespace melinda::mdbsql::parser

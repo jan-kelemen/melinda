@@ -41,8 +41,7 @@ namespace melinda::mdbsql::parser
 
         static constexpr auto value = lexy::callback<ast::regular_identifier>(
             [](auto lexeme) {
-                return ast::regular_identifier{{lexeme.begin(), lexeme.end()},
-                    false};
+                return ast::regular_identifier{{lexeme.begin(), lexeme.end()}};
             });
     };
 } // namespace melinda::mdbsql::parser

@@ -10,6 +10,14 @@
 
 #include <mdbsql_parser.h>
 
+namespace
+{
+    auto as_str(melinda::mdbsql::ast::identifier const& value)
+    {
+        return std::visit([](auto&& v) { return v.body; }, value);
+    }
+} // namespace
+
 melinda::mdbsql::engine::engine(std::filesystem::path data_directory)
     : data_directory_{std::move(data_directory)}
 {
@@ -24,16 +32,17 @@ bool melinda::mdbsql::engine::execute(std::string_view query)
         {
             if (auto it = std::find(std::cbegin(databases_),
                     std::cend(databases_),
-                    statement.schema_name->parts.back());
+                    as_str(statement.schema_name->back()));
                 it != std::cend(databases_))
             {
                 MBLTRC_TRACE_ERROR("Can't create schema '{}', already exists",
-                    statement.schema_name->parts.back());
+                    as_str(statement.schema_name->back()));
                 return false;
             }
 
-            databases_.push_back(statement.schema_name->parts.back());
-            MBLTRC_TRACE_INFO("Created schema '{}'", *statement.schema_name);
+            databases_.push_back(as_str(statement.schema_name->back()));
+            MBLTRC_TRACE_INFO("Created schema '{}'",
+                as_str(statement.schema_name->back()));
             return true;
         }
         else if constexpr (std::is_same_v<T, ast::table_definition>)
@@ -66,8 +75,6 @@ bool melinda::mdbsql::engine::execute(std::string_view query)
     {
         if (!std::visit(sql_executable_statement_visitor, statement.ok()))
         {
-            MBLTRC_TRACE_ERROR("Execution of statement '{}' failed.",
-                statement.ok());
             return false;
         }
         return true;

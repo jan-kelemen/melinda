@@ -8,7 +8,6 @@ namespace melinda::mdbsql::ast
     struct [[nodiscard]] regular_identifier final
     {
         std::string body;
-        bool delimited;
     };
 
 } // namespace melinda::mdbsql::ast

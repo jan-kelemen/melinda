@@ -1,3 +1,4 @@
+#include "mdbsql_ast_delimited_identifier.h"
 #include <catch2/catch_test_macros.hpp>
 
 #include <fmt/core.h>
@@ -10,7 +11,6 @@
 
 #include <mblcxx_result.h>
 
-#include <mdbsql_ast_regular_identifier.h>
 #include <mdbsql_parser_delimited_identifier.h>
 #include <mdbsql_parser_parse_error.h>
 
@@ -18,7 +18,8 @@ using namespace melinda;
 
 namespace
 {
-    mblcxx::result<mdbsql::ast::regular_identifier, mdbsql::parser::parse_error>
+    mblcxx::result<mdbsql::ast::delimited_identifier,
+        mdbsql::parser::parse_error>
     parse(std::string_view value)
     {
         lexy::string_input<lexy::utf8_char_encoding> const range{value};
