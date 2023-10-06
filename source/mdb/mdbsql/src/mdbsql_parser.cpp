@@ -475,21 +475,6 @@ namespace
                                          .map<LEXY_SYMBOL("local")>("local")
                                          .case_folding(dsl::ascii::case_folding);
 
-    struct multipart_identifier
-    {
-        static constexpr auto rule = []
-        {
-            return dsl::list(dsl::p<melinda::mdbsql::parser::identifier>,
-                dsl::sep(dsl::period));
-        }();
-
-        static constexpr auto value =
-            lexy::fold_inplace<ast::multipart_identifier>(
-                ast::multipart_identifier{},
-                [](auto& rv, ast::identifier i)
-                { rv.push_back(std::move(i)); });
-    };
-
     struct column_definition
     {
         static constexpr auto rule = []
