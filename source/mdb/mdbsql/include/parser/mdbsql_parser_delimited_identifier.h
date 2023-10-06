@@ -5,6 +5,7 @@
 #include <lexy/code_point.hpp>
 #include <lexy/dsl/capture.hpp>
 #include <lexy/dsl/code_point.hpp>
+#include <lexy/dsl/literal.hpp>
 #include <lexy/dsl/scan.hpp>
 #include <lexy/grammar.hpp>
 #include <lexy/lexeme.hpp>
@@ -18,7 +19,7 @@ namespace melinda::mdbsql::parser
         , lexy::token_production
     {
         template<typename Context, typename Reader>
-        static constexpr lexy::scan_result<ast::regular_identifier> scan(
+        static constexpr scan_result scan(
             lexy::rule_scanner<Context, Reader>& scanner)
         {
             auto everything_except_doublequote =
@@ -35,7 +36,7 @@ namespace melinda::mdbsql::parser
             auto found_closing_quote{false};
             while (!found_closing_quote)
             {
-                if (scanner.branch(lexy::dsl::lit<"\"\"">))
+                if (scanner.branch(LEXY_LIT("\"\"")))
                 {
                     result += '"';
                 }

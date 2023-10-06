@@ -1,6 +1,6 @@
 set(TARGET_NAME mdbsql)
 
-find_package(lexy REQUIRED)
+#find_package(lexy REQUIRED)
 find_package(fmt REQUIRED)
 
 add_library(${TARGET_NAME})

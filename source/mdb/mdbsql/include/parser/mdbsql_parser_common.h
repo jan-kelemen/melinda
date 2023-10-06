@@ -8,9 +8,9 @@
 
 namespace melinda::mdbsql::parser
 {
-    constexpr auto separator = lexy::dsl::lit<"/*"> >>
-            lexy::dsl::until(lexy::dsl::lit<"*/">) |
-        lexy::dsl::lit<"--"> >> lexy::dsl::until(lexy::dsl::newline) |
+    constexpr auto separator = LEXY_LIT("/*") >>
+            lexy::dsl::until(LEXY_LIT("*/")) |
+        LEXY_LIT("--") >> lexy::dsl::until(lexy::dsl::newline) |
         lexy::dsl::unicode::space;
 } // namespace melinda::mdbsql::parser
 
