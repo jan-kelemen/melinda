@@ -7,7 +7,7 @@
 #include <lexy/dsl/identifier.hpp>
 #include <lexy/encoding.hpp>
 
-#include <mdbsql_ast_regular_identifier.h>
+#include <mdbsql_ast_regular_identifier.h> // IWYU pragma: export
 #include <mdbsql_parser_reserved_word.h>
 
 namespace melinda::mdbsql::parser

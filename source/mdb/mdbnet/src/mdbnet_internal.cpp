@@ -1,4 +1,6 @@
-#include "mdbnet_internal.h"
+#include <mdbnet_internal.h>
+
+#include <zmq.hpp>
 
 zmq::context_t& melinda::mdbnet::context()
 {

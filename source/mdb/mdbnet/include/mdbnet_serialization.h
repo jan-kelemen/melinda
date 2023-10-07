@@ -1,21 +1,20 @@
 #ifndef MELINDA_MDBNET_SERIALIZATION_INCLUDED
 #define MELINDA_MDBNET_SERIALIZATION_INCLUDED
 
+#include <cstddef>
 #include <cstdint>
 #include <span>
 #include <string>
 
 #include <flatbuffers/flatbuffers.h>
 
-#include <mblcxx_sops.h>
-
-#include <mdbnet_wire_generated.h>
+#include <mdbnet_wire_generated.h> // IWYU pragma: keep
 
 namespace melinda::mdbnet
 {
     using root_type = melinda::mdbnet::Message;
 
-    struct serialization final : public mblcxx::sops::none
+    struct serialization final
     {
     public:
         static flatbuffers::FlatBufferBuilder query(std::string const& identity,
@@ -26,6 +25,11 @@ namespace melinda::mdbnet
             std::uint32_t length,
             std::span<uint32_t> const& offsets,
             std::span<std::byte> const& data);
+
+    public:
+        serialization() = delete;
+
+        ~serialization() noexcept = delete;
     };
 
 } // namespace melinda::mdbnet

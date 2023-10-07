@@ -8,7 +8,6 @@ add_library(${TARGET_NAME})
 target_sources(${TARGET_NAME}
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mdbsql_engine.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/mdbsql_ast.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mdbsql_parser.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/ast/mdbsql_ast_column_definition.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/ast/mdbsql_ast_identifier.h
@@ -28,7 +27,6 @@ target_sources(${TARGET_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/include/parser/mdbsql_parser_unicode_delimited_identifier.h
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbsql_engine.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbsql_ast.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbsql_parser.cpp
 )
 
@@ -57,7 +55,6 @@ target_sources(${TARGET_NAME}_test
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/test/mdbsql.t.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/mdbsql_engine.t.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/test/mdbsql_ast.t.cpp
         #${CMAKE_CURRENT_SOURCE_DIR}/test/mdbsql_parser.t.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/parser/mdbsql_parser_regular_identifier.t.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/parser/mdbsql_parser_delimited_identifier.t.cpp

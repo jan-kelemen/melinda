@@ -3,16 +3,18 @@
 
 #include <concepts>
 #include <memory>
-#include <source_location>
+#include <source_location> // IWYU pragma: keep
+#include <string>
 #include <string_view>
-#include <thread>
+#include <thread> // IWYU pragma: keep
 #include <type_traits>
+#include <utility>
 
-#include <fmt/format.h>
+#include <fmt/core.h>
 
 #include <mbltrc_sink.h>
-#include <mbltrc_timestamp.h>
-#include <mbltrc_trace_level.h>
+#include <mbltrc_timestamp.h> // IWYU pragma: keep
+#include <mbltrc_trace_level.h> // IWYU pragma: keep
 
 namespace melinda::mbltrc::detail
 {

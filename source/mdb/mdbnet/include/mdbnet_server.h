@@ -8,7 +8,6 @@
 #include <zmq.hpp>
 
 #include <mblcxx_result.h>
-#include <mblcxx_sops.h>
 
 #include <mdbnet_types.h>
 
@@ -20,7 +19,7 @@ namespace melinda::mdbnet
         zmq::message_t content;
     };
 
-    struct server final : mblcxx::sops::none
+    struct server final
     {
     public:
         static mblcxx::result<zmq::socket_t> bind(zmq::context_t& context,
@@ -33,6 +32,11 @@ namespace melinda::mdbnet
 
         static result<recv_response<client_message>> recv(zmq::socket_t& socket,
             zmq::recv_flags flags = zmq::recv_flags::dontwait);
+
+    public:
+        server() = delete;
+
+        ~server() noexcept = delete;
     };
 
 } // namespace melinda::mdbnet

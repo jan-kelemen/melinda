@@ -10,7 +10,7 @@
 #include <lexy/grammar.hpp>
 #include <lexy/lexeme.hpp>
 
-#include <mdbsql_ast_delimited_identifier.h>
+#include <mdbsql_ast_delimited_identifier.h> // IWYU pragma: export
 
 namespace melinda::mdbsql::parser
 {

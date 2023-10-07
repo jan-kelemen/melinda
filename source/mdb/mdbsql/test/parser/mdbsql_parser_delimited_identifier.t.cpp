@@ -1,11 +1,17 @@
-#include "mdbsql_ast_delimited_identifier.h"
 #include <catch2/catch_test_macros.hpp>
+
+#include <initializer_list>
+#include <lexy/callback/container.hpp>
+#include <string>
+#include <string_view>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 #include <fmt/core.h>
 
 #include <lexy/action/parse.hpp>
-#include <lexy/action/trace.hpp>
-#include <lexy/action/validate.hpp>
+#include <lexy/callback/container.hpp> // IWYU pragma: keep
 #include <lexy/encoding.hpp>
 #include <lexy/input/string_input.hpp>
 

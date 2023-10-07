@@ -6,20 +6,23 @@
 #include <string_view>
 #include <vector>
 
-#include <mblcxx_sops.h>
-
 namespace melinda::mdbsql
 {
-    class [[nodiscard]] engine final : public mblcxx::sops::noncopyable
+    class [[nodiscard]] engine final
     {
     public: // Construction
         engine(std::filesystem::path data_directory);
+
+        engine(engine const&) = delete;
 
     public: // Destruction
         ~engine() = default;
 
     public: // Interface
         bool execute(std::string_view query);
+
+    public: // Operators
+        engine& operator=(engine const&) = delete;
 
     private: // Data
         std::filesystem::path data_directory_;

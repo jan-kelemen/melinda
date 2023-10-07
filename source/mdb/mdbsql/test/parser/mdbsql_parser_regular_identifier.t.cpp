@@ -1,14 +1,19 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <initializer_list>
+#include <string>
+#include <string_view>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
 #include <lexy/action/parse.hpp>
-#include <lexy/action/trace.hpp>
-#include <lexy/action/validate.hpp>
+#include <lexy/callback/container.hpp> // IWYU pragma: keep
 #include <lexy/encoding.hpp>
 #include <lexy/input/string_input.hpp>
 
 #include <mblcxx_result.h>
 
-#include <mdbsql_ast_regular_identifier.h>
 #include <mdbsql_parser_parse_error.h>
 #include <mdbsql_parser_regular_identifier.h>
 

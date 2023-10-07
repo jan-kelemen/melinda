@@ -2,22 +2,18 @@
 #define MELINDA_MDBNET_CLIENT_INCLUDED
 
 #include <cstddef>
-#include <cstdint>
-#include <optional>
 #include <span>
 #include <string>
-#include <variant>
 
 #include <zmq.hpp>
 
 #include <mblcxx_result.h>
-#include <mblcxx_sops.h>
 
 #include <mdbnet_types.h>
 
 namespace melinda::mdbnet
 {
-    struct client final : public mblcxx::sops::none
+    struct client final
     {
     public:
         static mblcxx::result<zmq::socket_t> connect(zmq::context_t& context,
@@ -29,6 +25,11 @@ namespace melinda::mdbnet
 
         static result<recv_response<zmq::message_t>> recv(zmq::socket_t& socket,
             zmq::recv_flags flags = zmq::recv_flags::none);
+
+    public:
+        client() = delete;
+
+        ~client() noexcept = delete;
     };
 } // namespace melinda::mdbnet
 

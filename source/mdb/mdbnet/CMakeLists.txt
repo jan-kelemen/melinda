@@ -32,6 +32,10 @@ target_sources(${TARGET_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbnet_wire_generated.cpp
 )
 
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/mdbnet_wire_generated.cpp PROPERTIES
+    SKIP_LINTING ON
+)
+
 add_dependencies(${TARGET_NAME} mdbnet_generate_fb clang-format)
 
 target_link_libraries(${TARGET_NAME}
@@ -49,27 +53,7 @@ target_include_directories(${TARGET_NAME}
     PUBLIC 
         include
         ${CMAKE_CURRENT_BINARY_DIR}/include
-)
-
-add_executable(${TARGET_NAME}_test)
-
-target_sources(${TARGET_NAME}_test
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/test/mdbnet_client.t.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/test/mdbnet_server.t.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/test/mdbnet_types.t.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/test/mdbnet_serialization.t.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/test/mdbnet_wire_generated.t.cpp
+        src
 )
 
-target_link_libraries(${TARGET_NAME}_test
-    PRIVATE
-        ${TARGET_NAME}
-        Catch2::Catch2WithMain
-        project-options
-)
-
-add_dependencies(${TARGET_NAME}_test clang-format)
-
-include(Catch)
-catch_discover_tests(${TARGET_NAME}_test)

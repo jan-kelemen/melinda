@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.27)
 
 set(TARGET_NAME melinda)
 project(${TARGET_NAME} VERSION 0.1 LANGUAGES CXX)
@@ -20,7 +20,7 @@ set(CMAKE_INSTALL_RPATH $ORIGIN $ORIGIN/../lib)
 include(${PROJECT_SOURCE_DIR}/cmake/clang-format.cmake)
 
 include(${PROJECT_SOURCE_DIR}/cmake/dependencies.cmake)
-
+include(${PROJECT_SOURCE_DIR}/cmake/iwyu.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/project-options.cmake)
 
 enable_testing()

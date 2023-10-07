@@ -5,11 +5,10 @@
 #include <lexy/dsl/case_folding.hpp>
 #include <lexy/dsl/identifier.hpp>
 
+#include <mdbsql_parser_common.h>
+
 namespace melinda::mdbsql::parser
 {
-    constexpr auto kw = lexy::dsl::identifier(lexy::dsl::ascii::alpha,
-        lexy::dsl::ascii::alpha_underscore / LEXY_LIT("-"));
-
     constexpr auto kw_abs =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"abs", kw));
     constexpr auto kw_all =

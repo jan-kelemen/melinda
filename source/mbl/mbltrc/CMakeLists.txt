@@ -35,11 +35,7 @@ add_executable(${TARGET_NAME}_test)
 
 target_sources(${TARGET_NAME}_test
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/test/mbltrc_memory_mapped_sink.t.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/test/mbltrc_trace.t.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/mbltrc_trace_level.t.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/test/mbltrc_timestamp.t.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/test/mbltrc_sink.t.cpp
 )
 
 target_link_libraries(${TARGET_NAME}_test

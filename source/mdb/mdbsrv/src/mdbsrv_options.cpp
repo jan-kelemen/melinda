@@ -1,6 +1,8 @@
 #include <mdbsrv_options.h>
 
 #include <iostream>
+#include <string>
+#include <utility>
 
 #include <boost/program_options.hpp>
 
