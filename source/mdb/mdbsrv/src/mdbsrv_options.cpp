@@ -39,7 +39,7 @@ std::optional<melinda::mdbsrv::options> melinda::mdbsrv::parse_options(int argc,
 
         return {{std::move(data_directory)}};
     }
-    catch (const bpo::error& ex)
+    catch (bpo::error const& ex)
     {
         std::cerr << "Failed start with given command line arguments: "
                   << ex.what() << '\n';

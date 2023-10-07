@@ -8,11 +8,12 @@ Melinda - Relational Database Management System
 #### Supported compilers:
 * gcc-13
 * clang-16
+* clang-17
 
 #### Optional tools:
 * include-what-you-use 0.20
   * Enable it with `-DCMAKE\_MELINDA\_ENABLE\_IWYU=ON`
-* clang-format-16
+* clang-format-17
   * Enable it with `-DCMAKE\_MELINDA\_ENABLE\_CLANG_FORMAT=ON`
 
 #### Required third party dependencies
