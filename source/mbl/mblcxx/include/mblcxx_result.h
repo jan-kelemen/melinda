@@ -2,20 +2,15 @@
 #define MELINDA_MBLCXX_RESULT_INCLUDED
 
 #include <concepts>
+#include <cstddef>
 #include <functional>
 #include <system_error>
 #include <type_traits>
 #include <utility>
 #include <variant>
 
-#include <mblcxx_always_false.h>
-#include <mblcxx_sops.h>
-
 namespace melinda::mblcxx::detail
 {
-    template<typename T1, typename T2>
-    using either = std::variant<T1, T2>;
-
     template<typename Callable, typename... Args>
     concept nothrow_invocable = std::invocable<Callable, Args...>&& noexcept(
         std::invoke(std::declval<Callable>(), std::declval<Args>()...));
@@ -31,7 +26,7 @@ namespace melinda::mblcxx
     class result;
 
     template<typename T, typename E = std::error_code>
-    struct res final : sops::none
+    struct res final
     {
     public:
         template<typename... Args>
@@ -41,6 +36,11 @@ namespace melinda::mblcxx
         template<typename... Args>
         static result<T, E> error(Args&&... args) noexcept(noexcept(
             result<T, E>(std::in_place_index<1>, std::forward<Args>(args)...)));
+
+    public:
+        res() = delete;
+
+        ~res() noexcept = delete;
     };
 
     template<typename T, typename E>
@@ -49,9 +49,6 @@ namespace melinda::mblcxx
     public: // Types
         using ok_type = T;
         using error_type = E;
-
-    private: // Types
-        using either_t = detail::either<T, E>;
 
     public: // Constants
         static constexpr std::size_t ok_index = 0;
@@ -73,13 +70,15 @@ namespace melinda::mblcxx
         template<std::size_t I, typename... Args>
         result(std::in_place_index_t<I> index, Args&&... value) noexcept(
             std::is_nothrow_constructible_v<
-                std::variant_alternative_t<I, either_t>,
+                std::variant_alternative_t<I, std::variant<T, E>>,
                 Args...>)
-        requires(
-            std::constructible_from<std::variant_alternative_t<I, either_t>,
-                Args...> &&
-            (std::same_as<std::variant_alternative_t<I, either_t>, T> ||
-                std::same_as<std::variant_alternative_t<I, either_t>, E>) )
+        requires(std::constructible_from<
+                     std::variant_alternative_t<I, std::variant<T, E>>,
+                     Args...> &&
+            (std::same_as<std::variant_alternative_t<I, std::variant<T, E>>,
+                 T> ||
+                std::same_as<std::variant_alternative_t<I, std::variant<T, E>>,
+                    E>) )
             : value_(index, std::forward<Args>(value)...)
         {
         }
@@ -158,7 +157,7 @@ namespace melinda::mblcxx
         ~result() noexcept = default;
 
     private: // Data
-        either_t value_;
+        std::variant<T, E> value_;
     };
 
     template<typename T, typename E>

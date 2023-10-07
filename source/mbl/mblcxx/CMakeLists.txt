@@ -9,14 +9,12 @@ target_sources(${TARGET_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mblcxx_unused.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mblcxx_always_false.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mblcxx_result.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/mblcxx_sops.h
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mblcxx_iterator_traits.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mblcxx_scope_exit.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mblcxx_unused.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mblcxx_always_false.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mblcxx_result.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/mblcxx_sops.cpp
 )
 
 add_dependencies(${TARGET_NAME} clang-format)
@@ -34,10 +32,7 @@ target_sources(${TARGET_NAME}_test
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/test/mblcxx_iterator_traits.t.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/mblcxx_scope_exit.t.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/test/mblcxx_unused.t.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/test/mblcxx_always_false.t.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/mblcxx_result.t.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/test/mblcxx_sops.t.cpp
 )
 
 target_link_libraries(${TARGET_NAME}_test
