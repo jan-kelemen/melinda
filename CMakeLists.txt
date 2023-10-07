@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.24)
 
 set(TARGET_NAME melinda)
 project(${TARGET_NAME} VERSION 0.1 LANGUAGES CXX)

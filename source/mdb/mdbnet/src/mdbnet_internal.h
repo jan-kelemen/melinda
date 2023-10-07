@@ -1,9 +1,10 @@
-#ifndef MELINDA_NETWORK_NCPROT_NCPROT_INTERNAL_INCLUDED
-#define MELINDA_NETWORK_NCPROT_NCPROT_INTERNAL_INCLUDED
+#ifndef MELINDA_MDBNET_INTERNAL_INCLUDED
+#define MELINDA_MDBNET_INTERNAL_INCLUDED
 
-#include <zmq.hpp>
-
-#include <mdbnet_types.h>
+namespace zmq
+{
+    class context_t;
+} // namespace zmq
 
 namespace melinda::mdbnet
 {

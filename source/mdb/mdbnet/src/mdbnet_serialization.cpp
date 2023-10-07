@@ -1,5 +1,7 @@
 #include <mdbnet_serialization.h>
 
+#include <mdbnet_wire_generated.h>
+
 namespace melinda::mdbnet
 {
     flatbuffers::FlatBufferBuilder
