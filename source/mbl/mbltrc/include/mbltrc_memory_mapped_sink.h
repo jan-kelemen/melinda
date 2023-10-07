@@ -1,10 +1,19 @@
 #ifndef MELINDA_MBLTRC_MEMORY_MAPPED_SINK_INCLUDED
 #define MELINDA_MBLTRC_MEMORY_MAPPED_SINK_INCLUDED
 
+#include <cstddef>
+#include <cstdint>
 #include <filesystem>
 #include <memory>
+#include <string_view>
 
 #include <mbltrc_sink.h>
+
+namespace melinda::mbltrc
+{
+    enum class trace_level : uint8_t;
+    struct timestamp;
+} // namespace melinda::mbltrc
 
 namespace melinda::mbltrc
 {

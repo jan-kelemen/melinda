@@ -1,12 +1,16 @@
 #ifndef MELINDA_MBLTRC_TRACE_SINK_INCLUDED
 #define MELINDA_MBLTRC_TRACE_SINK_INCLUDED
 
+#include <cstdint>
 #include <source_location>
 #include <string_view>
 #include <thread>
 
-#include <mbltrc_timestamp.h>
-#include <mbltrc_trace_level.h>
+namespace melinda::mbltrc
+{
+    enum class trace_level : uint8_t;
+    struct timestamp;
+} // namespace melinda::mbltrc
 
 namespace melinda::mbltrc
 {

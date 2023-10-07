@@ -3,14 +3,23 @@
 #include <atomic>
 #include <iostream>
 #include <mutex>
+#include <source_location>
+#include <string>
+#include <system_error>
+#include <thread>
 
 #include <boost/iostreams/device/mapped_file.hpp>
+#include <boost/iostreams/positioning.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+// IWYU pragma: no_include <boost/numeric/conversion/converter_policies.hpp>
 
-#include <fmt/std.h>
-#include <source_location>
-#include <thread>
+#include <fmt/core.h>
+#include <fmt/std.h> // IWYU pragma: keep
+
+#include <mbltrc_sink.h>
+#include <mbltrc_timestamp.h>
+#include <mbltrc_trace_level.h>
 
 namespace
 {

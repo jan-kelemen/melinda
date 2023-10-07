@@ -1,5 +1,10 @@
 #include <mbltrc_trace.h>
 
+namespace melinda::mbltrc
+{
+    class sink;
+} // namespace melinda::mbltrc
+
 namespace
 {
     std::weak_ptr<melinda::mbltrc::sink> proc_sink;
