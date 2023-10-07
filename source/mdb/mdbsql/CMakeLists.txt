@@ -1,8 +1,5 @@
 set(TARGET_NAME mdbsql)
 
-#find_package(lexy REQUIRED)
-find_package(fmt REQUIRED)
-
 add_library(${TARGET_NAME})
 
 target_sources(${TARGET_NAME}
@@ -30,24 +27,22 @@ target_sources(${TARGET_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbsql_parser.cpp
 )
 
-add_dependencies(${TARGET_NAME} clang-format)
+target_include_directories(${TARGET_NAME} 
+    PUBLIC 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/ast
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/parser
+)
 
 target_link_libraries(${TARGET_NAME}
     PUBLIC
         fmt::fmt
+        foonathan::lexy
         mblcxx
         mbltrc
-        foonathan::lexy
-    PRIVATE
-        project-options
 )
 
-target_include_directories(${TARGET_NAME} 
-    PUBLIC 
-        include 
-        include/ast
-        include/parser
-)
+add_global_settings_to_target(${TARGET_NAME})
 
 add_executable(${TARGET_NAME}_test)
 
@@ -61,18 +56,17 @@ target_sources(${TARGET_NAME}_test
         ${CMAKE_CURRENT_SOURCE_DIR}/test/parser/mdbsql_parser_unicode_delimited_identifier.t.cpp
 )
 
+target_include_directories(${TARGET_NAME}_test 
+    PRIVATE 
+        ${CMAKE_CURRENT_SOURCE_DIR}/test)
+
 target_link_libraries(${TARGET_NAME}_test
     PRIVATE
         ${TARGET_NAME}
         Catch2::Catch2WithMain
-        project-options
 )
 
-target_include_directories(${TARGET_NAME}_test 
-    PRIVATE 
-        test)
-
-add_dependencies(${TARGET_NAME}_test clang-format)
+add_global_settings_to_target(${TARGET_NAME}_test)
 
 include(Catch)
 catch_discover_tests(${TARGET_NAME}_test)

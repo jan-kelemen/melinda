@@ -1,9 +1,5 @@
 set(TARGET_NAME mdbnet)
 
-find_package(flatbuffers CONFIG REQUIRED)
-find_package(cppzmq REQUIRED)
-find_package(Boost REQUIRED)
-
 build_flatbuffers(
     "mdbnet_wire.fbs" # Schema files
     "" # Schema include directories 
@@ -32,11 +28,15 @@ target_sources(${TARGET_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbnet_wire_generated.cpp
 )
 
-set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/mdbnet_wire_generated.cpp PROPERTIES
-    SKIP_LINTING ON
+target_include_directories(${TARGET_NAME} 
+    PUBLIC 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_BINARY_DIR}/include
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-add_dependencies(${TARGET_NAME} mdbnet_generate_fb clang-format)
+add_dependencies(${TARGET_NAME} mdbnet_generate_fb)
 
 target_link_libraries(${TARGET_NAME}
     PUBLIC
@@ -46,14 +46,10 @@ target_link_libraries(${TARGET_NAME}
     PRIVATE
         Boost::headers
         mbltrc
-        project-options
 )
 
-target_include_directories(${TARGET_NAME} 
-    PUBLIC 
-        include
-        ${CMAKE_CURRENT_BINARY_DIR}/include
-    PRIVATE
-        src
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/mdbnet_wire_generated.cpp PROPERTIES
+    SKIP_LINTING ON
 )
 
+add_global_settings_to_target(${TARGET_NAME})

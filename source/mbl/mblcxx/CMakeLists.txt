@@ -16,15 +16,11 @@ target_sources(${TARGET_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mblcxx_always_false.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mblcxx_result.cpp
 )
+target_include_directories(${TARGET_NAME} 
+    PUBLIC 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_dependencies(${TARGET_NAME} clang-format)
-
-target_link_libraries(${TARGET_NAME}
-    PRIVATE
-        project-options
-)
-
-target_include_directories(${TARGET_NAME} PUBLIC include)
+add_global_settings_to_target(${TARGET_NAME})
 
 add_executable(${TARGET_NAME}_test)
 
@@ -39,10 +35,9 @@ target_link_libraries(${TARGET_NAME}_test
     PRIVATE
         ${TARGET_NAME}
         Catch2::Catch2WithMain
-        project-options
 )
 
-add_dependencies(${TARGET_NAME}_test clang-format)
+add_global_settings_to_target(${TARGET_NAME}_test)
 
 include(Catch)
 catch_discover_tests(${TARGET_NAME}_test)

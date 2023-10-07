@@ -1,8 +1,5 @@
 set(TARGET_NAME mdbsrv)
 
-find_package(Boost REQUIRED)
-find_package(cppzmq REQUIRED)
-
 add_executable(${TARGET_NAME})
 
 target_sources(${TARGET_NAME}
@@ -12,8 +9,6 @@ target_sources(${TARGET_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbsrv_options.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbsrv.m.cpp
 )
-
-add_dependencies(${TARGET_NAME} clang-format)
 
 target_include_directories(${TARGET_NAME} PRIVATE include)
 
@@ -25,6 +20,6 @@ target_link_libraries(${TARGET_NAME}
         mbltrc
         mdbnet
         mdbsql
-        project-options
 )
 
+add_global_settings_to_target(${TARGET_NAME})

@@ -17,6 +17,10 @@ target_sources(${TARGET_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mbltrc_sink.cpp
 )
 
+target_include_directories(${TARGET_NAME} 
+    PUBLIC 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
 target_link_libraries(${TARGET_NAME}
     PUBLIC
         fmt::fmt
@@ -25,11 +29,9 @@ target_link_libraries(${TARGET_NAME}
         Boost::iostreams
         Boost::headers
         date::date
-        project-options
 )
-add_dependencies(${TARGET_NAME} clang-format)
 
-target_include_directories(${TARGET_NAME} PUBLIC include)
+add_global_settings_to_target(${TARGET_NAME})
 
 add_executable(${TARGET_NAME}_test)
 
@@ -42,9 +44,9 @@ target_link_libraries(${TARGET_NAME}_test
     PRIVATE
         ${TARGET_NAME}
         Catch2::Catch2WithMain
-        project-options
 )
-add_dependencies(${TARGET_NAME}_test clang-format)
+
+add_global_settings_to_target(${TARGET_NAME}_test)
 
 include(Catch)
 catch_discover_tests(${TARGET_NAME}_test)

@@ -6,11 +6,11 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(lexy)
 
-find_package(Catch2 REQUIRED)
-find_package(fmt REQUIRED)
-find_package(date REQUIRED)
+find_package(Catch2 CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+find_package(date CONFIG REQUIRED)
 find_package(Boost REQUIRED COMPONENTS iostreams program_options)
-find_package(cppzmq REQUIRED)
-find_package(flatbuffers REQUIRED)
-#find_package(lexy REQUIRED)
+find_package(cppzmq CONFIG REQUIRED)
+find_package(flatbuffers CONFIG REQUIRED)
+#find_package(lexy REQUIRED) # Currently rolled forward to avoid build errors with clang
 
