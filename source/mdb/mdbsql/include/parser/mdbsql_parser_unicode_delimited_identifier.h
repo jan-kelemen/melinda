@@ -23,7 +23,7 @@
 #include <lexy/input/string_input.hpp>
 #include <lexy/lexeme.hpp>
 
-#include <mdbsql_ast_unicode_delimited_identifier.h>
+#include <mdbsql_ast_unicode_delimited_identifier.h> // IWYU pragma: export
 #include <mdbsql_parser_common.h>
 #include <mdbsql_parser_parse_error.h>
 #include <mdbsql_parser_reserved_word.h>

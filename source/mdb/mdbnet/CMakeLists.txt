@@ -32,6 +32,10 @@ target_sources(${TARGET_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mdbnet_wire_generated.cpp
 )
 
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/mdbnet_wire_generated.cpp PROPERTIES
+    SKIP_LINTING ON
+)
+
 add_dependencies(${TARGET_NAME} mdbnet_generate_fb clang-format)
 
 target_link_libraries(${TARGET_NAME}

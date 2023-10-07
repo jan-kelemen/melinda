@@ -1,14 +1,22 @@
-#include "mdbsql_ast.h"
 #include <mdbsql_engine.h>
 
 #include <algorithm>
+#include <iterator>
 #include <type_traits>
+#include <utility>
+#include <variant>
 
-#include <mblcxx_always_false.h>
-
+#include <mblcxx_always_false.h> // IWYU pragma: keep
 #include <mbltrc_trace.h>
-
+#include <mdbsql_ast_identifier.h>
+#include <mdbsql_ast_sql_schema_statement.h>
 #include <mdbsql_parser.h>
+
+namespace melinda::mdbsql::ast
+{
+    struct schema_definition;
+    struct table_definition;
+} // namespace melinda::mdbsql::ast
 
 namespace
 {

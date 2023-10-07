@@ -8,7 +8,7 @@
 
 #include <flatbuffers/flatbuffers.h>
 
-#include <mdbnet_wire_generated.h>
+#include <mdbnet_wire_generated.h> // IWYU pragma: keep
 
 namespace melinda::mdbnet
 {

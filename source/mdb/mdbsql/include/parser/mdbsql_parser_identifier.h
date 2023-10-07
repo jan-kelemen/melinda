@@ -6,7 +6,7 @@
 #include <lexy/dsl/list.hpp>
 #include <lexy/dsl/production.hpp>
 
-#include <mdbsql_ast_identifier.h>
+#include <mdbsql_ast_identifier.h> // IWYU pragma: export
 #include <mdbsql_parser_delimited_identifier.h>
 #include <mdbsql_parser_regular_identifier.h>
 #include <mdbsql_parser_unicode_delimited_identifier.h>

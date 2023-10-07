@@ -54,4 +54,12 @@
   { include: [ "<flatbuffers/vector.h>", private, "<flatbuffers/flatbuffers.h>", public ] },
   { include: [ "<flatbuffers/vector_downward.h>", private, "<flatbuffers/flatbuffers.h>", public ] },
   { include: [ "<flatbuffers/verifier.h>", private, "<flatbuffers/flatbuffers.h>", public ] },
+
+  # Lexy aliases
+  { include: [ "<lexy/_detail/nttp_string.hpp>", private, "<lexy/dsl/literal.hpp>", public ] },
+
+  # Boost aliases
+  { include: [ "<boost/iostreams/positioning.hpp>", public, "<boost/iostreams/stream.hpp>", public ] },
+  { include: [ "<boost/numeric/conversion/converter_policies.hpp>", public, "<boost/numeric/conversion/cast.hpp>", public ] },
+  { include: [ "@<boost/program_options/.+\\.hpp>", public, "<boost/program_options.hpp>", public ] },
 ]
