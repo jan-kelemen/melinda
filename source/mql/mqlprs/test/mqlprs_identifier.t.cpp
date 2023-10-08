@@ -33,15 +33,15 @@ TEST_CASE("<identifier> recognizes correct variant of identifier")
 {
     using namespace std::string_view_literals;
 
-    auto regular_identifier = "abc"sv;
+    auto const regular_identifier = "abc"sv;
     check_for_identifier_type<mqlprs::ast::regular_identifier>("abc",
         parse(regular_identifier).ok());
 
-    auto delimited_identifier = R"("abc")"sv;
+    auto const delimited_identifier = R"("abc")"sv;
     check_for_identifier_type<mqlprs::ast::delimited_identifier>("abc",
         parse(delimited_identifier).ok());
 
-    auto unicode_delimited_identifier = R"(U&"abc")"sv;
+    auto const unicode_delimited_identifier = R"(U&"abc")"sv;
     check_for_identifier_type<mqlprs::ast::unicode_delimited_identifier>("abc",
         parse(unicode_delimited_identifier).ok());
 }

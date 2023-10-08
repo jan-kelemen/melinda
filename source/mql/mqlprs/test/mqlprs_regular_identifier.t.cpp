@@ -32,10 +32,10 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
     SECTION("<identifier start> includes Uppercase Letter character class")
     {
-        auto uppercase_identifiers = {"A"sv, "Σ"sv};
+        auto const uppercase_identifiers = {"A"sv, "Σ"sv};
         for (auto&& id : uppercase_identifiers)
         {
-            auto result = parse(id);
+            auto const result = parse(id);
 
             REQUIRE(result);
             REQUIRE(result.ok().body == id);
@@ -44,10 +44,10 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
     SECTION("<identifier start> includes Lowercase Letter character class")
     {
-        auto lowercase_identifiers = {"a"sv, "ȹ"sv};
+        auto const lowercase_identifiers = {"a"sv, "ȹ"sv};
         for (auto&& id : lowercase_identifiers)
         {
-            auto result = parse(id);
+            auto const result = parse(id);
 
             REQUIRE(result);
             REQUIRE(result.ok().body == id);
@@ -56,10 +56,10 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
     SECTION("<identifier start> includes Titlecase Letter character class")
     {
-        auto titlecase_identifiers = {"ῼ"sv, "ǈ"sv};
+        auto const titlecase_identifiers = {"ῼ"sv, "ǈ"sv};
         for (auto&& id : titlecase_identifiers)
         {
-            auto result = parse(id);
+            auto const result = parse(id);
 
             REQUIRE(result);
             REQUIRE(result.ok().body == id);
@@ -68,10 +68,10 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
     SECTION("<identifier start> includes Modifier Letter character class")
     {
-        auto titlecase_identifiers = {"ᵝ"sv, "ꟹ"sv};
+        auto const titlecase_identifiers = {"ᵝ"sv, "ꟹ"sv};
         for (auto&& id : titlecase_identifiers)
         {
-            auto result = parse(id);
+            auto const result = parse(id);
 
             REQUIRE(result);
             REQUIRE(result.ok().body == id);
@@ -80,10 +80,10 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
     SECTION("<identifier start> includes Other Letter character class")
     {
-        auto titlecase_identifiers = {"ګ"sv, "ܤ"sv};
+        auto const titlecase_identifiers = {"ګ"sv, "ܤ"sv};
         for (auto&& id : titlecase_identifiers)
         {
-            auto result = parse(id);
+            auto const result = parse(id);
 
             REQUIRE(result);
             REQUIRE(result.ok().body == id);
@@ -92,10 +92,10 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
     SECTION("<identifier start> includes Letter Number character class")
     {
-        auto titlecase_identifiers = {"ⅻ"sv, "〥"sv};
+        auto const titlecase_identifiers = {"ⅻ"sv, "〥"sv};
         for (auto&& id : titlecase_identifiers)
         {
-            auto result = parse(id);
+            auto const result = parse(id);
 
             REQUIRE(result);
             REQUIRE(result.ok().body == id);
@@ -104,9 +104,9 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
     SECTION("<identifier extend> includes Middle Dot character")
     {
-        auto id = "a·"sv;
+        auto const id = "a·"sv;
 
-        auto result = parse(id);
+        auto const result = parse(id);
 
         REQUIRE(result);
         REQUIRE(result.ok().body == id);
@@ -114,9 +114,9 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
     SECTION("<identifier extend> includes Letter Number character class")
     {
-        auto id = "a\xCC\x83"sv;
+        auto const id = "a\xCC\x83"sv;
 
-        auto result = parse(id);
+        auto const result = parse(id);
 
         REQUIRE(result);
         REQUIRE(result.ok().body == id);
@@ -124,9 +124,9 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
     SECTION("<identifier extend> includes Spacing Mark character class")
     {
-        auto id = "a\xE0\xA7\x80"sv;
+        auto const id = "a\xE0\xA7\x80"sv;
 
-        auto result = parse(id);
+        auto const result = parse(id);
 
         REQUIRE(result);
         REQUIRE(result.ok().body == id);
@@ -134,9 +134,9 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
     SECTION("<identifier extend> includes Decimal Number character class")
     {
-        auto id = "a\xE0\xB9\x90"sv;
+        auto const id = "a\xE0\xB9\x90"sv;
 
-        auto result = parse(id);
+        auto const result = parse(id);
 
         REQUIRE(result);
         REQUIRE(result.ok().body == id);
@@ -145,9 +145,9 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
     SECTION(
         "<identifier extend> includes Connector Punctuation character class")
     {
-        auto id = "a\xEF\xB9\x8F"sv;
+        auto const id = "a\xEF\xB9\x8F"sv;
 
-        auto result = parse(id);
+        auto const result = parse(id);
 
         REQUIRE(result);
         REQUIRE(result.ok().body == id);
@@ -155,18 +155,18 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
     SECTION("<identifier extend> includes Format character class")
     {
-        auto id = "a\xF3\xA0\x80\xB0"sv;
+        auto const id = "a\xF3\xA0\x80\xB0"sv;
 
-        auto result = parse(id);
+        auto const result = parse(id);
 
         REQUIRE(result);
         REQUIRE(result.ok().body == id);
     }
 
-    auto identifier_with_all_character_classes =
+    auto const identifier_with_all_character_classes =
         "Aaǈꟹܤ〥·\xCC\x83\xE0\xA7\x80\xE0\xB9\x90\xEF\xB9\x8F\xF3\xA0\x80\xB0"sv;
 
-    auto result = parse(identifier_with_all_character_classes);
+    auto const result = parse(identifier_with_all_character_classes);
     REQUIRE(result);
     REQUIRE(result.ok().body ==
         "Aaǈꟹܤ〥·\xCC\x83\xE0\xA7\x80\xE0\xB9\x90\xEF\xB9\x8F\xF3\xA0\x80\xB0");
@@ -174,7 +174,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
 TEST_CASE("<regular identifier> does not match a reserved word")
 {
-    auto reserved_words = {"ABS",
+    auto const reserved_words = {"ABS",
         "ALL",
         "ALLOCATE",
         "ALTER",
@@ -501,7 +501,7 @@ TEST_CASE("<regular identifier> does not match a reserved word")
 
     for (auto&& reserved_word : reserved_words)
     {
-        auto result{parse(reserved_word)};
+        auto const result{parse(reserved_word)};
 
         if (result)
         {

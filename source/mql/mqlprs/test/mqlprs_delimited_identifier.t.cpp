@@ -40,7 +40,7 @@ TEST_CASE("<delimited identifer> escapes double quote symbol")
 
 TEST_CASE("<delimited identifier> allows usage of reserved word")
 {
-    auto reserved_words = {"ABS",
+    auto const reserved_words = {"ABS",
         "ALL",
         "ALLOCATE",
         "ALTER",

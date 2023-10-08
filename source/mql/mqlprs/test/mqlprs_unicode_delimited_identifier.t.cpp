@@ -32,7 +32,7 @@ TEST_CASE("<Unicode delimited identifer> escapes double quote symbol")
 {
     using namespace std::string_view_literals;
 
-    auto result = parse(R"(U&"before""after")"sv);
+    auto const result = parse(R"(U&"before""after")"sv);
     REQUIRE(result);
     REQUIRE(result.ok().body == "before\"after");
 }
@@ -43,26 +43,27 @@ TEST_CASE("<Unicode delimited identifier> introducer")
 
     SECTION("Introducer is case insensitive")
     {
-        auto uppercase_introducer = R"(U&"before")"sv;
-        auto lowercase_introducer = R"(u&"before")"sv;
+        auto const uppercase_introducer = R"(U&"before")"sv;
+        auto const lowercase_introducer = R"(u&"before")"sv;
 
-        auto expected_parsed_value = "before";
+        auto const expected_parsed_value = "before";
 
-        auto uppercase_result = parse(uppercase_introducer);
+        auto const uppercase_result = parse(uppercase_introducer);
         REQUIRE(uppercase_result);
         REQUIRE(uppercase_result.ok().body == expected_parsed_value);
 
-        auto lowercase_result = parse(lowercase_introducer);
+        auto const lowercase_result = parse(lowercase_introducer);
         REQUIRE(lowercase_result);
         REQUIRE(lowercase_result.ok().body == expected_parsed_value);
     }
 
     SECTION("Introducer does not allow for spaces")
     {
-        auto introducers_with_spaces = {R"(U &"space")"sv, R"(U& "space")"sv};
+        auto const introducers_with_spaces = {R"(U &"space")"sv,
+            R"(U& "space")"sv};
         for (auto&& introducer : introducers_with_spaces)
         {
-            auto result = parse(introducer);
+            auto const result = parse(introducer);
             REQUIRE_FALSE(result);
         }
     }
@@ -74,7 +75,7 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
 
     SECTION("Backslash is default escape character")
     {
-        auto result = parse(R"(U&"str\\")");
+        auto const result = parse(R"(U&"str\\")");
         REQUIRE(result);
         REQUIRE(result.ok().body == "str\\");
         REQUIRE(result.ok().escape_character == '\\');
@@ -82,14 +83,19 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
 
     SECTION("Can be specified with <Unicode escape specifier>")
     {
-        auto result = parse(R"(U&"str" UESCAPE 'y')");
-        REQUIRE(result);
-        REQUIRE(result.ok().escape_character == 'y');
+        auto const escape_specifiers = {R"(U&"str" UESCAPE 'y')"sv,
+            R"(U&"str" uescape 'y')"sv};
+        for (auto&& escape_specifier : escape_specifiers)
+        {
+            auto const result = parse(escape_specifier);
+            REQUIRE(result);
+            REQUIRE(result.ok().escape_character == 'y');
+        }
     }
 
     SECTION("<Unicode escape specifier> allows for optional <separator>")
     {
-        auto strings_with_separators = {R"(U&"str"UESCAPE'y'")"sv,
+        auto const strings_with_separators = {R"(U&"str"UESCAPE'y'")"sv,
             R"(U&"str" UESCAPE'y'")"sv,
             R"(U&"str" UESCAPE 'y'")"sv,
             R"(U&"str"/**/UESCAPE/**/'y'")"sv,
@@ -98,7 +104,7 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
 
         for (auto&& str : strings_with_separators)
         {
-            auto result = parse(str);
+            auto const result = parse(str);
             if (!result)
             {
                 FAIL("Parsing failed for: " << str);
@@ -110,13 +116,13 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
 
     SECTION("<Unicode escape specifier> fails with multiple characters")
     {
-        auto result = parse(R"(U&"str" UESCAPE 'yy')");
+        auto const result = parse(R"(U&"str" UESCAPE 'yy')");
         REQUIRE_FALSE(result);
     }
 
     SECTION("<Unicode escape specifier> is respected in string literal")
     {
-        auto result = parse(R"(U&"d!0061t!+000061" UESCAPE '!')");
+        auto const result = parse(R"(U&"d!0061t!+000061" UESCAPE '!')");
         REQUIRE(result);
         REQUIRE(result.ok().body == "data");
     }
@@ -124,25 +130,26 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
     SECTION(
         "Doubling <Unicode escape character> in string literal escapes escape character")
     {
-        auto result = parse(R"(U&"d!!" UESCAPE '!')");
+        auto const result = parse(R"(U&"d!!" UESCAPE '!')");
         REQUIRE(result);
         REQUIRE(result.ok().body == "d!");
     }
 
     SECTION("Parsing fails for invalid escape sequences")
     {
-        auto escape_character_followed_by_quote = R"(U&"\"")";
-        auto escape_character_followed_by_printable = R"(U&"\a")";
-        auto three_digit_unicode_escape = R"(U&"\000")";
-        auto five_digit_unicode_escape = R"(U&"\+00000")";
+        auto const escape_character_followed_by_quote = R"(U&"\"")";
+        auto const escape_character_followed_by_printable = R"(U&"\a")";
+        auto const three_digit_unicode_escape = R"(U&"\000")";
+        auto const five_digit_unicode_escape = R"(U&"\+00000")";
 
-        auto invalid_escape_sequences = {escape_character_followed_by_quote,
+        auto const invalid_escape_sequences = {
+            escape_character_followed_by_quote,
             escape_character_followed_by_printable,
             three_digit_unicode_escape,
             five_digit_unicode_escape};
         for (auto&& sequence : invalid_escape_sequences)
         {
-            auto result = parse(sequence);
+            auto const result = parse(sequence);
             if (result)
             {
                 FAIL("Parsing succeeded for: " << sequence);
@@ -155,10 +162,10 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
 TEST_CASE(
     "Extra numbers after <Unicode escaped value> are parsed as normal text")
 {
-    auto a0_strings = {R"(U&"\00610")", R"(U&"\+0000610")"};
+    auto const a0_strings = {R"(U&"\00610")", R"(U&"\+0000610")"};
     for (auto&& str : a0_strings)
     {
-        auto result = parse(str);
+        auto const result = parse(str);
         REQUIRE(result);
         REQUIRE(result.ok().body == "a0");
     }
@@ -166,7 +173,7 @@ TEST_CASE(
 
 TEST_CASE("<Unicode delimited identifier> allows usage of reserved word")
 {
-    auto reserved_words = {"ABS",
+    auto const reserved_words = {"ABS",
         "ALL",
         "ALLOCATE",
         "ALTER",
@@ -493,7 +500,7 @@ TEST_CASE("<Unicode delimited identifier> allows usage of reserved word")
 
     for (auto&& reserved_word : reserved_words)
     {
-        auto result{parse(fmt::format("U&\"{}\"", reserved_word))};
+        auto const result{parse(fmt::format("U&\"{}\"", reserved_word))};
 
         if (!result)
         {
