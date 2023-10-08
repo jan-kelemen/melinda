@@ -18,6 +18,9 @@ namespace melinda::mqlprs
 
     constexpr auto kw = lexy::dsl::identifier(lexy::dsl::ascii::alpha,
         lexy::dsl::ascii::alpha_underscore / LEXY_LIT("-"));
+
+    template<typename T>
+    struct parser_for;
 } // namespace melinda::mqlprs
 
 #endif

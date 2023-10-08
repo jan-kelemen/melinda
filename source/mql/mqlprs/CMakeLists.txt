@@ -10,6 +10,7 @@ target_sources(${TARGET_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/include/ast/mqlprs_ast_unicode_delimited_identifier.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mqlprs_common.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mqlprs_parse_error.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/mqlprs_parser.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mqlprs_regular_identifier.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mqlprs_delimited_identifier.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mqlprs_unicode_delimited_identifier.h
@@ -20,6 +21,7 @@ target_sources(${TARGET_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/mqlprs_ast_unicode_delimited_identifier.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mqlprs_common.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mqlprs_parse_error.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/mqlprs_parser.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mqlprs_regular_identifier.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mqlprs_delimited_identifier.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mqlprs_unicode_delimited_identifier.cpp

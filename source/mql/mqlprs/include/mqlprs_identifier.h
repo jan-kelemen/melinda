@@ -22,12 +22,28 @@ namespace melinda::mqlprs
         static constexpr auto value = lexy::construct<ast::identifier>;
     };
 
+    template<>
+    struct parser_for<ast::identifier>
+    {
+        using value_type = ast::identifier;
+
+        using type = identifier;
+    };
+
     struct [[nodiscard]] multipart_identifier final
     {
         static constexpr auto rule = lexy::dsl::list(lexy::dsl::p<identifier>,
             lexy::dsl::sep(lexy::dsl::period));
 
         static constexpr auto value = lexy::as_list<ast::multipart_identifier>;
+    };
+
+    template<>
+    struct parser_for<ast::multipart_identifier>
+    {
+        using value_type = ast::multipart_identifier;
+
+        using type = multipart_identifier;
     };
 } // namespace melinda::mqlprs
 

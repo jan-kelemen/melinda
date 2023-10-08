@@ -196,6 +196,14 @@ namespace melinda::mqlprs
                 escape_character};
         }
     };
+
+    template<>
+    struct parser_for<ast::unicode_delimited_identifier>
+    {
+        using value_type = ast::unicode_delimited_identifier;
+
+        using type = unicode_delimited_identifier;
+    };
 } // namespace melinda::mqlprs
 
 #endif

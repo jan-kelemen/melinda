@@ -44,6 +44,15 @@ namespace melinda::mqlprs
                 return ast::regular_identifier{{lexeme.begin(), lexeme.end()}};
             });
     };
+
+    template<>
+
+    struct parser_for<ast::regular_identifier>
+    {
+        using value_type = ast::regular_identifier;
+
+        using type = regular_identifier;
+    };
 } // namespace melinda::mqlprs
 
 #endif

@@ -11,6 +11,7 @@
 #include <lexy/lexeme.hpp>
 
 #include <mqlprs_ast_delimited_identifier.h> // IWYU pragma: export
+#include <mqlprs_common.h>
 
 namespace melinda::mqlprs
 {
@@ -58,6 +59,14 @@ namespace melinda::mqlprs
 
             return ast::delimited_identifier{std::move(result)};
         }
+    };
+
+    template<>
+    struct parser_for<ast::delimited_identifier>
+    {
+        using value_type = ast::delimited_identifier;
+
+        using type = delimited_identifier;
     };
 } // namespace melinda::mqlprs
 

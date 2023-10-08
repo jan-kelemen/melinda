@@ -19,36 +19,21 @@
 
 #include <mqlprs_delimited_identifier.h>
 #include <mqlprs_parse_error.h>
+#include <mqlprs_parser.h>
 
 using namespace melinda;
 
 namespace
 {
-    mblcxx::result<mqlprs::ast::delimited_identifier, mqlprs::parse_error>
-    parse(std::string_view value)
-    {
-        lexy::string_input<lexy::utf8_char_encoding> const range{value};
-
-        if (auto result{lexy::parse<mqlprs::delimited_identifier>(range,
-                lexy::collect<std::vector<mqlprs::parse_error_detail>>(
-                    mqlprs::error_callback{}))};
-            result.has_value() && result.is_success())
-        {
-            return {std::in_place_index<0>, std::move(result).value()};
-        }
-        else
-        {
-            mqlprs::parse_error error{std::move(result).errors()};
-            return {std::in_place_index<1>, std::move(error)};
-        }
-    }
+    auto parse = [](std::string_view query)
+    { return mqlprs::parse<mqlprs::ast::delimited_identifier>(query); };
 } // namespace
 
 TEST_CASE("<delimited identifer> escapes double quote symbol")
 {
     using namespace std::string_view_literals;
 
-    auto result = parse(R"("before""after")"sv);
+    auto const result = parse(R"("before""after")"sv);
     REQUIRE(result);
     REQUIRE(result.ok().body == "before\"after");
 }
@@ -382,7 +367,7 @@ TEST_CASE("<delimited identifier> allows usage of reserved word")
 
     for (auto&& reserved_word : reserved_words)
     {
-        auto result{parse(fmt::format("\"{}\"", reserved_word))};
+        auto const result{parse(fmt::format("\"{}\"", reserved_word))};
 
         if (!result)
         {
