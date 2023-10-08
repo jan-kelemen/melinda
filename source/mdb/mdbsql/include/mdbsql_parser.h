@@ -6,12 +6,11 @@
 #include <mblcxx_result.h>
 
 #include <mdbsql_ast_sql_executable_statement.h>
-#include <mdbsql_parser_parse_error.h>
+#include <mqlprs_parser.h>
 
 namespace melinda::mdbsql
 {
-    using parse_result =
-        mblcxx::result<ast::sql_executable_statement, parser::parse_error>;
+    using parse_result = mqlprs::parse_result<ast::sql_executable_statement>;
 
     parse_result parse(std::string_view statement);
 } // namespace melinda::mdbsql

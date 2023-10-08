@@ -3,13 +3,13 @@
 
 #include <string>
 
-#include <mdbsql_ast_identifier.h>
+#include <mqlprs_ast_identifier.h>
 
 namespace melinda::mdbsql::ast
 {
     struct [[nodiscard]] column_definition final
     {
-        multipart_identifier name;
+        mqlprs::ast::multipart_identifier name;
         std::string data_type;
 
         bool operator==(column_definition const&) const = default;

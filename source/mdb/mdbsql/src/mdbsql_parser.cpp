@@ -34,22 +34,22 @@
 
 #include <mbltrc_trace.h>
 
+#include <mqlprs_common.h>
+#include <mqlprs_identifier.h> // IWYU pragma: keep
+#include <mqlprs_parse_error.h>
+#include <mqlprs_reserved_word.h>
+
 #include <mdbsql_ast_column_definition.h>
-#include <mdbsql_ast_delimited_identifier.h>
 #include <mdbsql_ast_schema_definition.h> // IWYU pragma: keep
 #include <mdbsql_ast_sql_executable_statement.h>
 #include <mdbsql_ast_sql_schema_statement.h>
 #include <mdbsql_ast_table_definition.h> // IWYU pragma: keep
 #include <mdbsql_ast_table_elements.h>
-#include <mdbsql_parser_common.h>
-#include <mdbsql_parser_identifier.h> // IWYU pragma: keep
-#include <mdbsql_parser_parse_error.h>
-#include <mdbsql_parser_reserved_word.h>
 
 namespace
 {
-    namespace ast = melinda::mdbsql::ast;
-    namespace parser = melinda::mdbsql::parser;
+    namespace ast = melinda::mqlprs::ast;
+    namespace parser = melinda::mqlprs;
     namespace dsl = lexy::dsl;
 
     [[maybe_unused]] constexpr auto nrkw_a =
@@ -529,7 +529,8 @@ namespace
     {
         static constexpr auto rule = []
         { return dsl::p<parser::multipart_identifier> + parser::kw_integer; }();
-        static constexpr auto value = lexy::construct<ast::column_definition>;
+        static constexpr auto value =
+            lexy::construct<melinda::mdbsql::ast::column_definition>;
     };
 
     struct table_elements
@@ -541,8 +542,8 @@ namespace
         }();
 
         static constexpr auto value =
-            lexy::fold_inplace<ast::table_elements>({},
-                [](auto& rv, ast::column_definition v)
+            lexy::fold_inplace<melinda::mdbsql::ast::table_elements>({},
+                [](auto& rv, melinda::mdbsql::ast::column_definition v)
                 { rv.elements.push_back(std::move(v)); });
     };
 
@@ -555,7 +556,8 @@ namespace
                 parser::kw_table + dsl::p<parser::multipart_identifier> +
                 dsl::p<table_elements>;
         }();
-        static constexpr auto value = lexy::construct<ast::table_definition>;
+        static constexpr auto value =
+            lexy::construct<melinda::mdbsql::ast::table_definition>;
     };
 
     struct path_specification
@@ -592,7 +594,8 @@ namespace
                 dsl::opt(parser::kw_create >> dsl::p<table_definition>);
         }();
 
-        static constexpr auto value = lexy::construct<ast::schema_definition>;
+        static constexpr auto value =
+            lexy::construct<melinda::mdbsql::ast::schema_definition>;
     };
 
     struct create_statement
@@ -601,14 +604,14 @@ namespace
             (nrkw_schema >> dsl::p<schema_definition> |
                 dsl::else_ >> dsl::p<table_definition>);
         static constexpr auto value =
-            lexy::construct<ast::sql_schema_statement>;
+            lexy::construct<melinda::mdbsql::ast::sql_schema_statement>;
     };
 
     struct sql_schema_statement
     {
         static constexpr auto rule = dsl::p<create_statement>;
         static constexpr auto value =
-            lexy::construct<ast::sql_schema_statement>;
+            lexy::construct<melinda::mdbsql::ast::sql_schema_statement>;
     };
 
     struct sql_executable_statement
@@ -616,17 +619,17 @@ namespace
         static constexpr auto whitespace = parser::separator;
         static constexpr auto rule = dsl::p<sql_schema_statement> + dsl::eof;
         static constexpr auto value =
-            lexy::construct<ast::sql_executable_statement>;
+            lexy::construct<melinda::mdbsql::ast::sql_executable_statement>;
     };
 } // namespace
 
 template<>
-struct fmt::formatter<melinda::mdbsql::parser::parse_error_detail>
+struct fmt::formatter<melinda::mqlprs::parse_error_detail>
 {
     constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
 
     template<typename FormatContext>
-    auto format(melinda::mdbsql::parser::parse_error_detail const& value,
+    auto format(melinda::mqlprs::parse_error_detail const& value,
         FormatContext& ctx) const
     {
         return format_to(ctx.out(),
@@ -639,12 +642,12 @@ struct fmt::formatter<melinda::mdbsql::parser::parse_error_detail>
 };
 
 template<>
-struct fmt::formatter<melinda::mdbsql::parser::parse_error>
+struct fmt::formatter<melinda::mqlprs::parse_error>
 {
     constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
 
     template<typename FormatContext>
-    auto format(melinda::mdbsql::parser::parse_error const& value,
+    auto format(melinda::mqlprs::parse_error const& value,
         FormatContext& ctx) const
     {
         if (!value.details.empty())
@@ -663,21 +666,6 @@ struct fmt::formatter<melinda::mdbsql::parser::parse_error>
 
 melinda::mdbsql::parse_result melinda::mdbsql::parse(std::string_view statement)
 {
-    lexy::string_input<lexy::utf8_char_encoding> const range{statement};
-
-    if (auto result{lexy::parse<sql_executable_statement>(range,
-            lexy::collect<std::vector<parser::parse_error_detail>>(
-                parser::error_callback{}))};
-        result.has_value())
-    {
-        return {std::in_place_index<0>, std::move(result).value()};
-    }
-    else
-    {
-        parser::parse_error error{std::move(result).errors()};
-        MBLTRC_TRACE_ERROR("Parsing of statement '{}' failed. {}",
-            statement,
-            error);
-        return {std::in_place_index<1>, std::move(error)};
-    }
+    return mqlprs::parse<ast::sql_executable_statement,
+        sql_executable_statement>(statement);
 }

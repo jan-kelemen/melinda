@@ -16,7 +16,7 @@ namespace melinda::mdbsql::ast
         using table_contents_source = std::variant<table_elements>;
 
         std::optional<std::string> scope;
-        multipart_identifier name;
+        mqlprs::ast::multipart_identifier name;
         table_contents_source table_contents;
 
         bool operator==(table_definition const&) const = default;

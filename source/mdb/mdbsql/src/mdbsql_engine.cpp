@@ -8,9 +8,9 @@
 
 #include <mblcxx_always_false.h> // IWYU pragma: keep
 #include <mbltrc_trace.h>
-#include <mdbsql_ast_identifier.h>
 #include <mdbsql_ast_sql_schema_statement.h>
 #include <mdbsql_parser.h>
+#include <mqlprs_ast_identifier.h>
 
 namespace melinda::mdbsql::ast
 {
@@ -20,7 +20,7 @@ namespace melinda::mdbsql::ast
 
 namespace
 {
-    auto as_str(melinda::mdbsql::ast::identifier const& value)
+    auto as_str(melinda::mqlprs::ast::identifier const& value)
     {
         return std::visit([](auto&& v) { return v.body; }, value);
     }
