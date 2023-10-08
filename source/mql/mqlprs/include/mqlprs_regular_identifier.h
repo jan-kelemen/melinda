@@ -1,16 +1,23 @@
-#ifndef MELINDA_MDBSQL_PARSER_REGULAR_IDENTIFIER_INCLUDED
-#define MELINDA_MDBSQL_PARSER_REGULAR_IDENTIFIER_INCLUDED
+#ifndef MELINDA_MQLPRS_REGULAR_IDENTIFIER_INCLUDED
+#define MELINDA_MQLPRS_REGULAR_IDENTIFIER_INCLUDED
 
 #include <lexy/callback/adapter.hpp>
 #include <lexy/code_point.hpp>
+#include <lexy/dsl/char_class.hpp>
 #include <lexy/dsl/code_point.hpp>
 #include <lexy/dsl/identifier.hpp>
-#include <lexy/encoding.hpp>
+#include <lexy/dsl/literal.hpp>
 
-#include <mdbsql_ast_regular_identifier.h> // IWYU pragma: export
-#include <mdbsql_parser_reserved_word.h>
+#include <mqlprs_ast_regular_identifier.h> // IWYU pragma: keep
+#include <mqlprs_reserved_word.h>
 
-namespace melinda::mdbsql::parser
+namespace melinda::mqlprs
+{
+    template<typename T>
+    struct parser_for;
+} // namespace melinda::mqlprs
+
+namespace melinda::mqlprs
 {
     struct [[nodiscard]] regular_identifier final
     {
@@ -44,6 +51,14 @@ namespace melinda::mdbsql::parser
                 return ast::regular_identifier{{lexeme.begin(), lexeme.end()}};
             });
     };
-} // namespace melinda::mdbsql::parser
+
+    template<>
+    struct parser_for<ast::regular_identifier>
+    {
+        using value_type = ast::regular_identifier;
+
+        using type = regular_identifier;
+    };
+} // namespace melinda::mqlprs
 
 #endif

@@ -1,18 +1,27 @@
-#ifndef MELINDA_MDBSQL_PARSER_DELIMITED_IDENTIFIER_INCLUDED
-#define MELINDA_MDBSQL_PARSER_DELIMITED_IDENTIFIER_INCLUDED
+#ifndef MELINDA_MQLPRS_DELIMITED_IDENTIFIER_INCLUDED
+#define MELINDA_MQLPRS_DELIMITED_IDENTIFIER_INCLUDED
 
-#include <lexy/callback/adapter.hpp>
-#include <lexy/code_point.hpp>
+#include <string>
+#include <utility>
+
+#include <lexy/dsl/branch.hpp>
 #include <lexy/dsl/capture.hpp>
-#include <lexy/dsl/code_point.hpp>
+#include <lexy/dsl/char_class.hpp>
 #include <lexy/dsl/literal.hpp>
 #include <lexy/dsl/scan.hpp>
+#include <lexy/error.hpp>
 #include <lexy/grammar.hpp>
-#include <lexy/lexeme.hpp>
+#include <lexy/lexeme.hpp> // IWYU pragma: keep
 
-#include <mdbsql_ast_delimited_identifier.h> // IWYU pragma: export
+#include <mqlprs_ast_delimited_identifier.h> // IWYU pragma: keep
 
-namespace melinda::mdbsql::parser
+namespace melinda::mqlprs
+{
+    template<typename T>
+    struct parser_for;
+} // namespace melinda::mqlprs
+
+namespace melinda::mqlprs
 {
     struct [[nodiscard]] delimited_identifier final
         : lexy::scan_production<ast::delimited_identifier>
@@ -59,6 +68,14 @@ namespace melinda::mdbsql::parser
             return ast::delimited_identifier{std::move(result)};
         }
     };
-} // namespace melinda::mdbsql::parser
+
+    template<>
+    struct parser_for<ast::delimited_identifier>
+    {
+        using value_type = ast::delimited_identifier;
+
+        using type = delimited_identifier;
+    };
+} // namespace melinda::mqlprs
 
 #endif

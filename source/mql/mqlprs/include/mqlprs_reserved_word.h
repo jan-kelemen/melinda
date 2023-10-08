@@ -1,13 +1,13 @@
-#ifndef MELINDA_MDBSQL_PARSER_RESERVED_WORD_INCLUDED
-#define MELINDA_MDBSQL_PARSER_RESERVED_WORD_INCLUDED
+#ifndef MELINDA_MQLPRS_RESERVED_WORD_INCLUDED
+#define MELINDA_MQLPRS_RESERVED_WORD_INCLUDED
 
 #include <lexy/dsl/ascii.hpp>
 #include <lexy/dsl/case_folding.hpp>
 #include <lexy/dsl/identifier.hpp>
 
-#include <mdbsql_parser_common.h>
+#include <mqlprs_common.h>
 
-namespace melinda::mdbsql::parser
+namespace melinda::mqlprs
 {
     constexpr auto kw_abs =
         lexy::dsl::ascii::case_folding(LEXY_KEYWORD(u8"abs", kw));
@@ -985,5 +985,5 @@ namespace melinda::mdbsql::parser
         kw_within,
         kw_without,
         kw_year);
-} // namespace melinda::mdbsql::parser
+} // namespace melinda::mqlprs
 #endif

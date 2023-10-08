@@ -1,6 +1,7 @@
-#ifndef MELINDA_MDBSQL_PARSER_PARSE_ERROR
-#define MELINDA_MDBSQL_PARSER_PARSE_ERROR
+#ifndef MELINDA_MQLPRS_PARSE_ERROR
+#define MELINDA_MQLPRS_PARSE_ERROR
 
+#include <cstddef>
 #include <cstdint>
 #include <string_view>
 #include <vector>
@@ -8,7 +9,7 @@
 #include <lexy/error.hpp>
 #include <lexy/input_location.hpp>
 
-namespace melinda::mdbsql::parser
+namespace melinda::mqlprs
 {
     enum class [[nodiscard]] parse_error_kind : std::uint8_t
     {
@@ -33,11 +34,10 @@ namespace melinda::mdbsql::parser
 
     struct error_callback
     {
-        using return_type = melinda::mdbsql::parser::parse_error_detail;
+        using return_type = parse_error_detail;
 
         template<typename Input, typename Tag>
-        melinda::mdbsql::parser::parse_error_detail operator()(
-            lexy::error_context<Input> const& context,
+        parse_error_detail operator()(lexy::error_context<Input> const& context,
             lexy::error_for<Input, Tag> const& error)
         {
             lexy::input_location const context_location{
@@ -55,34 +55,31 @@ namespace melinda::mdbsql::parser
                 return {line_number,
                     column_number,
                     context.production(),
-                    melinda::mdbsql::parser::parse_error_kind::
-                        expected_literal};
+                    parse_error_kind::expected_literal};
             }
             else if constexpr (std::is_same_v<Tag, lexy::expected_keyword>)
             {
                 return {line_number,
                     column_number,
                     context.production(),
-                    melinda::mdbsql::parser::parse_error_kind::
-                        expected_keyword};
+                    parse_error_kind::expected_keyword};
             }
             else if constexpr (std::is_same_v<Tag, lexy::expected_char_class>)
             {
                 return {line_number,
                     column_number,
                     context.production(),
-                    melinda::mdbsql::parser::parse_error_kind::
-                        expected_char_class};
+                    parse_error_kind::expected_char_class};
             }
             else
             {
                 return {line_number,
                     column_number,
                     context.production(),
-                    melinda::mdbsql::parser::parse_error_kind::generic};
+                    parse_error_kind::generic};
             }
         }
     };
-} // namespace melinda::mdbsql::parser
+} // namespace melinda::mqlprs
 
 #endif

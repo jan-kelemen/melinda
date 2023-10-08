@@ -3,187 +3,170 @@
 #include <initializer_list>
 #include <string>
 #include <string_view>
-#include <type_traits>
-#include <utility>
-#include <vector>
-
-#include <fmt/core.h>
-
-#include <lexy/action/parse.hpp>
-#include <lexy/callback/container.hpp> // IWYU pragma: keep
-#include <lexy/encoding.hpp>
-#include <lexy/input/string_input.hpp>
 
 #include <mblcxx_result.h>
 
-#include <mdbsql_parser_parse_error.h>
-#include <mdbsql_parser_unicode_delimited_identifier.h>
+#include <mqlprs_ast_regular_identifier.h>
+#include <mqlprs_parser.h>
+#include <mqlprs_regular_identifier.h> // IWYU pragma: keep
 
 using namespace melinda;
 
 namespace
 {
-    mblcxx::result<mdbsql::ast::unicode_delimited_identifier,
-        mdbsql::parser::parse_error>
-    parse(std::string_view value)
-    {
-        lexy::string_input<lexy::utf8_char_encoding> const range{value};
-
-        if (auto result{lexy::parse<
-                mdbsql::parser::unicode_delimited_identifier>(range,
-                lexy::collect<std::vector<mdbsql::parser::parse_error_detail>>(
-                    mdbsql::parser::error_callback{}))};
-            result.has_value() && result.is_success())
-        {
-            return {std::in_place_index<0>, std::move(result).value()};
-        }
-        else
-        {
-            mdbsql::parser::parse_error error{std::move(result).errors()};
-            return {std::in_place_index<1>, std::move(error)};
-        }
-    }
+    auto parse = [](std::string_view query)
+    { return mqlprs::parse<mqlprs::ast::regular_identifier>(query); };
 } // namespace
 
-TEST_CASE("<Unicode delimited identifer> escapes double quote symbol")
+TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 {
     using namespace std::string_view_literals;
 
-    auto result = parse(R"(U&"before""after")"sv);
-    REQUIRE(result);
-    REQUIRE(result.ok().body == "before\"after");
-}
-
-TEST_CASE("<Unicode delimited identifier> introducer")
-{
-    using namespace std::string_view_literals;
-
-    SECTION("Introducer is case insensitive")
+    SECTION("<identifier start> includes Uppercase Letter character class")
     {
-        auto uppercase_introducer = R"(U&"before")"sv;
-        auto lowercase_introducer = R"(u&"before")"sv;
-
-        auto expected_parsed_value = "before";
-
-        auto uppercase_result = parse(uppercase_introducer);
-        REQUIRE(uppercase_result);
-        REQUIRE(uppercase_result.ok().body == expected_parsed_value);
-
-        auto lowercase_result = parse(lowercase_introducer);
-        REQUIRE(lowercase_result);
-        REQUIRE(lowercase_result.ok().body == expected_parsed_value);
-    }
-
-    SECTION("Introducer does not allow for spaces")
-    {
-        auto introducers_with_spaces = {R"(U &"space")"sv, R"(U& "space")"sv};
-        for (auto&& introducer : introducers_with_spaces)
+        auto const uppercase_identifiers = {"A"sv, "Σ"sv};
+        for (auto&& id : uppercase_identifiers)
         {
-            auto result = parse(introducer);
-            REQUIRE_FALSE(result);
-        }
-    }
-}
+            auto const result = parse(id);
 
-TEST_CASE("<Unicode delimited indentifier> escape character")
-{
-    using namespace std::string_view_literals;
-
-    SECTION("Backslash is default escape character")
-    {
-        auto result = parse(R"(U&"str\\")");
-        REQUIRE(result);
-        REQUIRE(result.ok().body == "str\\");
-        REQUIRE(result.ok().escape_character == '\\');
-    }
-
-    SECTION("Can be specified with <Unicode escape specifier>")
-    {
-        auto result = parse(R"(U&"str" UESCAPE 'y')");
-        REQUIRE(result);
-        REQUIRE(result.ok().escape_character == 'y');
-    }
-
-    SECTION("<Unicode escape specifier> allows for optional <separator>")
-    {
-        auto strings_with_separators = {R"(U&"str"UESCAPE'y'")"sv,
-            R"(U&"str" UESCAPE'y'")"sv,
-            R"(U&"str" UESCAPE 'y'")"sv,
-            R"(U&"str"/**/UESCAPE/**/'y'")"sv,
-            "U&\"str\"--\nUESCAPE'y'\""sv,
-            "U&\"str\"--\nUESCAPE--\n'y'\""sv};
-
-        for (auto&& str : strings_with_separators)
-        {
-            auto result = parse(str);
-            if (!result)
-            {
-                FAIL("Parsing failed for: " << str);
-            }
             REQUIRE(result);
-            REQUIRE(result.ok().escape_character == 'y');
+            REQUIRE(result.ok().body == id);
         }
     }
 
-    SECTION("<Unicode escape specifier> fails with multiple characters")
+    SECTION("<identifier start> includes Lowercase Letter character class")
     {
-        auto result = parse(R"(U&"str" UESCAPE 'yy')");
-        REQUIRE_FALSE(result);
+        auto const lowercase_identifiers = {"a"sv, "ȹ"sv};
+        for (auto&& id : lowercase_identifiers)
+        {
+            auto const result = parse(id);
+
+            REQUIRE(result);
+            REQUIRE(result.ok().body == id);
+        }
     }
 
-    SECTION("<Unicode escape specifier> is respected in string literal")
+    SECTION("<identifier start> includes Titlecase Letter character class")
     {
-        auto result = parse(R"(U&"d!0061t!+000061" UESCAPE '!')");
+        auto const titlecase_identifiers = {"ῼ"sv, "ǈ"sv};
+        for (auto&& id : titlecase_identifiers)
+        {
+            auto const result = parse(id);
+
+            REQUIRE(result);
+            REQUIRE(result.ok().body == id);
+        }
+    }
+
+    SECTION("<identifier start> includes Modifier Letter character class")
+    {
+        auto const titlecase_identifiers = {"ᵝ"sv, "ꟹ"sv};
+        for (auto&& id : titlecase_identifiers)
+        {
+            auto const result = parse(id);
+
+            REQUIRE(result);
+            REQUIRE(result.ok().body == id);
+        }
+    }
+
+    SECTION("<identifier start> includes Other Letter character class")
+    {
+        auto const titlecase_identifiers = {"ګ"sv, "ܤ"sv};
+        for (auto&& id : titlecase_identifiers)
+        {
+            auto const result = parse(id);
+
+            REQUIRE(result);
+            REQUIRE(result.ok().body == id);
+        }
+    }
+
+    SECTION("<identifier start> includes Letter Number character class")
+    {
+        auto const titlecase_identifiers = {"ⅻ"sv, "〥"sv};
+        for (auto&& id : titlecase_identifiers)
+        {
+            auto const result = parse(id);
+
+            REQUIRE(result);
+            REQUIRE(result.ok().body == id);
+        }
+    }
+
+    SECTION("<identifier extend> includes Middle Dot character")
+    {
+        auto const id = "a·"sv;
+
+        auto const result = parse(id);
+
         REQUIRE(result);
-        REQUIRE(result.ok().body == "data");
+        REQUIRE(result.ok().body == id);
+    }
+
+    SECTION("<identifier extend> includes Letter Number character class")
+    {
+        auto const id = "a\xCC\x83"sv;
+
+        auto const result = parse(id);
+
+        REQUIRE(result);
+        REQUIRE(result.ok().body == id);
+    }
+
+    SECTION("<identifier extend> includes Spacing Mark character class")
+    {
+        auto const id = "a\xE0\xA7\x80"sv;
+
+        auto const result = parse(id);
+
+        REQUIRE(result);
+        REQUIRE(result.ok().body == id);
+    }
+
+    SECTION("<identifier extend> includes Decimal Number character class")
+    {
+        auto const id = "a\xE0\xB9\x90"sv;
+
+        auto const result = parse(id);
+
+        REQUIRE(result);
+        REQUIRE(result.ok().body == id);
     }
 
     SECTION(
-        "Doubling <Unicode escape character> in string literal escapes escape character")
+        "<identifier extend> includes Connector Punctuation character class")
     {
-        auto result = parse(R"(U&"d!!" UESCAPE '!')");
+        auto const id = "a\xEF\xB9\x8F"sv;
+
+        auto const result = parse(id);
+
         REQUIRE(result);
-        REQUIRE(result.ok().body == "d!");
+        REQUIRE(result.ok().body == id);
     }
 
-    SECTION("Parsing fails for invalid escape sequences")
+    SECTION("<identifier extend> includes Format character class")
     {
-        auto escape_character_followed_by_quote = R"(U&"\"")";
-        auto escape_character_followed_by_printable = R"(U&"\a")";
-        auto three_digit_unicode_escape = R"(U&"\000")";
-        auto five_digit_unicode_escape = R"(U&"\+00000")";
+        auto const id = "a\xF3\xA0\x80\xB0"sv;
 
-        auto invalid_escape_sequences = {escape_character_followed_by_quote,
-            escape_character_followed_by_printable,
-            three_digit_unicode_escape,
-            five_digit_unicode_escape};
-        for (auto&& sequence : invalid_escape_sequences)
-        {
-            auto result = parse(sequence);
-            if (result)
-            {
-                FAIL("Parsing succeeded for: " << sequence);
-            }
-            REQUIRE_FALSE(result);
-        }
+        auto const result = parse(id);
+
+        REQUIRE(result);
+        REQUIRE(result.ok().body == id);
     }
+
+    auto const identifier_with_all_character_classes =
+        "Aaǈꟹܤ〥·\xCC\x83\xE0\xA7\x80\xE0\xB9\x90\xEF\xB9\x8F\xF3\xA0\x80\xB0"sv;
+
+    auto const result = parse(identifier_with_all_character_classes);
+    REQUIRE(result);
+    REQUIRE(result.ok().body ==
+        "Aaǈꟹܤ〥·\xCC\x83\xE0\xA7\x80\xE0\xB9\x90\xEF\xB9\x8F\xF3\xA0\x80\xB0");
 }
 
-TEST_CASE(
-    "Extra numbers after <Unicode escaped value> are parsed as normal text")
+TEST_CASE("<regular identifier> does not match a reserved word")
 {
-    auto a0_strings = {R"(U&"\00610")", R"(U&"\+0000610")"};
-    for (auto&& str : a0_strings)
-    {
-        auto result = parse(str);
-        REQUIRE(result);
-        REQUIRE(result.ok().body == "a0");
-    }
-}
-
-TEST_CASE("<Unicode delimited identifier> allows usage of reserved word")
-{
-    auto reserved_words = {"ABS",
+    auto const reserved_words = {"ABS",
         "ALL",
         "ALLOCATE",
         "ALTER",
@@ -510,14 +493,13 @@ TEST_CASE("<Unicode delimited identifier> allows usage of reserved word")
 
     for (auto&& reserved_word : reserved_words)
     {
-        auto result{parse(fmt::format("U&\"{}\"", reserved_word))};
+        auto const result{parse(reserved_word)};
 
-        if (!result)
+        if (result)
         {
-            FAIL("Parsing failed for reserved word: " << reserved_word);
+            FAIL("Parsing succeed for reserved word: " << reserved_word);
         }
 
-        REQUIRE(result);
-        REQUIRE(result.ok().body == reserved_word);
+        REQUIRE_FALSE(result);
     }
 }
