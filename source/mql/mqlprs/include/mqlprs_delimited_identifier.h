@@ -1,5 +1,5 @@
-#ifndef MELINDA_MDBSQL_PARSER_DELIMITED_IDENTIFIER_INCLUDED
-#define MELINDA_MDBSQL_PARSER_DELIMITED_IDENTIFIER_INCLUDED
+#ifndef MELINDA_MQLPRS_DELIMITED_IDENTIFIER_INCLUDED
+#define MELINDA_MQLPRS_DELIMITED_IDENTIFIER_INCLUDED
 
 #include <lexy/callback/adapter.hpp>
 #include <lexy/code_point.hpp>
@@ -10,9 +10,9 @@
 #include <lexy/grammar.hpp>
 #include <lexy/lexeme.hpp>
 
-#include <mdbsql_ast_delimited_identifier.h> // IWYU pragma: export
+#include <mqlprs_ast_delimited_identifier.h> // IWYU pragma: export
 
-namespace melinda::mdbsql::parser
+namespace melinda::mqlprs
 {
     struct [[nodiscard]] delimited_identifier final
         : lexy::scan_production<ast::delimited_identifier>
@@ -59,6 +59,6 @@ namespace melinda::mdbsql::parser
             return ast::delimited_identifier{std::move(result)};
         }
     };
-} // namespace melinda::mdbsql::parser
+} // namespace melinda::mqlprs
 
 #endif

@@ -1,17 +1,17 @@
-#ifndef MELINDA_MDBSQL_PARSER_IDENTIFIER_INCLUDED
-#define MELINDA_MDBSQL_PARSER_IDENTIFIER_INCLUDED
+#ifndef MELINDA_MQLPRS_IDENTIFIER_INCLUDED
+#define MELINDA_MQLPRS_IDENTIFIER_INCLUDED
 
 #include <lexy/callback/container.hpp>
 #include <lexy/callback/object.hpp>
 #include <lexy/dsl/list.hpp>
 #include <lexy/dsl/production.hpp>
 
-#include <mdbsql_ast_identifier.h> // IWYU pragma: export
-#include <mdbsql_parser_delimited_identifier.h>
-#include <mdbsql_parser_regular_identifier.h>
-#include <mdbsql_parser_unicode_delimited_identifier.h>
+#include <mqlprs_ast_identifier.h> // IWYU pragma: export
+#include <mqlprs_delimited_identifier.h>
+#include <mqlprs_regular_identifier.h>
+#include <mqlprs_unicode_delimited_identifier.h>
 
-namespace melinda::mdbsql::parser
+namespace melinda::mqlprs
 {
     struct [[nodiscard]] identifier final
     {
@@ -29,6 +29,6 @@ namespace melinda::mdbsql::parser
 
         static constexpr auto value = lexy::as_list<ast::multipart_identifier>;
     };
-} // namespace melinda::mdbsql::parser
+} // namespace melinda::mqlprs
 
 #endif

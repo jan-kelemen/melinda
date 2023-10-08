@@ -16,30 +16,29 @@
 
 #include <mblcxx_result.h>
 
-#include <mdbsql_parser_parse_error.h>
-#include <mdbsql_parser_unicode_delimited_identifier.h>
+#include <mqlprs_parse_error.h>
+#include <mqlprs_unicode_delimited_identifier.h>
 
 using namespace melinda;
 
 namespace
 {
-    mblcxx::result<mdbsql::ast::unicode_delimited_identifier,
-        mdbsql::parser::parse_error>
+    mblcxx::result<mqlprs::ast::unicode_delimited_identifier,
+        mqlprs::parse_error>
     parse(std::string_view value)
     {
         lexy::string_input<lexy::utf8_char_encoding> const range{value};
 
-        if (auto result{lexy::parse<
-                mdbsql::parser::unicode_delimited_identifier>(range,
-                lexy::collect<std::vector<mdbsql::parser::parse_error_detail>>(
-                    mdbsql::parser::error_callback{}))};
+        if (auto result{lexy::parse<mqlprs::unicode_delimited_identifier>(range,
+                lexy::collect<std::vector<mqlprs::parse_error_detail>>(
+                    mqlprs::error_callback{}))};
             result.has_value() && result.is_success())
         {
             return {std::in_place_index<0>, std::move(result).value()};
         }
         else
         {
-            mdbsql::parser::parse_error error{std::move(result).errors()};
+            mqlprs::parse_error error{std::move(result).errors()};
             return {std::in_place_index<1>, std::move(error)};
         }
     }

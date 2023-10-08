@@ -1,5 +1,5 @@
-#ifndef MELINDA_MDBSQL_PARSER_UNICODE_DELIMITED_IDENTIFIER_INCLUDED
-#define MELINDA_MDBSQL_PARSER_UNICODE_DELIMITED_IDENTIFIER_INCLUDED
+#ifndef MELINDA_MQLPRS_UNICODE_DELIMITED_IDENTIFIER_INCLUDED
+#define MELINDA_MQLPRS_UNICODE_DELIMITED_IDENTIFIER_INCLUDED
 
 #include <lexy/action/parse.hpp>
 #include <lexy/callback/adapter.hpp>
@@ -23,12 +23,12 @@
 #include <lexy/input/string_input.hpp>
 #include <lexy/lexeme.hpp>
 
-#include <mdbsql_ast_unicode_delimited_identifier.h> // IWYU pragma: export
-#include <mdbsql_parser_common.h>
-#include <mdbsql_parser_parse_error.h>
-#include <mdbsql_parser_reserved_word.h>
+#include <mqlprs_ast_unicode_delimited_identifier.h> // IWYU pragma: export
+#include <mqlprs_common.h>
+#include <mqlprs_parse_error.h>
+#include <mqlprs_reserved_word.h>
 
-namespace melinda::mdbsql::parser
+namespace melinda::mqlprs
 {
     struct [[nodiscard]] unicode_string_literal final
         : lexy::scan_production<std::string>
@@ -184,8 +184,8 @@ namespace melinda::mdbsql::parser
                 intermediate_result};
             auto result = lexy::parse<unicode_string_literal>(range,
                 escape_character,
-                lexy::collect<std::vector<mdbsql::parser::parse_error_detail>>(
-                    mdbsql::parser::error_callback{}));
+                lexy::collect<std::vector<parse_error_detail>>(
+                    error_callback{}));
             if (!result)
             {
                 scanner.error("Unparsable string", literal_start);
@@ -196,6 +196,6 @@ namespace melinda::mdbsql::parser
                 escape_character};
         }
     };
-} // namespace melinda::mdbsql::parser
+} // namespace melinda::mqlprs
 
 #endif
