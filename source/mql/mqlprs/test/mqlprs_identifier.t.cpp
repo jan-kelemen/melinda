@@ -1,11 +1,15 @@
-#include "mqlprs_ast_delimited_identifier.h"
-#include "mqlprs_ast_identifier.h"
 #include <catch2/catch_test_macros.hpp>
 
 #include <source_location>
 #include <string_view>
+#include <variant>
 
-#include <mqlprs_identifier.h>
+#include <mqlprs_ast_delimited_identifier.h>
+#include <mqlprs_ast_identifier.h> // IWYU pragma: keep
+#include <mqlprs_ast_regular_identifier.h>
+#include <mqlprs_ast_unicode_delimited_identifier.h>
+
+#include <mqlprs_identifier.h> // IWYU pragma: keep
 #include <mqlprs_parser.h>
 
 using namespace melinda;

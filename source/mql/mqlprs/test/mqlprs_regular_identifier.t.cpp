@@ -3,20 +3,12 @@
 #include <initializer_list>
 #include <string>
 #include <string_view>
-#include <type_traits>
-#include <utility>
-#include <vector>
-
-#include <lexy/action/parse.hpp>
-#include <lexy/callback/container.hpp> // IWYU pragma: keep
-#include <lexy/encoding.hpp>
-#include <lexy/input/string_input.hpp>
 
 #include <mblcxx_result.h>
 
-#include <mqlprs_parse_error.h>
+#include <mqlprs_ast_regular_identifier.h>
 #include <mqlprs_parser.h>
-#include <mqlprs_regular_identifier.h>
+#include <mqlprs_regular_identifier.h> // IWYU pragma: keep
 
 using namespace melinda;
 

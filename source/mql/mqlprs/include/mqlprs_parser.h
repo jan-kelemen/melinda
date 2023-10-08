@@ -1,7 +1,10 @@
 #ifndef MELINDA_MQLPRS_PARSER_INCLUDED
 #define MELINDA_MQLPRS_PARSER_INCLUDED
 
+#include <string_view>
+#include <type_traits>
 #include <utility>
+#include <vector>
 
 #include <lexy/action/parse.hpp>
 #include <lexy/callback/container.hpp>
@@ -10,7 +13,7 @@
 
 #include <mblcxx_result.h>
 #include <mqlprs_common.h>
-#include <mqlprs_parse_error.h> // IWYU pragma: export
+#include <mqlprs_parse_error.h> // IWYU pragma: keep
 
 namespace melinda::mqlprs
 {

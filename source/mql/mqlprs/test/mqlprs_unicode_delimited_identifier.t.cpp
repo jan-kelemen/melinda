@@ -9,16 +9,11 @@
 
 #include <fmt/core.h>
 
-#include <lexy/action/parse.hpp>
-#include <lexy/callback/container.hpp> // IWYU pragma: keep
-#include <lexy/encoding.hpp>
-#include <lexy/input/string_input.hpp>
-
 #include <mblcxx_result.h>
 
-#include <mqlprs_parse_error.h>
+#include <mqlprs_ast_unicode_delimited_identifier.h>
 #include <mqlprs_parser.h>
-#include <mqlprs_unicode_delimited_identifier.h>
+#include <mqlprs_unicode_delimited_identifier.h> // IWYU pragma: keep
 
 using namespace melinda;
 

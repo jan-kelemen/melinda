@@ -4,9 +4,9 @@
 #include <variant>
 #include <vector>
 
-#include <mqlprs_ast_delimited_identifier.h>
-#include <mqlprs_ast_regular_identifier.h>
-#include <mqlprs_ast_unicode_delimited_identifier.h>
+#include <mqlprs_ast_delimited_identifier.h> // IWYU pragma: keep
+#include <mqlprs_ast_regular_identifier.h> // IWYU pragma: keep
+#include <mqlprs_ast_unicode_delimited_identifier.h> // IWYU pragma: keep
 
 namespace melinda::mqlprs::ast
 {

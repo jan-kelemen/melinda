@@ -1,7 +1,9 @@
 #ifndef MELINDA_MQLPRS_COMMON_INCLUDED
 #define MELINDA_MQLPRS_COMMON_INCLUDED
 
+#include <lexy/dsl/ascii.hpp>
 #include <lexy/dsl/branch.hpp>
+#include <lexy/dsl/char_class.hpp>
 #include <lexy/dsl/choice.hpp>
 #include <lexy/dsl/identifier.hpp>
 #include <lexy/dsl/literal.hpp>
@@ -20,7 +22,7 @@ namespace melinda::mqlprs
         lexy::dsl::ascii::alpha_underscore / LEXY_LIT("-"));
 
     template<typename T>
-    struct parser_for;
+    struct parser_for; // IWYU pragma: keep
 } // namespace melinda::mqlprs
 
 #endif

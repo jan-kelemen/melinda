@@ -1,6 +1,7 @@
 #ifndef MELINDA_MQLPRS_PARSE_ERROR
 #define MELINDA_MQLPRS_PARSE_ERROR
 
+#include <cstddef>
 #include <cstdint>
 #include <string_view>
 #include <vector>

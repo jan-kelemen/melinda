@@ -1,32 +1,42 @@
 #ifndef MELINDA_MQLPRS_UNICODE_DELIMITED_IDENTIFIER_INCLUDED
 #define MELINDA_MQLPRS_UNICODE_DELIMITED_IDENTIFIER_INCLUDED
 
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
 #include <lexy/action/parse.hpp>
-#include <lexy/callback/adapter.hpp>
 #include <lexy/callback/container.hpp>
-#include <lexy/code_point.hpp>
-#include <lexy/dsl/ascii.hpp>
+#include <lexy/dsl/branch.hpp>
 #include <lexy/dsl/capture.hpp>
 #include <lexy/dsl/case_folding.hpp>
+#include <lexy/dsl/char_class.hpp>
+#include <lexy/dsl/choice.hpp>
 #include <lexy/dsl/code_point.hpp>
 #include <lexy/dsl/digit.hpp>
-#include <lexy/dsl/integer.hpp>
+#include <lexy/dsl/integer.hpp> // IWYU pragma: keep
 #include <lexy/dsl/literal.hpp>
-#include <lexy/dsl/peek.hpp>
+#include <lexy/dsl/peek.hpp> // IWYU pragma: keep
 #include <lexy/dsl/punctuator.hpp>
 #include <lexy/dsl/scan.hpp>
-#include <lexy/dsl/sign.hpp>
 #include <lexy/dsl/token.hpp>
 #include <lexy/dsl/unicode.hpp>
 #include <lexy/encoding.hpp>
+#include <lexy/error.hpp>
 #include <lexy/grammar.hpp>
 #include <lexy/input/string_input.hpp>
-#include <lexy/lexeme.hpp>
+#include <lexy/lexeme.hpp> // IWYU pragma: keep
 
-#include <mqlprs_ast_unicode_delimited_identifier.h> // IWYU pragma: export
+#include <mqlprs_ast_unicode_delimited_identifier.h> // IWYU pragma: keep
 #include <mqlprs_common.h>
 #include <mqlprs_parse_error.h>
-#include <mqlprs_reserved_word.h>
+
+namespace melinda::mqlprs
+{
+    template<typename T>
+    struct parser_for;
+} // namespace melinda::mqlprs
 
 namespace melinda::mqlprs
 {

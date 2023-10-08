@@ -3,12 +3,19 @@
 
 #include <lexy/callback/adapter.hpp>
 #include <lexy/code_point.hpp>
+#include <lexy/dsl/char_class.hpp>
 #include <lexy/dsl/code_point.hpp>
 #include <lexy/dsl/identifier.hpp>
-#include <lexy/encoding.hpp>
+#include <lexy/dsl/literal.hpp>
 
-#include <mqlprs_ast_regular_identifier.h> // IWYU pragma: export
+#include <mqlprs_ast_regular_identifier.h> // IWYU pragma: keep
 #include <mqlprs_reserved_word.h>
+
+namespace melinda::mqlprs
+{
+    template<typename T>
+    struct parser_for;
+} // namespace melinda::mqlprs
 
 namespace melinda::mqlprs
 {
@@ -46,7 +53,6 @@ namespace melinda::mqlprs
     };
 
     template<>
-
     struct parser_for<ast::regular_identifier>
     {
         using value_type = ast::regular_identifier;
