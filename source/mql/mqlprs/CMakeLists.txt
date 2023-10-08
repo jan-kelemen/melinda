@@ -46,8 +46,9 @@ add_executable(${TARGET_NAME}_test)
 
 target_sources(${TARGET_NAME}_test
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/test/mqlprs_regular_identifier.t.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/mqlprs_delimited_identifier.t.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/mqlprs_identifier.t.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/mqlprs_regular_identifier.t.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/mqlprs_unicode_delimited_identifier.t.cpp
 )
 

@@ -15,9 +15,10 @@ namespace melinda::mqlprs
 {
     struct [[nodiscard]] identifier final
     {
-        static constexpr auto rule = lexy::dsl::p<regular_identifier> |
+        static constexpr auto rule =
+            lexy::dsl::p<unicode_delimited_identifier> |
             lexy::dsl::p<delimited_identifier> |
-            lexy::dsl::p<unicode_delimited_identifier>;
+            lexy::dsl::p<regular_identifier>;
 
         static constexpr auto value = lexy::construct<ast::identifier>;
     };
