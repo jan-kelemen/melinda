@@ -39,13 +39,13 @@ TEST_CASE("<identifier> recognizes correct variant of identifier")
 
     auto const regular_identifier = "abc"sv;
     check_for_identifier_type<mqlprs::ast::regular_identifier>("abc",
-        parse(regular_identifier).ok());
+        parse(regular_identifier).value());
 
     auto const delimited_identifier = R"("abc")"sv;
     check_for_identifier_type<mqlprs::ast::delimited_identifier>("abc",
-        parse(delimited_identifier).ok());
+        parse(delimited_identifier).value());
 
     auto const unicode_delimited_identifier = R"(U&"abc")"sv;
     check_for_identifier_type<mqlprs::ast::unicode_delimited_identifier>("abc",
-        parse(unicode_delimited_identifier).ok());
+        parse(unicode_delimited_identifier).value());
 }

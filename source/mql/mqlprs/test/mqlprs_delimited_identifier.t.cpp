@@ -6,8 +6,6 @@
 
 #include <fmt/core.h>
 
-#include <mblcxx_result.h>
-
 #include <mqlprs_ast_delimited_identifier.h>
 #include <mqlprs_delimited_identifier.h> // IWYU pragma: keep
 #include <mqlprs_parser.h>
@@ -26,7 +24,7 @@ TEST_CASE("<delimited identifer> escapes double quote symbol")
 
     auto const result = parse(R"("before""after")"sv);
     REQUIRE(result);
-    REQUIRE(result.ok().body == "before\"after");
+    REQUIRE(result->body == "before\"after");
 }
 
 TEST_CASE("<delimited identifier> allows usage of reserved word")
@@ -366,6 +364,6 @@ TEST_CASE("<delimited identifier> allows usage of reserved word")
         }
 
         REQUIRE(result);
-        REQUIRE(result.ok().body == reserved_word);
+        REQUIRE(result->body == reserved_word);
     }
 }

@@ -4,13 +4,15 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <system_error>
+#include <utility>
 #include <vector>
 
 #include <boost/numeric/conversion/cast.hpp>
 #include <flatbuffers/flatbuffers.h>
+#include <tl/expected.hpp>
 #include <zmq.hpp>
 
-#include <mblcxx_result.h>
 #include <mblcxx_scope_exit.h>
 
 #include <mbltrc_memory_mapped_sink.h>
@@ -36,16 +38,14 @@ int main()
     zmq::context_t ctx;
     constexpr char const* const address = "tcp://localhost:22365";
 
-    melinda::mblcxx::result<zmq::socket_t> connect_result =
-        melinda::mdbnet::client::connect(ctx, address);
+    auto connect_result = melinda::mdbnet::client::connect(ctx, address);
     if (!connect_result)
     {
         MBLTRC_TRACE_FATAL("Can't connect to {}", address);
         std::terminate();
     }
 
-    // TODO-JK allow taking values out of result
-    zmq::socket_t& socket = connect_result.ok();
+    zmq::socket_t socket = std::move(*connect_result);
     MBLCXX_ON_SCOPE_EXIT(socket.disconnect(address));
 
     std::string const identity = socket.get(zmq::sockopt::routing_id, 256);
@@ -67,7 +67,7 @@ int main()
                 {reinterpret_cast<std::byte*>(q.GetBufferPointer()),
                     q.GetSize()});
 
-        if (!send_result || !send_result.ok())
+        if (!send_result || !*send_result)
         {
             continue;
         }
@@ -78,8 +78,7 @@ int main()
 
         if (recv_result)
         {
-            melinda::mdbnet::recv_response<zmq::message_t> const& success =
-                recv_result.ok();
+            auto success = std::move(*recv_result);
             if (success.received)
             {
                 melinda::mdbnet::Message const* message =

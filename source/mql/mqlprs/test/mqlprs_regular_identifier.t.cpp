@@ -4,8 +4,6 @@
 #include <string>
 #include <string_view>
 
-#include <mblcxx_result.h>
-
 #include <mqlprs_ast_regular_identifier.h>
 #include <mqlprs_parser.h>
 #include <mqlprs_regular_identifier.h> // IWYU pragma: keep
@@ -30,7 +28,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
             auto const result = parse(id);
 
             REQUIRE(result);
-            REQUIRE(result.ok().body == id);
+            REQUIRE(result->body == id);
         }
     }
 
@@ -42,7 +40,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
             auto const result = parse(id);
 
             REQUIRE(result);
-            REQUIRE(result.ok().body == id);
+            REQUIRE(result->body == id);
         }
     }
 
@@ -54,7 +52,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
             auto const result = parse(id);
 
             REQUIRE(result);
-            REQUIRE(result.ok().body == id);
+            REQUIRE(result->body == id);
         }
     }
 
@@ -66,7 +64,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
             auto const result = parse(id);
 
             REQUIRE(result);
-            REQUIRE(result.ok().body == id);
+            REQUIRE(result->body == id);
         }
     }
 
@@ -78,7 +76,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
             auto const result = parse(id);
 
             REQUIRE(result);
-            REQUIRE(result.ok().body == id);
+            REQUIRE(result->body == id);
         }
     }
 
@@ -90,7 +88,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
             auto const result = parse(id);
 
             REQUIRE(result);
-            REQUIRE(result.ok().body == id);
+            REQUIRE(result->body == id);
         }
     }
 
@@ -101,7 +99,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
         auto const result = parse(id);
 
         REQUIRE(result);
-        REQUIRE(result.ok().body == id);
+        REQUIRE(result->body == id);
     }
 
     SECTION("<identifier extend> includes Letter Number character class")
@@ -111,7 +109,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
         auto const result = parse(id);
 
         REQUIRE(result);
-        REQUIRE(result.ok().body == id);
+        REQUIRE(result->body == id);
     }
 
     SECTION("<identifier extend> includes Spacing Mark character class")
@@ -121,7 +119,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
         auto const result = parse(id);
 
         REQUIRE(result);
-        REQUIRE(result.ok().body == id);
+        REQUIRE(result->body == id);
     }
 
     SECTION("<identifier extend> includes Decimal Number character class")
@@ -131,7 +129,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
         auto const result = parse(id);
 
         REQUIRE(result);
-        REQUIRE(result.ok().body == id);
+        REQUIRE(result->body == id);
     }
 
     SECTION(
@@ -142,7 +140,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
         auto const result = parse(id);
 
         REQUIRE(result);
-        REQUIRE(result.ok().body == id);
+        REQUIRE(result->body == id);
     }
 
     SECTION("<identifier extend> includes Format character class")
@@ -152,7 +150,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
         auto const result = parse(id);
 
         REQUIRE(result);
-        REQUIRE(result.ok().body == id);
+        REQUIRE(result->body == id);
     }
 
     auto const identifier_with_all_character_classes =
@@ -160,7 +158,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
     auto const result = parse(identifier_with_all_character_classes);
     REQUIRE(result);
-    REQUIRE(result.ok().body ==
+    REQUIRE(result->body ==
         "Aaǈꟹܤ〥·\xCC\x83\xE0\xA7\x80\xE0\xB9\x90\xEF\xB9\x8F\xF3\xA0\x80\xB0");
 }
 

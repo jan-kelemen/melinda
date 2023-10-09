@@ -37,6 +37,7 @@ target_link_libraries(${TARGET_NAME}
     PUBLIC
         fmt::fmt
         foonathan::lexy
+        tl::expected
         mblcxx
 )
 

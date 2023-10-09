@@ -5,15 +5,12 @@
 
 #include <zmq.hpp>
 
-#include <mblcxx_result.h>
+#include <tl/expected.hpp>
 
 namespace melinda::mdbnet
 {
     template<typename T>
-    using result = mblcxx::result<T, zmq::error_t>;
-
-    template<typename T, typename E = zmq::error_t>
-    using res = mblcxx::res<T, E>;
+    using result = tl::expected<T, zmq::error_t>;
 
     template<typename T>
     struct recv_response final

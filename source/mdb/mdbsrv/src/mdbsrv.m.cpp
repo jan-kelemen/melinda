@@ -7,12 +7,15 @@
 #include <memory>
 #include <optional>
 #include <signal.h>
+#include <system_error>
+#include <utility>
 
 #include <flatbuffers/flatbuffers.h>
 
+#include <tl/expected.hpp>
+
 #include <zmq.hpp>
 
-#include <mblcxx_result.h>
 #include <mblcxx_scope_exit.h>
 
 #include <mbltrc_memory_mapped_sink.h>
@@ -62,30 +65,26 @@ int main(int argc, char** argv)
     zmq::context_t ctx;
     constexpr char const* const address = "tcp://*:22365";
 
-    melinda::mblcxx::result<zmq::socket_t> bind_result =
-        melinda::mdbnet::server::bind(ctx, address);
+    auto bind_result = melinda::mdbnet::server::bind(ctx, address);
     if (!bind_result)
     {
         MBLTRC_TRACE_FATAL("Can't connect to {}", address);
         std::terminate();
     }
 
-    zmq::socket_t& socket = bind_result.ok();
+    zmq::socket_t socket = std::move(*bind_result);
     MBLCXX_ON_SCOPE_EXIT(socket.unbind(address));
 
     while (run)
     {
-        melinda::mdbnet::result<melinda::mdbnet::recv_response<
-            melinda::mdbnet::client_message>> const recv_result =
-            melinda::mdbnet::server::recv(socket);
+        auto recv_result = melinda::mdbnet::server::recv(socket);
 
-        if (!recv_result || !recv_result.ok().received)
+        if (!recv_result || !recv_result->received)
         {
             continue;
         }
 
-        melinda::mdbnet::recv_response<melinda::mdbnet::client_message> const&
-            success = recv_result.ok();
+        auto const& success = *recv_result;
 
         melinda::mdbnet::Message const* const message =
             flatbuffers::GetRoot<melinda::mdbnet::root_type>(
@@ -120,7 +119,7 @@ int main(int argc, char** argv)
 
         if (send_result)
         {
-            if (!send_result.ok())
+            if (!send_result.value())
             {
                 MBLTRC_TRACE_ERROR("Can't send response to {}",
                     success.message->identity);

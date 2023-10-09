@@ -19,13 +19,14 @@ Melinda - Relational Database Management System
 #### Required third party dependencies
 * See cmake/dependencies.cmake for up to date information
 ```
-find_package(Catch2 CONFIG REQUIRED)
-find_package(fmt CONFIG REQUIRED)
-find_package(date CONFIG REQUIRED)
 find_package(Boost REQUIRED COMPONENTS iostreams program_options)
+find_package(Catch2 CONFIG REQUIRED)
 find_package(cppzmq CONFIG REQUIRED)
+find_package(date CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
 find_package(flatbuffers CONFIG REQUIRED)
 find_package(lexy REQUIRED)
+find_package(tl-expected REQUIRED)
 ```
 
 # Building with vcpkg

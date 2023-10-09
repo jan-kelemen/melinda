@@ -40,8 +40,9 @@ add_dependencies(${TARGET_NAME} mdbnet_generate_fb)
 
 target_link_libraries(${TARGET_NAME}
     PUBLIC
-        flatbuffers::flatbuffers
         cppzmq
+        flatbuffers::flatbuffers
+        tl::expected
         mblcxx
     PRIVATE
         Boost::headers

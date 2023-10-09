@@ -3,13 +3,8 @@
 #include <initializer_list>
 #include <string>
 #include <string_view>
-#include <type_traits>
-#include <utility>
-#include <vector>
 
 #include <fmt/core.h>
-
-#include <mblcxx_result.h>
 
 #include <mqlprs_ast_unicode_delimited_identifier.h>
 #include <mqlprs_parser.h>
@@ -29,7 +24,7 @@ TEST_CASE("<Unicode delimited identifer> escapes double quote symbol")
 
     auto const result = parse(R"(U&"before""after")"sv);
     REQUIRE(result);
-    REQUIRE(result.ok().body == "before\"after");
+    REQUIRE(result->body == "before\"after");
 }
 
 TEST_CASE("<Unicode delimited identifier> introducer")
@@ -45,11 +40,11 @@ TEST_CASE("<Unicode delimited identifier> introducer")
 
         auto const uppercase_result = parse(uppercase_introducer);
         REQUIRE(uppercase_result);
-        REQUIRE(uppercase_result.ok().body == expected_parsed_value);
+        REQUIRE(uppercase_result->body == expected_parsed_value);
 
         auto const lowercase_result = parse(lowercase_introducer);
         REQUIRE(lowercase_result);
-        REQUIRE(lowercase_result.ok().body == expected_parsed_value);
+        REQUIRE(lowercase_result->body == expected_parsed_value);
     }
 
     SECTION("Introducer does not allow for spaces")
@@ -72,8 +67,8 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
     {
         auto const result = parse(R"(U&"str\\")");
         REQUIRE(result);
-        REQUIRE(result.ok().body == "str\\");
-        REQUIRE(result.ok().escape_character == '\\');
+        REQUIRE(result->body == "str\\");
+        REQUIRE(result->escape_character == '\\');
     }
 
     SECTION("Can be specified with <Unicode escape specifier>")
@@ -84,7 +79,7 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
         {
             auto const result = parse(escape_specifier);
             REQUIRE(result);
-            REQUIRE(result.ok().escape_character == 'y');
+            REQUIRE(result->escape_character == 'y');
         }
     }
 
@@ -105,7 +100,7 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
                 FAIL("Parsing failed for: " << str);
             }
             REQUIRE(result);
-            REQUIRE(result.ok().escape_character == 'y');
+            REQUIRE(result->escape_character == 'y');
         }
     }
 
@@ -119,7 +114,7 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
     {
         auto const result = parse(R"(U&"d!0061t!+000061" UESCAPE '!')");
         REQUIRE(result);
-        REQUIRE(result.ok().body == "data");
+        REQUIRE(result->body == "data");
     }
 
     SECTION(
@@ -127,7 +122,7 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
     {
         auto const result = parse(R"(U&"d!!" UESCAPE '!')");
         REQUIRE(result);
-        REQUIRE(result.ok().body == "d!");
+        REQUIRE(result->body == "d!");
     }
 
     SECTION("Parsing fails for invalid escape sequences")
@@ -162,7 +157,7 @@ TEST_CASE(
     {
         auto const result = parse(str);
         REQUIRE(result);
-        REQUIRE(result.ok().body == "a0");
+        REQUIRE(result->body == "a0");
     }
 }
 
@@ -503,6 +498,6 @@ TEST_CASE("<Unicode delimited identifier> allows usage of reserved word")
         }
 
         REQUIRE(result);
-        REQUIRE(result.ok().body == reserved_word);
+        REQUIRE(result->body == reserved_word);
     }
 }

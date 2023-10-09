@@ -4,10 +4,10 @@
 #include <cstddef>
 #include <span>
 #include <string>
+#include <system_error>
 
+#include <tl/expected.hpp>
 #include <zmq.hpp>
-
-#include <mblcxx_result.h>
 
 #include <mdbnet_types.h>
 
@@ -22,8 +22,8 @@ namespace melinda::mdbnet
     struct server final
     {
     public:
-        static mblcxx::result<zmq::socket_t> bind(zmq::context_t& context,
-            std::string const& address);
+        static tl::expected<zmq::socket_t, std::error_code>
+        bind(zmq::context_t& context, std::string const& address);
 
         static result<zmq::send_result_t> send(zmq::socket_t& socket,
             std::string const& client,
