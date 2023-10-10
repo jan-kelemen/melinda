@@ -1,8 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <initializer_list>
-#include <string>
 #include <string_view>
+
+#include <tl/expected.hpp>
 
 #include <mqlprs_ast_regular_identifier.h>
 #include <mqlprs_parser.h>
@@ -26,9 +27,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
         for (auto&& id : uppercase_identifiers)
         {
             auto const result = parse(id);
-
-            REQUIRE(result);
-            REQUIRE(result->body == id);
+            REQUIRE(result == id);
         }
     }
 
@@ -38,9 +37,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
         for (auto&& id : lowercase_identifiers)
         {
             auto const result = parse(id);
-
-            REQUIRE(result);
-            REQUIRE(result->body == id);
+            REQUIRE(result == id);
         }
     }
 
@@ -51,8 +48,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
         {
             auto const result = parse(id);
 
-            REQUIRE(result);
-            REQUIRE(result->body == id);
+            REQUIRE(result == id);
         }
     }
 
@@ -63,8 +59,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
         {
             auto const result = parse(id);
 
-            REQUIRE(result);
-            REQUIRE(result->body == id);
+            REQUIRE(result == id);
         }
     }
 
@@ -75,8 +70,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
         {
             auto const result = parse(id);
 
-            REQUIRE(result);
-            REQUIRE(result->body == id);
+            REQUIRE(result == id);
         }
     }
 
@@ -87,8 +81,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
         {
             auto const result = parse(id);
 
-            REQUIRE(result);
-            REQUIRE(result->body == id);
+            REQUIRE(result == id);
         }
     }
 
@@ -98,8 +91,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
         auto const result = parse(id);
 
-        REQUIRE(result);
-        REQUIRE(result->body == id);
+        REQUIRE(result == id);
     }
 
     SECTION("<identifier extend> includes Letter Number character class")
@@ -108,8 +100,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
         auto const result = parse(id);
 
-        REQUIRE(result);
-        REQUIRE(result->body == id);
+        REQUIRE(result == id);
     }
 
     SECTION("<identifier extend> includes Spacing Mark character class")
@@ -118,8 +109,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
         auto const result = parse(id);
 
-        REQUIRE(result);
-        REQUIRE(result->body == id);
+        REQUIRE(result == id);
     }
 
     SECTION("<identifier extend> includes Decimal Number character class")
@@ -128,8 +118,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
         auto const result = parse(id);
 
-        REQUIRE(result);
-        REQUIRE(result->body == id);
+        REQUIRE(result == id);
     }
 
     SECTION(
@@ -139,8 +128,7 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
         auto const result = parse(id);
 
-        REQUIRE(result);
-        REQUIRE(result->body == id);
+        REQUIRE(result == id);
     }
 
     SECTION("<identifier extend> includes Format character class")
@@ -149,16 +137,14 @@ TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")
 
         auto const result = parse(id);
 
-        REQUIRE(result);
-        REQUIRE(result->body == id);
+        REQUIRE(result == id);
     }
 
     auto const identifier_with_all_character_classes =
         "Aaǈꟹܤ〥·\xCC\x83\xE0\xA7\x80\xE0\xB9\x90\xEF\xB9\x8F\xF3\xA0\x80\xB0"sv;
 
     auto const result = parse(identifier_with_all_character_classes);
-    REQUIRE(result);
-    REQUIRE(result->body ==
+    REQUIRE(result ==
         "Aaǈꟹܤ〥·\xCC\x83\xE0\xA7\x80\xE0\xB9\x90\xEF\xB9\x8F\xF3\xA0\x80\xB0");
 }
 

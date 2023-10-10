@@ -1,8 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <source_location>
+#include <string>
 #include <string_view>
-#include <variant>
 
 #include <mqlprs_ast_delimited_identifier.h>
 #include <mqlprs_ast_identifier.h> // IWYU pragma: keep
@@ -24,12 +24,12 @@ namespace
         mqlprs::ast::identifier const& id,
         std::source_location const& l = std::source_location::current())
     {
-        if (!std::holds_alternative<T>(id))
+        if (!id.of_type<T>())
         {
-            FAIL("<identifier> contains " << id.index() << " alternative. Line "
-                                          << l.line());
+            FAIL("<identifier> contains " << id.contained_type()
+                                          << " alternative. Line " << l.line());
         }
-        CHECK(expected_body == std::get<T>(id).body);
+        REQUIRE(expected_body == id.body());
     }
 } // namespace
 

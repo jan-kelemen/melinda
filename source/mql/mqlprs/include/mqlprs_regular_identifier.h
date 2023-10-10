@@ -1,6 +1,8 @@
 #ifndef MELINDA_MQLPRS_REGULAR_IDENTIFIER_INCLUDED
 #define MELINDA_MQLPRS_REGULAR_IDENTIFIER_INCLUDED
 
+#include <string_view>
+
 #include <lexy/callback/adapter.hpp>
 #include <lexy/code_point.hpp>
 #include <lexy/dsl/char_class.hpp>
@@ -47,8 +49,10 @@ namespace melinda::mqlprs
         }();
 
         static constexpr auto value = lexy::callback<ast::regular_identifier>(
-            [](auto lexeme) {
-                return ast::regular_identifier{{lexeme.begin(), lexeme.end()}};
+            [](auto lexeme)
+            {
+                return ast::regular_identifier{
+                    std::string_view{lexeme.begin(), lexeme.end()}};
             });
     };
 

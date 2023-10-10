@@ -1,10 +1,10 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <initializer_list>
-#include <string>
 #include <string_view>
 
 #include <fmt/core.h>
+#include <tl/expected.hpp>
 
 #include <mqlprs_ast_unicode_delimited_identifier.h>
 #include <mqlprs_parser.h>
@@ -23,8 +23,7 @@ TEST_CASE("<Unicode delimited identifer> escapes double quote symbol")
     using namespace std::string_view_literals;
 
     auto const result = parse(R"(U&"before""after")"sv);
-    REQUIRE(result);
-    REQUIRE(result->body == "before\"after");
+    REQUIRE(result == "before\"after");
 }
 
 TEST_CASE("<Unicode delimited identifier> introducer")
@@ -36,15 +35,14 @@ TEST_CASE("<Unicode delimited identifier> introducer")
         auto const uppercase_introducer = R"(U&"before")"sv;
         auto const lowercase_introducer = R"(u&"before")"sv;
 
-        auto const expected_parsed_value = "before";
+        auto const expected_parsed_value =
+            mqlprs::ast::unicode_delimited_identifier{"before"};
 
         auto const uppercase_result = parse(uppercase_introducer);
-        REQUIRE(uppercase_result);
-        REQUIRE(uppercase_result->body == expected_parsed_value);
+        REQUIRE(uppercase_result == expected_parsed_value);
 
         auto const lowercase_result = parse(lowercase_introducer);
-        REQUIRE(lowercase_result);
-        REQUIRE(lowercase_result->body == expected_parsed_value);
+        REQUIRE(lowercase_result == expected_parsed_value);
     }
 
     SECTION("Introducer does not allow for spaces")
@@ -65,26 +63,32 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
 
     SECTION("Backslash is default escape character")
     {
+        auto const expected_parsed_value =
+            mqlprs::ast::unicode_delimited_identifier{"str\\", '\\'};
+
         auto const result = parse(R"(U&"str\\")");
-        REQUIRE(result);
-        REQUIRE(result->body == "str\\");
-        REQUIRE(result->escape_character == '\\');
+        REQUIRE(result == expected_parsed_value);
     }
 
     SECTION("Can be specified with <Unicode escape specifier>")
     {
+        auto const expected_parsed_value =
+            mqlprs::ast::unicode_delimited_identifier{"str", 'y'};
+
         auto const escape_specifiers = {R"(U&"str" UESCAPE 'y')"sv,
             R"(U&"str" uescape 'y')"sv};
         for (auto&& escape_specifier : escape_specifiers)
         {
             auto const result = parse(escape_specifier);
-            REQUIRE(result);
-            REQUIRE(result->escape_character == 'y');
+            REQUIRE(result == expected_parsed_value);
         }
     }
 
     SECTION("<Unicode escape specifier> allows for optional <separator>")
     {
+        auto const expected_parsed_value =
+            mqlprs::ast::unicode_delimited_identifier{"str", 'y'};
+
         auto const strings_with_separators = {R"(U&"str"UESCAPE'y'")"sv,
             R"(U&"str" UESCAPE'y'")"sv,
             R"(U&"str" UESCAPE 'y'")"sv,
@@ -99,8 +103,7 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
             {
                 FAIL("Parsing failed for: " << str);
             }
-            REQUIRE(result);
-            REQUIRE(result->escape_character == 'y');
+            REQUIRE(result == expected_parsed_value);
         }
     }
 
@@ -113,16 +116,15 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
     SECTION("<Unicode escape specifier> is respected in string literal")
     {
         auto const result = parse(R"(U&"d!0061t!+000061" UESCAPE '!')");
-        REQUIRE(result);
-        REQUIRE(result->body == "data");
+        REQUIRE(
+            result == mqlprs::ast::unicode_delimited_identifier{"data", '!'});
     }
 
     SECTION(
         "Doubling <Unicode escape character> in string literal escapes escape character")
     {
         auto const result = parse(R"(U&"d!!" UESCAPE '!')");
-        REQUIRE(result);
-        REQUIRE(result->body == "d!");
+        REQUIRE(result == mqlprs::ast::unicode_delimited_identifier{"d!", '!'});
     }
 
     SECTION("Parsing fails for invalid escape sequences")
@@ -152,12 +154,14 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
 TEST_CASE(
     "Extra numbers after <Unicode escaped value> are parsed as normal text")
 {
+    auto const expected_parsed_value =
+        mqlprs::ast::unicode_delimited_identifier{"a0", '\\'};
+
     auto const a0_strings = {R"(U&"\00610")", R"(U&"\+0000610")"};
     for (auto&& str : a0_strings)
     {
         auto const result = parse(str);
-        REQUIRE(result);
-        REQUIRE(result->body == "a0");
+        REQUIRE(result == expected_parsed_value);
     }
 }
 
@@ -490,6 +494,8 @@ TEST_CASE("<Unicode delimited identifier> allows usage of reserved word")
 
     for (auto&& reserved_word : reserved_words)
     {
+        auto const expected_parsed_value =
+            mqlprs::ast::unicode_delimited_identifier{reserved_word, '\\'};
         auto const result{parse(fmt::format("U&\"{}\"", reserved_word))};
 
         if (!result)
@@ -497,7 +503,6 @@ TEST_CASE("<Unicode delimited identifier> allows usage of reserved word")
             FAIL("Parsing failed for reserved word: " << reserved_word);
         }
 
-        REQUIRE(result);
-        REQUIRE(result->body == reserved_word);
+        REQUIRE(result == expected_parsed_value);
     }
 }

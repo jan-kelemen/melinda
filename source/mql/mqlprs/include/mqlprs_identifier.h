@@ -1,6 +1,10 @@
 #ifndef MELINDA_MQLPRS_IDENTIFIER_INCLUDED
 #define MELINDA_MQLPRS_IDENTIFIER_INCLUDED
 
+#include <vector>
+
+#include <lexy/callback/adapter.hpp>
+#include <lexy/callback/composition.hpp>
 #include <lexy/callback/container.hpp>
 #include <lexy/callback/object.hpp>
 #include <lexy/dsl/list.hpp>
@@ -36,7 +40,10 @@ namespace melinda::mqlprs
         static constexpr auto rule = lexy::dsl::list(lexy::dsl::p<identifier>,
             lexy::dsl::sep(lexy::dsl::period));
 
-        static constexpr auto value = lexy::as_list<ast::multipart_identifier>;
+        static constexpr auto
+            value = lexy::as_list<std::vector<ast::identifier>> >>
+            lexy::callback<ast::multipart_identifier>([](auto&& parts)
+                { return ast::multipart_identifier{std::move(parts)}; });
     };
 
     template<>

@@ -1,10 +1,10 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <initializer_list>
-#include <string>
 #include <string_view>
 
 #include <fmt/core.h>
+#include <tl/expected.hpp>
 
 #include <mqlprs_ast_delimited_identifier.h>
 #include <mqlprs_delimited_identifier.h> // IWYU pragma: keep
@@ -23,8 +23,7 @@ TEST_CASE("<delimited identifer> escapes double quote symbol")
     using namespace std::string_view_literals;
 
     auto const result = parse(R"("before""after")"sv);
-    REQUIRE(result);
-    REQUIRE(result->body == "before\"after");
+    REQUIRE(result == "before\"after");
 }
 
 TEST_CASE("<delimited identifier> allows usage of reserved word")
@@ -363,7 +362,6 @@ TEST_CASE("<delimited identifier> allows usage of reserved word")
             FAIL("Parsing failed for reserved word: " << reserved_word);
         }
 
-        REQUIRE(result);
-        REQUIRE(result->body == reserved_word);
+        REQUIRE(result == reserved_word);
     }
 }
