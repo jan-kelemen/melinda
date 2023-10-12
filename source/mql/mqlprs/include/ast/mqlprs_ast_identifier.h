@@ -99,7 +99,8 @@ namespace melinda::mqlprs::ast
 
         constexpr identifier& operator=(identifier&&) noexcept = default;
 
-        friend bool operator==(identifier const&, identifier const&) = default;
+        constexpr friend bool operator==(identifier const&,
+            identifier const&) = default;
 
     private: // Data
         underlying_type value_;

@@ -22,7 +22,7 @@ namespace melinda::mqlprs::ast
         constexpr regular_identifier(regular_identifier&&) noexcept = default;
 
     public: // Destruction
-        ~regular_identifier() = default;
+        constexpr ~regular_identifier() = default;
 
     public: // Interface
         [[nodiscard]] constexpr std::string const& body() const&
@@ -42,7 +42,7 @@ namespace melinda::mqlprs::ast
         constexpr regular_identifier& operator=(
             regular_identifier&&) noexcept = default;
 
-        friend bool operator==(regular_identifier const&,
+        constexpr friend bool operator==(regular_identifier const&,
             regular_identifier const&) = default;
 
     private: // Data

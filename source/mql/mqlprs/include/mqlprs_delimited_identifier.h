@@ -13,7 +13,8 @@
 #include <lexy/grammar.hpp>
 #include <lexy/lexeme.hpp> // IWYU pragma: keep
 
-#include <mqlprs_ast_delimited_identifier.h> // IWYU pragma: keep
+#include <mqlprs_ast_delimited_identifier.h>
+#include <mqlprs_common.h>
 
 namespace melinda::mqlprs
 {
@@ -60,8 +61,7 @@ namespace melinda::mqlprs
                 {
                     lexy::scan_result<lexy::lexeme<Reader>> scan_result;
                     scanner.parse(scan_result, everything_except_doublequote);
-                    result.append(scan_result.value().begin(),
-                        scan_result.value().end());
+                    result += to_string_view(std::move(scan_result).value());
                 }
             }
 

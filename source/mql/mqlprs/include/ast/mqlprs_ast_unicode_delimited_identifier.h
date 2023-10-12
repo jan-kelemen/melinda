@@ -26,7 +26,7 @@ namespace melinda::mqlprs::ast
             unicode_delimited_identifier&&) noexcept = default;
 
     public: // Destruction
-        ~unicode_delimited_identifier() = default;
+        constexpr ~unicode_delimited_identifier() = default;
 
     public: // Interface
         [[nodiscard]] constexpr std::string const& body() const&
@@ -51,7 +51,7 @@ namespace melinda::mqlprs::ast
         constexpr unicode_delimited_identifier& operator=(
             unicode_delimited_identifier&&) noexcept = default;
 
-        friend bool operator==(unicode_delimited_identifier const&,
+        constexpr friend bool operator==(unicode_delimited_identifier const&,
             unicode_delimited_identifier const&) = default;
 
     private: // Data

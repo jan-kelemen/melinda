@@ -156,8 +156,8 @@ namespace melinda::mqlprs
                 {
                     auto scan_result =
                         scanner.capture(everything_except_doublequote);
-                    intermediate_result.append(scan_result.value().begin(),
-                        scan_result.value().end());
+                    intermediate_result +=
+                        to_string_view(std::move(scan_result).value());
                 }
             }
 

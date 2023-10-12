@@ -3,17 +3,25 @@
 
 #include <vector>
 
-#include <lexy/callback/adapter.hpp>
 #include <lexy/callback/composition.hpp>
 #include <lexy/callback/container.hpp>
 #include <lexy/callback/object.hpp>
+#include <lexy/dsl/choice.hpp>
 #include <lexy/dsl/list.hpp>
 #include <lexy/dsl/production.hpp>
+#include <lexy/dsl/punctuator.hpp>
+#include <lexy/dsl/separator.hpp>
 
-#include <mqlprs_ast_identifier.h> // IWYU pragma: export
-#include <mqlprs_delimited_identifier.h>
-#include <mqlprs_regular_identifier.h>
-#include <mqlprs_unicode_delimited_identifier.h>
+#include <mqlprs_ast_identifier.h> // IWYU pragma: keep
+#include <mqlprs_delimited_identifier.h> // IWYU pragma: keep
+#include <mqlprs_regular_identifier.h> // IWYU pragma: keep
+#include <mqlprs_unicode_delimited_identifier.h> // IWYU pragma: keep
+
+namespace melinda::mqlprs
+{
+    template<typename T>
+    struct parser_for;
+} // namespace melinda::mqlprs
 
 namespace melinda::mqlprs
 {
@@ -40,10 +48,9 @@ namespace melinda::mqlprs
         static constexpr auto rule = lexy::dsl::list(lexy::dsl::p<identifier>,
             lexy::dsl::sep(lexy::dsl::period));
 
-        static constexpr auto
-            value = lexy::as_list<std::vector<ast::identifier>> >>
-            lexy::callback<ast::multipart_identifier>([](auto&& parts)
-                { return ast::multipart_identifier{std::move(parts)}; });
+        static constexpr auto value =
+            lexy::as_list<std::vector<ast::identifier>> >>
+            lexy::construct<ast::multipart_identifier>;
     };
 
     template<>

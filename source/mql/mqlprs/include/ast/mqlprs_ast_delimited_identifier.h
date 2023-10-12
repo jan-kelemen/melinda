@@ -23,7 +23,7 @@ namespace melinda::mqlprs::ast
             delimited_identifier&&) noexcept = default;
 
     public: // Destruction
-        ~delimited_identifier() = default;
+        constexpr ~delimited_identifier() = default;
 
     public: // Interface
         [[nodiscard]] constexpr std::string const& body() const&
@@ -43,7 +43,7 @@ namespace melinda::mqlprs::ast
         constexpr delimited_identifier& operator=(
             delimited_identifier&&) noexcept = default;
 
-        friend bool operator==(delimited_identifier const&,
+        constexpr friend bool operator==(delimited_identifier const&,
             delimited_identifier const&) = default;
 
     private: // Data

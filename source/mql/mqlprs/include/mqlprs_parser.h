@@ -13,7 +13,7 @@
 #include <tl/expected.hpp>
 
 #include <mqlprs_common.h>
-#include <mqlprs_parse_error.h> // IWYU pragma: keep
+#include <mqlprs_parse_error.h>
 
 namespace melinda::mqlprs
 {
