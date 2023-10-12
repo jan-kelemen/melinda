@@ -1,11 +1,11 @@
-#ifndef MELINDA_MQLPRS_AST_COMMON_INCLUDED
-#define MELINDA_MQLPRS_AST_COMMON_INCLUDED
+#ifndef MELINDA_MQLAST_COMMON_INCLUDED
+#define MELINDA_MQLAST_COMMON_INCLUDED
 
 #include <concepts>
 #include <optional>
 #include <utility>
 
-namespace melinda::mqlprs::ast
+namespace melinda::mqlast
 {
     enum class [[nodiscard]] sign : char
     {
@@ -49,5 +49,5 @@ namespace melinda::mqlprs::ast
     protected: // Data
         std::optional<enum sign> sign_;
     };
-} // namespace melinda::mqlprs::ast
+} // namespace melinda::mqlast
 #endif

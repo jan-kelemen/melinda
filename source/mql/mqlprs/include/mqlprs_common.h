@@ -19,7 +19,7 @@
 #include <lexy/lexeme.hpp>
 
 #include <mblcxx_always_false.h> // IWYU pragma: keep
-#include <mqlprs_ast_common.h>
+#include <mqlast_common.h>
 
 namespace melinda::mqlprs
 {
@@ -38,17 +38,17 @@ namespace melinda::mqlprs
         return {l.begin(), l.end()};
     }
 
-    [[nodiscard]] constexpr std::optional<ast::sign> to_ast_sign(
+    [[nodiscard]] constexpr std::optional<mqlast::sign> to_ast_sign(
         auto&& parsed_value)
     {
         using T = std::decay_t<decltype(parsed_value)>;
         if constexpr (std::is_same_v<lexy::plus_sign, T>)
         {
-            return ast::sign::plus;
+            return mqlast::sign::plus;
         }
         else if constexpr (std::is_same_v<lexy::minus_sign, T>)
         {
-            return ast::sign::minus;
+            return mqlast::sign::minus;
         }
         else if constexpr (std::is_same_v<lexy::nullopt, T>)
         {

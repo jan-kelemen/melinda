@@ -1,21 +1,21 @@
-#include <catch2/catch_test_macros.hpp>
+#include <mqlprs_unicode_delimited_identifier.h> // IWYU pragma: associated
 
 #include <initializer_list>
 #include <string_view>
 
+#include <catch2/catch_test_macros.hpp>
 #include <fmt/core.h>
 #include <tl/expected.hpp>
 
-#include <mqlprs_ast_unicode_delimited_identifier.h>
+#include <mqlast_unicode_delimited_identifier.h>
 #include <mqlprs_parser.h>
-#include <mqlprs_unicode_delimited_identifier.h> // IWYU pragma: keep
 
 using namespace melinda;
 
 namespace
 {
     auto parse = [](std::string_view query)
-    { return mqlprs::parse<mqlprs::ast::unicode_delimited_identifier>(query); };
+    { return mqlprs::parse<mqlast::unicode_delimited_identifier>(query); };
 } // namespace
 
 TEST_CASE("<Unicode delimited identifer> escapes double quote symbol")
@@ -36,7 +36,7 @@ TEST_CASE("<Unicode delimited identifier> introducer")
         auto const lowercase_introducer = R"(u&"before")"sv;
 
         auto const expected_parsed_value =
-            mqlprs::ast::unicode_delimited_identifier{"before"};
+            mqlast::unicode_delimited_identifier{"before"};
 
         auto const uppercase_result = parse(uppercase_introducer);
         REQUIRE(uppercase_result == expected_parsed_value);
@@ -64,7 +64,7 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
     SECTION("Backslash is default escape character")
     {
         auto const expected_parsed_value =
-            mqlprs::ast::unicode_delimited_identifier{"str\\", '\\'};
+            mqlast::unicode_delimited_identifier{"str\\", '\\'};
 
         auto const result = parse(R"(U&"str\\")");
         REQUIRE(result == expected_parsed_value);
@@ -73,7 +73,7 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
     SECTION("Can be specified with <Unicode escape specifier>")
     {
         auto const expected_parsed_value =
-            mqlprs::ast::unicode_delimited_identifier{"str", 'y'};
+            mqlast::unicode_delimited_identifier{"str", 'y'};
 
         auto const escape_specifiers = {R"(U&"str" UESCAPE 'y')"sv,
             R"(U&"str" uescape 'y')"sv};
@@ -87,7 +87,7 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
     SECTION("<Unicode escape specifier> allows for optional <separator>")
     {
         auto const expected_parsed_value =
-            mqlprs::ast::unicode_delimited_identifier{"str", 'y'};
+            mqlast::unicode_delimited_identifier{"str", 'y'};
 
         auto const strings_with_separators = {R"(U&"str"UESCAPE'y'")"sv,
             R"(U&"str" UESCAPE'y'")"sv,
@@ -116,15 +116,14 @@ TEST_CASE("<Unicode delimited indentifier> escape character")
     SECTION("<Unicode escape specifier> is respected in string literal")
     {
         auto const result = parse(R"(U&"d!0061t!+000061" UESCAPE '!')");
-        REQUIRE(
-            result == mqlprs::ast::unicode_delimited_identifier{"data", '!'});
+        REQUIRE(result == mqlast::unicode_delimited_identifier{"data", '!'});
     }
 
     SECTION(
         "Doubling <Unicode escape character> in string literal escapes escape character")
     {
         auto const result = parse(R"(U&"d!!" UESCAPE '!')");
-        REQUIRE(result == mqlprs::ast::unicode_delimited_identifier{"d!", '!'});
+        REQUIRE(result == mqlast::unicode_delimited_identifier{"d!", '!'});
     }
 
     SECTION("Parsing fails for invalid escape sequences")
@@ -155,7 +154,7 @@ TEST_CASE(
     "Extra numbers after <Unicode escaped value> are parsed as normal text")
 {
     auto const expected_parsed_value =
-        mqlprs::ast::unicode_delimited_identifier{"a0", '\\'};
+        mqlast::unicode_delimited_identifier{"a0", '\\'};
 
     auto const a0_strings = {R"(U&"\00610")", R"(U&"\+0000610")"};
     for (auto&& str : a0_strings)
@@ -495,7 +494,7 @@ TEST_CASE("<Unicode delimited identifier> allows usage of reserved word")
     for (auto&& reserved_word : reserved_words)
     {
         auto const expected_parsed_value =
-            mqlprs::ast::unicode_delimited_identifier{reserved_word, '\\'};
+            mqlast::unicode_delimited_identifier{reserved_word, '\\'};
         auto const result{parse(fmt::format("U&\"{}\"", reserved_word))};
 
         if (!result)

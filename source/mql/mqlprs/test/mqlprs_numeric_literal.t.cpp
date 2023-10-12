@@ -1,14 +1,15 @@
 #include <mqlprs_numeric_literal.h> // IWYU pragma: associated
 
-#include <catch2/catch_test_macros.hpp>
 #include <initializer_list>
 #include <optional>
 #include <string>
 #include <string_view>
+
+#include <catch2/catch_test_macros.hpp>
 #include <tl/expected.hpp>
 
-#include <mqlprs_ast_common.h>
-#include <mqlprs_ast_numeric_literal.h>
+#include <mqlast_common.h>
+#include <mqlast_numeric_literal.h>
 #include <mqlprs_parse_error.h>
 #include <mqlprs_parser.h>
 
@@ -17,7 +18,7 @@ using namespace melinda;
 TEST_CASE("<exact numeric literal>")
 {
     auto parse = [](std::string_view v)
-    { return mqlprs::parse<mqlprs::ast::exact_numeric_literal>(v); };
+    { return mqlprs::parse<mqlast::exact_numeric_literal>(v); };
 
     struct test_pairs
     {
@@ -46,13 +47,13 @@ TEST_CASE("<exact numeric literal>")
 TEST_CASE("<approximate numeric literal>")
 {
     auto parse = [](std::string_view v)
-    { return mqlprs::parse<mqlprs::ast::approximate_numeric_literal>(v); };
+    { return mqlprs::parse<mqlast::approximate_numeric_literal>(v); };
 
     struct test_pairs
     {
         std::string_view str;
-        mqlprs::ast::exact_numeric_literal mantissa;
-        std::optional<mqlprs::ast::sign> sign;
+        mqlast::exact_numeric_literal mantissa;
+        std::optional<mqlast::sign> sign;
         std::string_view exponent;
     };
 
@@ -62,8 +63,8 @@ TEST_CASE("<approximate numeric literal>")
         test_pairs{"2E4", {"2"}, std::nullopt, "4"},
         test_pairs{"2.E4", {"2"}, std::nullopt, "4"},
         test_pairs{"2.3e4", {"2", "3"}, std::nullopt, "4"},
-        test_pairs{"2.3E+4", {"2", "3"}, mqlprs::ast::sign::plus, "4"},
-        test_pairs{"2.3E-4", {"2", "3"}, mqlprs::ast::sign::minus, "4"},
+        test_pairs{"2.3E+4", {"2", "3"}, mqlast::sign::plus, "4"},
+        test_pairs{"2.3E-4", {"2", "3"}, mqlast::sign::minus, "4"},
         test_pairs{"2.3E45", {"2", "3"}, std::nullopt, "45"},
     };
 
@@ -79,35 +80,35 @@ TEST_CASE("<approximate numeric literal>")
 TEST_CASE("<unsigned numeric literal>")
 {
     auto parse = [](std::string_view v)
-    { return mqlprs::parse<mqlprs::ast::unsigned_numeric_literal>(v); };
+    { return mqlprs::parse<mqlast::unsigned_numeric_literal>(v); };
 
     struct test_pairs
     {
         std::string_view str;
-        mqlprs::ast::unsigned_numeric_literal expected;
+        mqlast::unsigned_numeric_literal expected;
     };
 
     SECTION("Parses to <approximate numeric literal>")
     {
         auto values = {
             test_pairs{"2.3E4",
-                mqlprs::ast::approximate_numeric_literal{
-                    mqlprs::ast::exact_numeric_literal{"2", "3"},
+                mqlast::approximate_numeric_literal{
+                    mqlast::exact_numeric_literal{"2", "3"},
                     std::nullopt,
                     "4"}},
             test_pairs{".3E45",
-                mqlprs::ast::approximate_numeric_literal{
-                    mqlprs::ast::exact_numeric_literal{std::nullopt, "3"},
+                mqlast::approximate_numeric_literal{
+                    mqlast::exact_numeric_literal{std::nullopt, "3"},
                     std::nullopt,
                     "45"}},
             test_pairs{"2.E45",
-                mqlprs::ast::approximate_numeric_literal{
-                    mqlprs::ast::exact_numeric_literal{"2"},
+                mqlast::approximate_numeric_literal{
+                    mqlast::exact_numeric_literal{"2"},
                     std::nullopt,
                     "45"}},
             test_pairs{"2E45",
-                mqlprs::ast::approximate_numeric_literal{
-                    mqlprs::ast::exact_numeric_literal{"2"},
+                mqlast::approximate_numeric_literal{
+                    mqlast::exact_numeric_literal{"2"},
                     std::nullopt,
                     "45"}},
         };
@@ -126,13 +127,11 @@ TEST_CASE("<unsigned numeric literal>")
     SECTION("Parses to <exact numeric literal>")
     {
         auto values = {
-            test_pairs{"2.3", mqlprs::ast::exact_numeric_literal{"2", "3"}},
+            test_pairs{"2.3", mqlast::exact_numeric_literal{"2", "3"}},
             test_pairs{".345",
-                mqlprs::ast::exact_numeric_literal{std::nullopt, "345"}},
-            test_pairs{"2.",
-                mqlprs::ast::exact_numeric_literal{"2", std::nullopt}},
-            test_pairs{"2",
-                mqlprs::ast::exact_numeric_literal{"2", std::nullopt}},
+                mqlast::exact_numeric_literal{std::nullopt, "345"}},
+            test_pairs{"2.", mqlast::exact_numeric_literal{"2", std::nullopt}},
+            test_pairs{"2", mqlast::exact_numeric_literal{"2", std::nullopt}},
         };
 
         for (auto&& value : values)
@@ -146,33 +145,32 @@ TEST_CASE("<unsigned numeric literal>")
 TEST_CASE("<signed numeric literal>")
 {
     auto parse = [](std::string_view v)
-    { return mqlprs::parse<mqlprs::ast::signed_numeric_literal>(v); };
+    { return mqlprs::parse<mqlast::signed_numeric_literal>(v); };
 
     struct test_pairs
     {
         std::string_view str;
-        mqlprs::ast::signed_numeric_literal expected;
+        mqlast::signed_numeric_literal expected;
     };
 
     SECTION("Parses to <approximate numeric literal>")
     {
-        auto values = {
-            test_pairs{"+2.3E4",
-                mqlprs::ast::signed_numeric_literal{mqlprs::ast::sign::plus,
-                    mqlprs::ast::approximate_numeric_literal{
-                        mqlprs::ast::exact_numeric_literal{"2", "3"},
-                        std::nullopt,
-                        "4"}}},
+        auto values = {test_pairs{"+2.3E4",
+                           mqlast::signed_numeric_literal{mqlast::sign::plus,
+                               mqlast::approximate_numeric_literal{
+                                   mqlast::exact_numeric_literal{"2", "3"},
+                                   std::nullopt,
+                                   "4"}}},
             test_pairs{"-.3E45",
-                mqlprs::ast::signed_numeric_literal{mqlprs::ast::sign::minus,
-                    mqlprs::ast::approximate_numeric_literal{
-                        mqlprs::ast::exact_numeric_literal{std::nullopt, "3"},
+                mqlast::signed_numeric_literal{mqlast::sign::minus,
+                    mqlast::approximate_numeric_literal{
+                        mqlast::exact_numeric_literal{std::nullopt, "3"},
                         std::nullopt,
                         "45"}}},
             test_pairs{"2.E45",
-                mqlprs::ast::signed_numeric_literal{
-                    mqlprs::ast::approximate_numeric_literal{
-                        mqlprs::ast::exact_numeric_literal{"2"},
+                mqlast::signed_numeric_literal{
+                    mqlast::approximate_numeric_literal{
+                        mqlast::exact_numeric_literal{"2"},
                         std::nullopt,
                         "45"}}}};
 
@@ -187,14 +185,14 @@ TEST_CASE("<signed numeric literal>")
     {
         auto values = {
             test_pairs{"+2.3",
-                mqlprs::ast::signed_numeric_literal{mqlprs::ast::sign::plus,
-                    mqlprs::ast::exact_numeric_literal{"2", "3"}}},
+                mqlast::signed_numeric_literal{mqlast::sign::plus,
+                    mqlast::exact_numeric_literal{"2", "3"}}},
             test_pairs{"-.3",
-                mqlprs::ast::signed_numeric_literal{mqlprs::ast::sign::minus,
-                    mqlprs::ast::exact_numeric_literal{std::nullopt, "3"}}},
+                mqlast::signed_numeric_literal{mqlast::sign::minus,
+                    mqlast::exact_numeric_literal{std::nullopt, "3"}}},
             test_pairs{"2.",
-                mqlprs::ast::signed_numeric_literal{
-                    mqlprs::ast::exact_numeric_literal{"2"}}},
+                mqlast::signed_numeric_literal{
+                    mqlast::exact_numeric_literal{"2"}}},
         };
 
         for (auto&& value : values)

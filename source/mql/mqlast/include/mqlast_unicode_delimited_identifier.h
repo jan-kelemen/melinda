@@ -1,11 +1,11 @@
-#ifndef MELINDA_MQLPRS_AST_UNICODE_DELIMITED_IDENTIFIER_INCLUDED
-#define MELINDA_MQLPRS_AST_UNICODE_DELIMITED_IDENTIFIER_INCLUDED
+#ifndef MELINDA_MQLAST_UNICODE_DELIMITED_IDENTIFIER_INCLUDED
+#define MELINDA_MQLAST_UNICODE_DELIMITED_IDENTIFIER_INCLUDED
 
 #include <concepts>
 #include <string>
 #include <utility>
 
-namespace melinda::mqlprs::ast
+namespace melinda::mqlast
 {
     struct [[nodiscard]] unicode_delimited_identifier final
     {
@@ -59,6 +59,6 @@ namespace melinda::mqlprs::ast
         char escape_character_;
     };
 
-} // namespace melinda::mqlprs::ast
+} // namespace melinda::mqlast
 
 #endif

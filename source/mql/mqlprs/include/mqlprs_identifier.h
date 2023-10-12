@@ -12,7 +12,7 @@
 #include <lexy/dsl/punctuator.hpp>
 #include <lexy/dsl/separator.hpp>
 
-#include <mqlprs_ast_identifier.h> // IWYU pragma: keep
+#include <mqlast_identifier.h> // IWYU pragma: keep
 #include <mqlprs_delimited_identifier.h> // IWYU pragma: keep
 #include <mqlprs_regular_identifier.h> // IWYU pragma: keep
 #include <mqlprs_unicode_delimited_identifier.h> // IWYU pragma: keep
@@ -32,13 +32,13 @@ namespace melinda::mqlprs
             lexy::dsl::p<delimited_identifier> |
             lexy::dsl::p<regular_identifier>;
 
-        static constexpr auto value = lexy::construct<ast::identifier>;
+        static constexpr auto value = lexy::construct<mqlast::identifier>;
     };
 
     template<>
-    struct parser_for<ast::identifier>
+    struct parser_for<mqlast::identifier>
     {
-        using value_type = ast::identifier;
+        using value_type = mqlast::identifier;
 
         using type = identifier;
     };
@@ -49,14 +49,14 @@ namespace melinda::mqlprs
             lexy::dsl::sep(lexy::dsl::period));
 
         static constexpr auto value =
-            lexy::as_list<std::vector<ast::identifier>> >>
-            lexy::construct<ast::multipart_identifier>;
+            lexy::as_list<std::vector<mqlast::identifier>> >>
+            lexy::construct<mqlast::multipart_identifier>;
     };
 
     template<>
-    struct parser_for<ast::multipart_identifier>
+    struct parser_for<mqlast::multipart_identifier>
     {
-        using value_type = ast::multipart_identifier;
+        using value_type = mqlast::multipart_identifier;
 
         using type = multipart_identifier;
     };

@@ -1,5 +1,5 @@
-#ifndef MELINDA_MQLPRS_AST_IDENTIFIER_INCLUDED
-#define MELINDA_MQLPRS_AST_IDENTIFIER_INCLUDED
+#ifndef MELINDA_MQLAST_IDENTIFIER_INCLUDED
+#define MELINDA_MQLAST_IDENTIFIER_INCLUDED
 
 #include <concepts>
 #include <string>
@@ -8,11 +8,11 @@
 #include <variant>
 #include <vector>
 
-#include <mqlprs_ast_delimited_identifier.h>
-#include <mqlprs_ast_regular_identifier.h>
-#include <mqlprs_ast_unicode_delimited_identifier.h>
+#include <mqlast_delimited_identifier.h>
+#include <mqlast_regular_identifier.h>
+#include <mqlast_unicode_delimited_identifier.h>
 
-namespace melinda::mqlprs::ast
+namespace melinda::mqlast
 {
     struct [[nodiscard]] identifier final
     {
@@ -151,6 +151,6 @@ namespace melinda::mqlprs::ast
     private: // Data
         underlying_type parts_;
     };
-} // namespace melinda::mqlprs::ast
+} // namespace melinda::mqlast
 
 #endif

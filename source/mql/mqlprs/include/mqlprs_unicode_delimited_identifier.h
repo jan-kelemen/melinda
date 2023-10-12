@@ -28,7 +28,7 @@
 #include <lexy/input/string_input.hpp>
 #include <lexy/lexeme.hpp> // IWYU pragma: keep
 
-#include <mqlprs_ast_unicode_delimited_identifier.h> // IWYU pragma: keep
+#include <mqlast_unicode_delimited_identifier.h> // IWYU pragma: keep
 #include <mqlprs_common.h>
 #include <mqlprs_parse_error.h>
 
@@ -113,7 +113,7 @@ namespace melinda::mqlprs
     };
 
     struct [[nodiscard]] unicode_delimited_identifier final
-        : lexy::scan_production<ast::unicode_delimited_identifier>
+        : lexy::scan_production<mqlast::unicode_delimited_identifier>
         , lexy::token_production
     {
         static constexpr auto rule =
@@ -202,15 +202,16 @@ namespace melinda::mqlprs
                 return lexy::scan_failed;
             }
 
-            return ast::unicode_delimited_identifier{std::move(result).value(),
+            return mqlast::unicode_delimited_identifier{
+                std::move(result).value(),
                 escape_character};
         }
     };
 
     template<>
-    struct parser_for<ast::unicode_delimited_identifier>
+    struct parser_for<mqlast::unicode_delimited_identifier>
     {
-        using value_type = ast::unicode_delimited_identifier;
+        using value_type = mqlast::unicode_delimited_identifier;
 
         using type = unicode_delimited_identifier;
     };

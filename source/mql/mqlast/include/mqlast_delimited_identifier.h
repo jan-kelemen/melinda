@@ -1,11 +1,11 @@
-#ifndef MELINDA_MQLPRS_AST_DELIMITED_IDENTIFIER_INCLUDED
-#define MELINDA_MQLPRS_AST_DELIMITED_IDENTIFIER_INCLUDED
+#ifndef MELINDA_MQLAST_DELIMITED_IDENTIFIER_INCLUDED
+#define MELINDA_MQLAST_DELIMITED_IDENTIFIER_INCLUDED
 
 #include <concepts>
 #include <string>
 #include <utility>
 
-namespace melinda::mqlprs::ast
+namespace melinda::mqlast
 {
     struct [[nodiscard]] delimited_identifier final
     {
@@ -50,6 +50,6 @@ namespace melinda::mqlprs::ast
         std::string body_;
     };
 
-} // namespace melinda::mqlprs::ast
+} // namespace melinda::mqlast
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef MELINDA_MQLPRS_AST_NUMERIC_LITERAL_INCLUDED
-#define MELINDA_MQLPRS_AST_NUMERIC_LITERAL_INCLUDED
+#ifndef MELINDA_MQLAST_NUMERIC_LITERAL_INCLUDED
+#define MELINDA_MQLAST_NUMERIC_LITERAL_INCLUDED
 
 #include <concepts>
 #include <optional>
@@ -8,9 +8,9 @@
 #include <utility>
 #include <variant>
 
-#include <mqlprs_ast_common.h>
+#include <mqlast_common.h>
 
-namespace melinda::mqlprs::ast
+namespace melinda::mqlast
 {
     struct [[nodiscard]] exact_numeric_literal final
     {
@@ -206,5 +206,5 @@ namespace melinda::mqlprs::ast
     using unsigned_numeric_literal = numeric_literal<false>;
 
     using signed_numeric_literal = numeric_literal<true>;
-} // namespace melinda::mqlprs::ast
+} // namespace melinda::mqlast
 #endif

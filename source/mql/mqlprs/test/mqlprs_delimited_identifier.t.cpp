@@ -6,7 +6,7 @@
 #include <fmt/core.h>
 #include <tl/expected.hpp>
 
-#include <mqlprs_ast_delimited_identifier.h>
+#include <mqlast_delimited_identifier.h>
 #include <mqlprs_delimited_identifier.h> // IWYU pragma: keep
 #include <mqlprs_parser.h>
 
@@ -15,7 +15,7 @@ using namespace melinda;
 namespace
 {
     auto parse = [](std::string_view query)
-    { return mqlprs::parse<mqlprs::ast::delimited_identifier>(query); };
+    { return mqlprs::parse<mqlast::delimited_identifier>(query); };
 } // namespace
 
 TEST_CASE("<delimited identifer> escapes double quote symbol")

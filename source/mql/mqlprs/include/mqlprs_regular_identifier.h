@@ -8,7 +8,7 @@
 #include <lexy/dsl/identifier.hpp>
 #include <lexy/dsl/literal.hpp>
 
-#include <mqlprs_ast_regular_identifier.h> // IWYU pragma: keep
+#include <mqlast_regular_identifier.h> // IWYU pragma: keep
 #include <mqlprs_common.h>
 #include <mqlprs_reserved_word.h>
 
@@ -47,14 +47,15 @@ namespace melinda::mqlprs
                 .reserve(reserved_set2);
         }();
 
-        static constexpr auto value = lexy::callback<ast::regular_identifier>(
-            [](auto&& lexeme) { return to_string_view(std::move(lexeme)); });
+        static constexpr auto value =
+            lexy::callback<mqlast::regular_identifier>([](auto&& lexeme)
+                { return to_string_view(std::move(lexeme)); });
     };
 
     template<>
-    struct parser_for<ast::regular_identifier>
+    struct parser_for<mqlast::regular_identifier>
     {
-        using value_type = ast::regular_identifier;
+        using value_type = mqlast::regular_identifier;
 
         using type = regular_identifier;
     };

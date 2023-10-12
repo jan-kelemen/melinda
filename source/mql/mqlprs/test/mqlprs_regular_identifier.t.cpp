@@ -1,3 +1,5 @@
+#include <mqlprs_regular_identifier.h> // IWYU pragma: associated
+//
 #include <catch2/catch_test_macros.hpp>
 
 #include <initializer_list>
@@ -5,16 +7,15 @@
 
 #include <tl/expected.hpp>
 
-#include <mqlprs_ast_regular_identifier.h>
+#include <mqlast_regular_identifier.h>
 #include <mqlprs_parser.h>
-#include <mqlprs_regular_identifier.h> // IWYU pragma: keep
 
 using namespace melinda;
 
 namespace
 {
     auto parse = [](std::string_view query)
-    { return mqlprs::parse<mqlprs::ast::regular_identifier>(query); };
+    { return mqlprs::parse<mqlast::regular_identifier>(query); };
 } // namespace
 
 TEST_CASE("<regular identifier> includes character classes", "[sql-grammar]")

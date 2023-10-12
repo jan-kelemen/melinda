@@ -19,7 +19,7 @@
 #include <lexy/dsl/sequence.hpp>
 #include <lexy/dsl/sign.hpp>
 
-#include <mqlprs_ast_numeric_literal.h>
+#include <mqlast_numeric_literal.h>
 #include <mqlprs_common.h>
 
 namespace melinda::mqlprs
@@ -43,28 +43,28 @@ namespace melinda::mqlprs
         }();
 
         static constexpr auto value =
-            lexy::callback<ast::exact_numeric_literal>(
+            lexy::callback<mqlast::exact_numeric_literal>(
                 [](lexy::nullopt, auto&& decimal)
                 {
-                    return ast::exact_numeric_literal(std::nullopt,
+                    return mqlast::exact_numeric_literal(std::nullopt,
                         to_string_view(std::move(decimal)));
                 },
                 [](auto&& whole, lexy::nullopt) {
-                    return ast::exact_numeric_literal(
+                    return mqlast::exact_numeric_literal(
                         to_string_view(std::move(whole)));
                 },
                 [](auto&& whole, auto&& decimal)
                 {
-                    return ast::exact_numeric_literal(
+                    return mqlast::exact_numeric_literal(
                         to_string_view(std::move(whole)),
                         to_string_view(std::move(decimal)));
                 });
     };
 
     template<>
-    struct parser_for<ast::exact_numeric_literal> final
+    struct parser_for<mqlast::exact_numeric_literal> final
     {
-        using value_type = ast::exact_numeric_literal;
+        using value_type = mqlast::exact_numeric_literal;
 
         using type = exact_numeric_literal;
     };
@@ -82,25 +82,27 @@ namespace melinda::mqlprs
         }();
 
         static constexpr auto value =
-            lexy::callback<ast::approximate_numeric_literal>(
+            lexy::callback<mqlast::approximate_numeric_literal>(
                 [](auto&& mantissa, auto&& sign, auto&& exponent)
                 {
-                    return ast::approximate_numeric_literal(std::move(mantissa),
+                    return mqlast::approximate_numeric_literal(
+                        std::move(mantissa),
                         to_ast_sign(sign),
                         to_string_view(std::move(exponent)));
                 },
                 [](auto&& mantissa, auto&& exponent)
                 {
-                    return ast::approximate_numeric_literal(std::move(mantissa),
+                    return mqlast::approximate_numeric_literal(
+                        std::move(mantissa),
                         std::nullopt,
                         to_string_view(std::move(exponent)));
                 });
     };
 
     template<>
-    struct parser_for<ast::approximate_numeric_literal>
+    struct parser_for<mqlast::approximate_numeric_literal>
     {
-        using value_type = ast::approximate_numeric_literal;
+        using value_type = mqlast::approximate_numeric_literal;
 
         using type = approximate_numeric_literal;
     };
@@ -117,13 +119,13 @@ namespace melinda::mqlprs
         }();
 
         static constexpr auto value =
-            lexy::construct<ast::unsigned_numeric_literal>;
+            lexy::construct<mqlast::unsigned_numeric_literal>;
     };
 
     template<>
-    struct parser_for<ast::unsigned_numeric_literal>
+    struct parser_for<mqlast::unsigned_numeric_literal>
     {
-        using value_type = ast::unsigned_numeric_literal;
+        using value_type = mqlast::unsigned_numeric_literal;
 
         using type = unsigned_numeric_literal;
     };
@@ -134,18 +136,19 @@ namespace melinda::mqlprs
             lexy::dsl::sign + lexy::dsl::inline_<unsigned_numeric_literal>;
 
         static constexpr auto value =
-            lexy::callback<ast::signed_numeric_literal>(
-                [](auto&& sign, auto&& literal) {
-                    return ast::signed_numeric_literal(to_ast_sign(sign),
+            lexy::callback<mqlast::signed_numeric_literal>(
+                [](auto&& sign, auto&& literal)
+                {
+                    return mqlast::signed_numeric_literal(to_ast_sign(sign),
                         std::move(literal));
                 },
-                lexy::construct<ast::signed_numeric_literal>);
+                lexy::construct<mqlast::signed_numeric_literal>);
     };
 
     template<>
-    struct parser_for<ast::signed_numeric_literal>
+    struct parser_for<mqlast::signed_numeric_literal>
     {
-        using value_type = ast::signed_numeric_literal;
+        using value_type = mqlast::signed_numeric_literal;
 
         using type = signed_numeric_literal;
     };

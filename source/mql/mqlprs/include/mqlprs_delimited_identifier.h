@@ -13,7 +13,7 @@
 #include <lexy/grammar.hpp>
 #include <lexy/lexeme.hpp> // IWYU pragma: keep
 
-#include <mqlprs_ast_delimited_identifier.h>
+#include <mqlast_delimited_identifier.h>
 #include <mqlprs_common.h>
 
 namespace melinda::mqlprs
@@ -25,7 +25,7 @@ namespace melinda::mqlprs
 namespace melinda::mqlprs
 {
     struct [[nodiscard]] delimited_identifier final
-        : lexy::scan_production<ast::delimited_identifier>
+        : lexy::scan_production<mqlast::delimited_identifier>
         , lexy::token_production
     {
         static constexpr auto rule = lexy::dsl::lit_c<'"'> >> lexy::dsl::scan;
@@ -65,14 +65,14 @@ namespace melinda::mqlprs
                 }
             }
 
-            return ast::delimited_identifier{std::move(result)};
+            return mqlast::delimited_identifier{std::move(result)};
         }
     };
 
     template<>
-    struct parser_for<ast::delimited_identifier>
+    struct parser_for<mqlast::delimited_identifier>
     {
-        using value_type = ast::delimited_identifier;
+        using value_type = mqlast::delimited_identifier;
 
         using type = delimited_identifier;
     };
