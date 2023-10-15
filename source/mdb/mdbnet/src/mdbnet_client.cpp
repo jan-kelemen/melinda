@@ -7,7 +7,12 @@
 #include <system_error>
 #include <utility>
 
+#ifndef _WIN32
 #include <unistd.h>
+#else
+#include <WinSock2.h>
+#define HOST_NAME_MAX 255
+#endif
 
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>

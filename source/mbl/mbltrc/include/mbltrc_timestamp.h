@@ -29,7 +29,7 @@ struct fmt::formatter<melinda::mbltrc::timestamp>
     template<typename FormatContext>
     auto format(melinda::mbltrc::timestamp const& t, FormatContext& ctx)
     {
-        return format_to(ctx.out(),
+        return fmt::format_to(ctx.out(),
             "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}:{:03}",
             t.year,
             t.month,

@@ -65,27 +65,27 @@ namespace melinda::mqlprs
                 {
                     if (scanner.branch(lexy::dsl::lit_c<'+'>))
                     {
-                        auto value = scanner.template integer<int>(
+                        auto escape_value = scanner.template integer<int>(
                             unicode_6_digit_escape_value);
-                        if (!value)
+                        if (!escape_value)
                         {
                             return lexy::scan_failed;
                         }
                         rv += static_cast<char>(
-                            value.value()); // TODO-JK: handle values larger
-                                            // than char correctly
+                            escape_value.value()); // TODO-JK: handle values
+                                                   // larger than char correctly
                     }
                     else if (scanner.peek(unicode_4_digit_escape_value))
                     {
-                        auto value = scanner.template integer<int>(
+                        auto escape_value = scanner.template integer<int>(
                             unicode_4_digit_escape_value);
-                        if (!value)
+                        if (!escape_value)
                         {
                             return lexy::scan_failed;
                         }
                         rv += static_cast<char>(
-                            value.value()); // TODO-JK: handle values larger
-                                            // than char correctly
+                            escape_value.value()); // TODO-JK: handle values
+                                                   // larger than char correctly
                     }
                     else if (pending_escape)
                     {

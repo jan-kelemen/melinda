@@ -8,7 +8,12 @@ using namespace melinda;
 
 std::filesystem::path mdbsql::t::runtime_directory()
 {
+#ifndef WIN32
     char* const env = secure_getenv("MELINDA_TEST_DIRECTORY");
+#else
+    char* const env = getenv("MELINDA_TEST_DIRECTORY");
+#endif
+
     REQUIRE(env);
     return {env};
 }

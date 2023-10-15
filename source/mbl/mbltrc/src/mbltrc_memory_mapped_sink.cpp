@@ -158,7 +158,7 @@ melinda::mbltrc::memory_mapped_sink::impl::new_file_params() const
     name += suffix;
     name.replace_extension("log");
 
-    boost::iostreams::mapped_file_params rv{name};
+    boost::iostreams::mapped_file_params rv{name.generic_string()};
     rv.flags = boost::iostreams::mapped_file::readwrite;
     rv.new_file_size =
         boost::numeric_cast<boost::iostreams::stream_offset>(file_size_);

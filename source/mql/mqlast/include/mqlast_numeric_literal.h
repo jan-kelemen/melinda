@@ -78,13 +78,13 @@ namespace melinda::mqlast
     public: // Construction
         template<typename Mantissa, typename Sign, typename Exponent>
         constexpr approximate_numeric_literal(Mantissa&& mantissa,
-            Sign&& sign,
+            Sign&& s,
             Exponent&& exponent)
         requires(std::constructible_from<exact_numeric_literal, Mantissa> &&
                     std::constructible_from<std::optional<enum sign>, Sign> &&
                     std::constructible_from<std::string, Exponent>)
             : mantissa_{std::forward<Mantissa>(mantissa)}
-            , sign_{std::forward<Sign>(sign)}
+            , sign_{std::forward<Sign>(s)}
             , exponent_{std::forward<Exponent>(exponent)}
         {
         }

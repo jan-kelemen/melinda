@@ -27,9 +27,9 @@ namespace melinda::mqlast
         constexpr sign_mixin() = default;
 
         template<typename Sign>
-        constexpr sign_mixin(Sign&& sign)
+        constexpr sign_mixin(Sign&& s)
         requires(std::constructible_from<std::optional<enum sign>, Sign>)
-            : sign_{std::forward<Sign>(sign)}
+            : sign_{std::forward<Sign>(s)}
         {
         }
 
