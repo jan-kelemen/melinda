@@ -1,6 +1,7 @@
-#ifndef MELINDA_MQLPRS_UNICODE_DELIMITED_IDENTIFIER_INCLUDED
-#define MELINDA_MQLPRS_UNICODE_DELIMITED_IDENTIFIER_INCLUDED
+#ifndef MELINDA_MQLPRS_UNICODE_CHARACTER_STRING_LITERAL
+#define MELINDA_MQLPRS_UNICODE_CHARACTER_STRING_LITERAL
 
+#include <optional>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -15,19 +16,23 @@
 #include <lexy/dsl/choice.hpp>
 #include <lexy/dsl/digit.hpp>
 #include <lexy/dsl/literal.hpp>
-#include <lexy/dsl/peek.hpp> // IWYU pragma: keep
+#include <lexy/dsl/option.hpp>
+#include <lexy/dsl/peek.hpp>
+#include <lexy/dsl/production.hpp>
 #include <lexy/dsl/punctuator.hpp>
 #include <lexy/dsl/scan.hpp>
+#include <lexy/dsl/sequence.hpp>
 #include <lexy/dsl/token.hpp>
 #include <lexy/dsl/unicode.hpp>
 #include <lexy/encoding.hpp>
 #include <lexy/error.hpp>
-#include <lexy/grammar.hpp>
 #include <lexy/input/string_input.hpp>
 #include <lexy/lexeme.hpp> // IWYU pragma: keep
 
-#include <mqlast_unicode_delimited_identifier.h> // IWYU pragma: keep
+#include <mqlast_identifier.h>
+#include <mqlast_unicode_character_string_literal.h>
 #include <mqlprs_common.h>
+#include <mqlprs_identifier.h>
 #include <mqlprs_parse_error.h>
 
 namespace melinda::mqlprs
@@ -38,38 +43,62 @@ namespace melinda::mqlprs
 
 namespace melinda::mqlprs
 {
-    struct [[nodiscard]] unicode_delimited_identifier final
-        : lexy::scan_production<mqlast::unicode_delimited_identifier>
-        , lexy::token_production
+    struct [[nodiscard]] unicode_character_string_literal final
+        : lexy::scan_production<mqlast::unicode_character_string_literal>
     {
-        static constexpr auto rule =
-            lexy::dsl::ascii::case_folding(LEXY_LIT("u&\"")) >> lexy::dsl::scan;
+        static constexpr auto introductor =
+            lexy::dsl::peek(lexy::dsl::opt(lexy::dsl::lit_c<'_'> >>
+                                lexy::dsl::p<multipart_identifier>) +
+                (lexy::dsl::lit_c<'u'> /
+                    lexy::dsl::lit_c<'U'>) +lexy::dsl::apostrophe);
 
         template<typename Context, typename Reader>
         static constexpr scan_result scan(
             lexy::rule_scanner<Context, Reader>& scanner)
         {
-            auto everything_except_doublequote = -lexy::dsl::lit_c<'"'>;
-
             auto unicode_escape_character =
                 lexy::dsl::capture(-(lexy::dsl::digit<lexy::dsl::hex> /
                     lexy::dsl::hyphen / lexy::dsl::apostrophe /
                     lexy::dsl::lit_c<'"'> / lexy::dsl::unicode::space));
 
+            std::optional<mqlast::multipart_identifier> character_set;
+            if (scanner.branch(lexy::dsl::lit_c<'_'>))
+            {
+                lexy::scan_result<mqlast::multipart_identifier> scan_result =
+                    scanner.parse(multipart_identifier{});
+                character_set = std::move(scan_result).value();
+
+                while (scanner.discard(lexy::dsl::token(separator)))
+                    ; // skip whitespace
+            }
+
+            auto everything_except_quote =
+                lexy::dsl::capture(-lexy::dsl::apostrophe);
+
+            scanner.parse(lexy::dsl::lit_c<'u'> / lexy::dsl::lit_c<'U'> +
+                lexy::dsl::apostrophe);
+            if (!scanner)
+            {
+                return lexy::scan_failed;
+            }
+
             std::string intermediate_result;
 
-            auto literal_start{scanner.position()};
-
+            auto literal_start = scanner.position();
             auto found_closing_quote{false};
             while (!found_closing_quote)
             {
-                if (scanner.branch(LEXY_LIT("\"\"")))
+                if (scanner.branch(LEXY_LIT("''")))
                 {
-                    intermediate_result += '"';
+                    intermediate_result += '\'';
                 }
-                if (scanner.branch(lexy::dsl::lit_c<'"'>))
+                else if (scanner.branch(lexy::dsl::apostrophe))
                 {
-                    found_closing_quote = true;
+                    while (scanner.discard(lexy::dsl::token(separator)))
+                        ; // skip whitespace
+
+                    found_closing_quote =
+                        !scanner.branch(lexy::dsl::apostrophe);
                 }
                 else if (scanner.is_at_eof())
                 {
@@ -80,15 +109,12 @@ namespace melinda::mqlprs
                 }
                 else
                 {
-                    auto scan_result =
-                        scanner.capture(everything_except_doublequote);
+                    lexy::scan_result<lexy::lexeme<Reader>> scan_result;
+                    scanner.parse(scan_result, everything_except_quote);
                     intermediate_result +=
                         to_string_view(std::move(scan_result).value());
                 }
             }
-
-            while (scanner.discard(lexy::dsl::token(separator)))
-                ; // skip whitespace
 
             char escape_character = '\\';
             if (scanner.branch(
@@ -128,19 +154,19 @@ namespace melinda::mqlprs
                 return lexy::scan_failed;
             }
 
-            return mqlast::unicode_delimited_identifier{
+            return mqlast::unicode_character_string_literal{
+                std::move(character_set),
                 std::move(result).value(),
                 escape_character};
         }
     };
 
     template<>
-    struct parser_for<mqlast::unicode_delimited_identifier>
+    struct parser_for<mqlast::unicode_character_string_literal>
     {
-        using value_type = mqlast::unicode_delimited_identifier;
+        using value_type = mqlast::unicode_character_string_literal;
 
-        using type = unicode_delimited_identifier;
+        using type = unicode_character_string_literal;
     };
 } // namespace melinda::mqlprs
-
 #endif
