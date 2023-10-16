@@ -1,11 +1,18 @@
-#include "mqlast_identifier.h"
-#include "mqlast_regular_identifier.h"
-#include <mqlprs_unicode_character_string_literal.h>
+#include <mqlprs_unicode_character_string_literal.h> // IWYU pragma: associated
+
+#include <initializer_list>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <mqlast_identifier.h>
+#include <mqlast_regular_identifier.h>
+#include <mqlast_unicode_character_string_literal.h>
 #include <mqlprs_parser.h>
-#include <vector>
 
 using namespace melinda;
 

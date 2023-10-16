@@ -13,6 +13,7 @@
 #include <lexy/dsl/code_point.hpp>
 #include <lexy/dsl/digit.hpp>
 #include <lexy/dsl/identifier.hpp>
+#include <lexy/dsl/integer.hpp> // IWYU pragma: keep
 #include <lexy/dsl/literal.hpp>
 #include <lexy/dsl/newline.hpp>
 #include <lexy/dsl/option.hpp> // IWYU pragma: keep
@@ -20,6 +21,7 @@
 #include <lexy/dsl/sign.hpp> // IWYU pragma: keep
 #include <lexy/dsl/unicode.hpp>
 #include <lexy/dsl/until.hpp>
+#include <lexy/grammar.hpp>
 #include <lexy/lexeme.hpp>
 
 #include <mblcxx_always_false.h> // IWYU pragma: keep

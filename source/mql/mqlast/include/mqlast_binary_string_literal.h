@@ -2,11 +2,9 @@
 #define MELINDA_MQLAST_BINARY_STRING_LITERAL
 
 #include <concepts>
-#include <optional>
-#include <string>
+#include <cstddef>
 #include <utility>
-
-#include <mqlast_identifier.h>
+#include <vector>
 
 namespace melinda::mqlast
 {

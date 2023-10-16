@@ -2,17 +2,25 @@
 #define MELINDA_MQLPRS_CHARACTER_STRING_LITERAL
 
 #include <charconv>
+#include <cstddef>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include <lexy/dsl/branch.hpp>
+#include <lexy/dsl/capture.hpp>
+#include <lexy/dsl/char_class.hpp>
+#include <lexy/dsl/choice.hpp>
 #include <lexy/dsl/digit.hpp>
 #include <lexy/dsl/literal.hpp>
-
 #include <lexy/dsl/punctuator.hpp>
 #include <lexy/dsl/scan.hpp>
-
+#include <lexy/dsl/token.hpp>
 #include <lexy/error.hpp>
+#include <lexy/lexeme.hpp> // IWYU pragma: keep
+
 #include <mqlast_binary_string_literal.h>
 #include <mqlprs_common.h>
-#include <mqlprs_identifier.h>
 
 namespace melinda::mqlprs
 {

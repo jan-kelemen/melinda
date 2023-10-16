@@ -13,9 +13,7 @@
 #include <lexy/dsl/case_folding.hpp>
 #include <lexy/dsl/char_class.hpp>
 #include <lexy/dsl/choice.hpp>
-#include <lexy/dsl/code_point.hpp>
 #include <lexy/dsl/digit.hpp>
-#include <lexy/dsl/integer.hpp> // IWYU pragma: keep
 #include <lexy/dsl/literal.hpp>
 #include <lexy/dsl/peek.hpp> // IWYU pragma: keep
 #include <lexy/dsl/punctuator.hpp>

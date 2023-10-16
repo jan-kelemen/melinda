@@ -5,8 +5,6 @@
 #include <string>
 #include <utility>
 
-#include <mqlast_identifier.h>
-
 namespace melinda::mqlast
 {
     struct [[nodiscard]] national_character_string_literal final

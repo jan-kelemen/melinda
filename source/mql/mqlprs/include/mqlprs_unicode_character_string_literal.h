@@ -1,15 +1,39 @@
 #ifndef MELINDA_MQLPRS_UNICODE_CHARACTER_STRING_LITERAL
 #define MELINDA_MQLPRS_UNICODE_CHARACTER_STRING_LITERAL
 
-#include <lexy/action/parse.hpp>
-#include <lexy/dsl/literal.hpp>
+#include <optional>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
+#include <lexy/action/parse.hpp>
+#include <lexy/callback/container.hpp>
+#include <lexy/dsl/branch.hpp>
+#include <lexy/dsl/capture.hpp>
+#include <lexy/dsl/case_folding.hpp>
+#include <lexy/dsl/char_class.hpp>
+#include <lexy/dsl/choice.hpp>
+#include <lexy/dsl/digit.hpp>
+#include <lexy/dsl/literal.hpp>
+#include <lexy/dsl/option.hpp>
+#include <lexy/dsl/peek.hpp>
+#include <lexy/dsl/production.hpp>
 #include <lexy/dsl/punctuator.hpp>
 #include <lexy/dsl/scan.hpp>
+#include <lexy/dsl/sequence.hpp>
+#include <lexy/dsl/token.hpp>
+#include <lexy/dsl/unicode.hpp>
+#include <lexy/encoding.hpp>
+#include <lexy/error.hpp>
+#include <lexy/input/string_input.hpp>
+#include <lexy/lexeme.hpp> // IWYU pragma: keep
 
+#include <mqlast_identifier.h>
 #include <mqlast_unicode_character_string_literal.h>
 #include <mqlprs_common.h>
 #include <mqlprs_identifier.h>
+#include <mqlprs_parse_error.h>
 
 namespace melinda::mqlprs
 {

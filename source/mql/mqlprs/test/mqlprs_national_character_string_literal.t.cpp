@@ -1,9 +1,13 @@
-#include <mqlprs_national_character_string_literal.h>
+#include <mqlprs_national_character_string_literal.h> // IWYU pragma: associated
+
+#include <initializer_list>
+#include <string>
+#include <string_view>
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <mqlast_national_character_string_literal.h>
 #include <mqlprs_parser.h>
-#include <vector>
 
 using namespace melinda;
 

@@ -1,1 +1,1 @@
-#include <mqlprs_character_string_literal.h>
+#include <mqlprs_binary_string_literal.h>

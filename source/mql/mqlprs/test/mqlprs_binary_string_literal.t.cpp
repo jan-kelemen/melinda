@@ -1,9 +1,14 @@
-#include <mqlprs_binary_string_literal.h>
+#include <mqlprs_binary_string_literal.h> // IWYU pragma: associated
+
+#include <cstddef>
+#include <initializer_list>
+#include <string_view>
+#include <vector>
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <mqlast_binary_string_literal.h>
 #include <mqlprs_parser.h>
-#include <vector>
 
 using namespace melinda;
 
