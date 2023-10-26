@@ -7,6 +7,7 @@ target_sources(${TARGET_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mqlprs_binary_string_literal.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mqlprs_character_string_literal.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mqlprs_common.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/mqlprs_datetime_literal.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mqlprs_delimited_identifier.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mqlprs_identifier.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mqlprs_national_character_string_literal.h
@@ -21,6 +22,7 @@ target_sources(${TARGET_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mqlprs_binary_string_literal.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mqlprs_character_string_literal.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mqlprs_common.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/mqlprs_datetime_literal.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mqlprs_delimited_identifier.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mqlprs_identifier.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mqlprs_national_character_string_literal.cpp
@@ -54,6 +56,7 @@ target_sources(${TARGET_NAME}_test
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/test/mqlprs_binary_string_literal.t.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/mqlprs_character_string_literal.t.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/mqlprs_datetime_literal.t.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/mqlprs_delimited_identifier.t.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/mqlprs_identifier.t.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/mqlprs_national_character_string_literal.t.cpp

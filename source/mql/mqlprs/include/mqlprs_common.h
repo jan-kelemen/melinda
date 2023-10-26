@@ -19,6 +19,7 @@
 #include <lexy/dsl/option.hpp> // IWYU pragma: keep
 #include <lexy/dsl/scan.hpp>
 #include <lexy/dsl/sign.hpp> // IWYU pragma: keep
+#include <lexy/dsl/symbol.hpp>
 #include <lexy/dsl/unicode.hpp>
 #include <lexy/dsl/until.hpp>
 #include <lexy/grammar.hpp>
@@ -65,6 +66,8 @@ namespace melinda::mqlprs
             static_assert(mblcxx::always_false_v<T>, "Unrecognized sign type");
         }
     }
+
+    constexpr auto sign = lexy::symbol_table<mqlast::sign>.map<LEXY_SYMBOL("+")>(mqlast::sign::plus).map<LEXY_SYMBOL("-")>(mqlast::sign::minus);
 
     struct [[nodiscard]] escaped_unicode_literal final
         : lexy::scan_production<std::string>
