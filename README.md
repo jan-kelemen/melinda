@@ -6,15 +6,15 @@ Melinda - Relational Database Management System
 * CMake 3.27
 
 #### Supported compilers:
-* gcc-13
-* clang-17
+* GCC-13
+* Clang-17
 
 #### Optional tools:
 * include-what-you-use 0.21
-  * Enable it with `-DCMAKE\_MELINDA\_ENABLE\_IWYU=ON`
+  * Enable it with `-DCMAKE_MELINDA_ENABLE_IWYU=ON`
   * Official release of iwyu 0.21 crashes when running `mqlprs` component due to a bug fixed in iwyu 0.22. Backport available [here](https://github.com/jan-kelemen/include-what-you-use/tree/clang_17)
 * clang-format-17
-  * Enable it with `-DCMAKE\_MELINDA\_ENABLE\_CLANG_FORMAT=ON`
+  * Enable it with `-DCMAKE_MELINDA_ENABLE_CLANG_FORMAT=ON`
 
 #### Required third party dependencies
 * See cmake/dependencies.cmake for up to date information
@@ -30,9 +30,11 @@ find_package(tl-expected REQUIRED)
 ```
 
 # Building with vcpkg
-* `cmake -B [build directory] -S . -DCMAKE\_TOOLCHAIN\_FILE=[path to vcpkg]/scripts/buildsystems/vcpkg.cmake -DCMAKE\_BUILD\_TYPE=Release`
-* `cmake --build [build directory] -j16`
+```
+cmake -B [build directory] -S . -DCMAKE_TOOLCHAIN_FILE=[path to vcpkg]/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release
+cmake --build [build directory] -j16
+```
 
 # Testing
-* Run scripts/test.sh
-  * Script supports optional testing directory parameter (-d), specify the filesystem location used for tests, defaults to value of MELINDA\_TEST\_DIRECTORY or /tmp if not set
+* Run `scripts/test.sh`
+  * Script supports optional testing directory parameter (`-d`), specify the filesystem location used for tests, defaults to value of `MELINDA_TEST_DIRECTORY` or `/tmp` if not set
