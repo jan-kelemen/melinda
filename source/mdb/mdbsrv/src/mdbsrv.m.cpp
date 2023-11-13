@@ -7,7 +7,7 @@
 #include <memory>
 #include <optional>
 #include <signal.h>
-#include <system_error>
+#include <span>
 #include <utility>
 
 #include <flatbuffers/flatbuffers.h>

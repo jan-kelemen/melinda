@@ -7,7 +7,6 @@
 #include <string>
 #include <string_view>
 #include <thread> // IWYU pragma: keep
-#include <type_traits>
 #include <utility>
 
 #include <fmt/core.h>

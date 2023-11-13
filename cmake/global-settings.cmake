@@ -1,5 +1,5 @@
 function(add_global_settings_to_target target_name)
-    target_compile_features(${target_name} PUBLIC cxx_std_20)
+    target_compile_features(${target_name} PUBLIC cxx_std_23)
     set_target_properties(${target_name} PROPERTIES CXX_STANDARD_REQUIRED ON)
     set_target_properties(${target_name} PROPERTIES CXX_EXTENSIONS OFF)
 
