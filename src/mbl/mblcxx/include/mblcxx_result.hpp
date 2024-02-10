@@ -1,9 +1,9 @@
 #ifndef MELINDA_MBLCXX_RESULT_INCLUDED
 #define MELINDA_MBLCXX_RESULT_INCLUDED
 
-#include <tl/expected.hpp>
+#include <tl/expected.hpp> // IWYU pragma: export
 
-#include <system_error>
+#include <system_error> // IWYU pragma: export
 
 namespace melinda::mblcxx
 {
