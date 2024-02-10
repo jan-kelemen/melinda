@@ -7,7 +7,7 @@ class DanaConan(ConanFile):
     build_policy = "missing"
 
     def requirements(self):
-        self.requires("fmt/10.2.1")
+        self.requires("tl-expected/20190710")
 
     def build_requirements(self):
         self.test_requires("catch2/3.5.2")
