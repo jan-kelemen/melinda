@@ -1,0 +1,5 @@
+[conf]
+tools.build:cflags+=["-D_GLIBCXX_ASSERTIONS", "-U_FORTIFY_SOURCE", "-D_FORTIFY_SOURCE=2", "-fPIC", "-fstack-protector-strong", "-fcf-protection", "-fstack-clash-protection"]
+tools.build:cxxflags+=["-D_GLIBCXX_ASSERTIONS", "-U_FORTIFY_SOURCE", "-D_FORTIFY_SOURCE=2", "-fPIC", "-fstack-protector-strong", "-fcf-protection", "-fstack-clash-protection"]
+tools.build:sharedlinkflags+=["-z relro", "-z now", "-z noexecstack"]
+tools.build:exelinkflags+=["-pie", "-z relro", "-z now", "-z noexecstack"]

@@ -1,0 +1,224 @@
+name: Static Analysis
+
+on:
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  clang-tidy:
+    runs-on: ubuntu-22.04
+    
+    env:
+      CLANG_VER: 17
+      
+    strategy:
+      fail-fast: false
+        
+    steps:
+      - name: Checkout repository from github
+        uses: actions/checkout@v4
+
+      - name: Install clang-tidy-${{ env.CLANG_VER }}
+        run: |
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          . /etc/lsb-release
+          sudo add-apt-repository -y "deb http://apt.llvm.org/${DISTRIB_CODENAME}/ llvm-toolchain-${DISTRIB_CODENAME}-${{ env.CLANG_VER }} main"
+          sudo apt-get install -y clang-${{ env.CLANG_VER }} llvm-${{ env.CLANG_VER }} clang-tidy-${{ env.CLANG_VER }}
+
+          echo "CONAN_PROFILE=clang-${{ env.CLANG_VER }}" >> $GITHUB_ENV
+              
+      - name: Install Conan
+        uses: turtlebrowser/get-conan@v1.2
+        with:
+          version: 2.0.17
+
+      - name: Fetch dependencies
+        run: |
+          conan profile detect --force
+          conan install . --profile=conan/${{ env.CONAN_PROFILE }} --build=missing --settings build_type=Debug
+
+      - name: Configure CMake
+        run: |
+          cmake -DMELINDA_ENABLE_CLANG_TIDY=ON --preset conan-debug
+
+      - name: Build
+        run: |
+          cmake --build --preset=conan-debug
+
+  iwyu:
+    runs-on: ubuntu-22.04
+    
+    env:
+      CLANG_VER: 17
+      
+    strategy:
+      fail-fast: false
+        
+    steps:
+      - name: Checkout repository from github
+        uses: actions/checkout@v4
+
+      - name: Checkout IWYU repository from github
+        uses: actions/checkout@v4
+        with:
+          repository: include-what-you-use/include-what-you-use
+          path: temp 
+          ref: clang_${{ env.CLANG_VER }}
+
+      - name: Install clang-${{ env.CLANG_VER }}
+        run: |
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          . /etc/lsb-release
+          sudo add-apt-repository -y "deb http://apt.llvm.org/${DISTRIB_CODENAME}/ llvm-toolchain-${DISTRIB_CODENAME}-${{ env.CLANG_VER }} main"
+          sudo apt-get install -y clang-${{ env.CLANG_VER }} llvm-${{ env.CLANG_VER }}-dev libclang-${{ env.CLANG_VER }}-dev
+          echo "CONAN_PROFILE=clang-${{ env.CLANG_VER }}" >> $GITHUB_ENV
+
+      - name: Install IWYU
+        run: |
+          cmake -S temp -B temp/build -DCMAKE_PREFIX_PATH=/usr/lib/llvm-${{ env.CLANG_VER }} -DCMAKE_BUILD_TYPE=Release -Wno-dev
+          cmake --build temp/build -j4
+          sudo cmake --install temp/build
+          rm -rf temp
+
+      - name: Install Conan
+        uses: turtlebrowser/get-conan@v1.2
+        with:
+          version: 2.0.17
+
+      - name: Fetch dependencies
+        run: |
+          conan profile detect --force
+          conan install . --profile=conan/${{ env.CONAN_PROFILE }} --build=missing --settings build_type=Debug
+
+      - name: Configure CMake
+        run: |
+          cmake -DMELINDA_ENABLE_IWYU=ON --preset conan-debug
+
+      - name: Build
+        run: |
+          cmake --build --preset=conan-debug
+
+  gcc-analyzer:
+    runs-on: ubuntu-22.04
+    
+    env:
+      GCC_VER: 13
+      
+    strategy:
+      fail-fast: false
+        
+    steps:
+      - name: Checkout repository from github
+        uses: actions/checkout@v4
+
+      - name: Install gcc-${{ env.GCC_VER }}
+        run: |
+          sudo apt-get install -y gcc-${{ env.GCC_VER }} g++-${{ env.GCC_VER }}
+
+          echo "CONAN_PROFILE=gcc-${{ env.GCC_VER }}" >> $GITHUB_ENV
+              
+      - name: Install Conan
+        uses: turtlebrowser/get-conan@v1.2
+        with:
+          version: 2.0.17
+
+      - name: Fetch dependencies
+        run: |
+          conan profile detect --force
+          conan install . --profile=conan/${{ env.CONAN_PROFILE }} --build=missing --settings build_type=Debug
+
+      - name: Configure CMake
+        run: |
+          cmake -DMELINDA_ENABLE_COMPILER_STATIC_ANALYSIS=ON --preset conan-debug
+
+      - name: Build
+        run: |
+          cmake --build --preset=conan-debug
+
+  cppcheck:
+    runs-on: ubuntu-22.04
+    
+    env:
+      GCC_VER: 13
+      
+    strategy:
+      fail-fast: false
+        
+    steps:
+      - name: Checkout repository from github
+        uses: actions/checkout@v4
+
+      - name: Checkout IWYU repository from github
+        uses: actions/checkout@v4
+        with:
+          repository: danmar/cppcheck
+          path: temp 
+          ref: 2.13.0
+
+      - name: Install gcc-${{ env.GCC_VER }}
+        run: |
+          sudo apt-get install -y gcc-${{ env.GCC_VER }} g++-${{ env.GCC_VER }}
+
+          echo "CONAN_PROFILE=gcc-${{ env.GCC_VER }}" >> $GITHUB_ENV
+
+      - name: Install Cppcheck
+        run: |
+          cmake -S temp -B temp/build -DCMAKE_BUILD_TYPE=Release -Wno-dev 
+          cmake --build temp/build -j4
+          sudo cmake --install temp/build
+          rm -rf temp
+
+      - name: Install Conan
+        uses: turtlebrowser/get-conan@v1.2
+        with:
+          version: 2.0.17
+
+      - name: Fetch dependencies
+        run: |
+          conan profile detect --force
+          conan install . --profile=conan/${{ env.CONAN_PROFILE }} --build=missing --settings build_type=Debug
+
+      - name: Configure CMake
+        run: |
+          cmake -DMELINDA_ENABLE_CPPCHECK=ON --preset conan-debug
+
+      - name: Build
+        run: |
+          cmake --build --preset=conan-debug
+
+  msvc-analyze:
+    runs-on: windows-2022
+
+    env:
+      CONAN_PROFILE: msvc-2022
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Initialize
+        run: |
+          git config --global core.autocrlf input
+          
+      - name: Checkout repository from github
+        uses: actions/checkout@v4
+
+      - name: Install Conan
+        uses: turtlebrowser/get-conan@v1.2
+        with:
+          version: 2.0.17
+
+      - name: Fetch dependencies
+        run: |
+          conan profile detect --force
+          conan install . --profile=conan/${{ env.CONAN_PROFILE }} --build=missing --settings build_type=Debug
+
+      - name: Configure CMake
+        run: |
+          cmake -DMELINDA_ENABLE_COMPILER_STATIC_ANALYSIS=ON --preset conan-default
+          
+      - name: Build
+        run: |
+          cmake --build --preset=conan-debug
+
