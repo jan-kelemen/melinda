@@ -1,1 +1,1 @@
-add_subdirectory(melinda)
+add_subdirectory(mbl)

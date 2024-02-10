@@ -10,7 +10,7 @@ option(MELINDA_ENABLE_COMPILER_STATIC_ANALYSIS "Enable static analysis provided 
 option(MELINDA_ENABLE_CPPCHECK "Enable cppcheck in build" OFF)
 option(MELINDA_ENABLE_IWYU "Enable include-what-you-use in build" OFF)
 
-find_package(fmt REQUIRED)
+find_package(tl-expected REQUIRED)
 
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(CTest)
