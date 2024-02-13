@@ -2,7 +2,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-TEST_CASE("Exiting the scope calls the defined action")
+TEST_CASE("mblcxx::on_scope_exit calls the defined action")
 {
     int value{};
     {

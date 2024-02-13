@@ -7,6 +7,7 @@ class DanaConan(ConanFile):
     build_policy = "missing"
 
     def requirements(self):
+        self.requires("foonathan-lexy/2022.12.1")
         self.requires("tl-expected/20190710")
 
     def build_requirements(self):

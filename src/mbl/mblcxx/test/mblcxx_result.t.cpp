@@ -4,7 +4,7 @@
 
 using namespace melinda;
 
-TEST_CASE("mblcxx::result::operator== supports conversions")
+TEST_CASE("mblcxx::result operator== supports conversions")
 {
     constexpr int contained{2};
 

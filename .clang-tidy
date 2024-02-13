@@ -20,3 +20,6 @@ Checks: '
 '
 FormatStyle: 'file'
 
+CheckOptions:
+  - key: readability-identifier-length.IgnoredVariableNames
+    value: 'rv'
