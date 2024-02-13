@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-22.04
     
     env:
-      CLANG_VER: 17
+      CLANG_VER: 18
       
     strategy:
       fail-fast: false
@@ -88,6 +88,7 @@ jobs:
 
       - name: Fetch dependencies
         run: |
+          conan config install conan/settings_user.yml
           conan profile detect --force
           conan install . --profile=conan/${{ env.CONAN_PROFILE }} --build=missing --settings build_type=Debug
 
