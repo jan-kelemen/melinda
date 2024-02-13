@@ -8,6 +8,8 @@
 
 #include <mblcxx_result.hpp>
 
+#include <cassert>
+
 namespace melinda::mqlast
 {
     template<typename T>
