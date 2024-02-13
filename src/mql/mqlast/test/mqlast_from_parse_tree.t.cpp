@@ -9,6 +9,12 @@
 
 #include <string_view>
 
+// IWYU pragma: no_include <lexy/_detail/iterator.hpp>
+// IWYU pragma: no_include <lexy/input/base.hpp>
+// IWYU pragma: no_include <lexy/parse_tree.hpp>
+// IWYU pragma: no_include <ranges>
+// IWYU pragma: no_include <vector>
+
 using namespace melinda;
 
 namespace

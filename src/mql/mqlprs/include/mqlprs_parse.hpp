@@ -60,8 +60,8 @@ namespace melinda::mqlprs
 
     struct create_statement final
     {
-        static constexpr auto rule =
-            kw_create >> (kw_schema + lexy::dsl::p<identifier>);
+        static constexpr auto rule = kw_create >>
+            (kw_schema + lexy::dsl::p<identifier>);
     };
 
     struct statement final : lexy::transparent_production
