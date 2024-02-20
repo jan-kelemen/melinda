@@ -1,4 +1,4 @@
-# melinda [![GitHub Build status](https://github.com/jan-kelemen/melinda/workflows/GitHub%20CI/badge.svg)](https://github.com/jan-kelemen/melinda/actions?query=workflow%3A%22GitHub+CI%22)
+# melinda [![GitHub Build status](https://github.com/jan-kelemen/melinda/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/jan-kelemen/melinda/actions/workflows/ci.yml/badge.svg?branch=master)
 
 Melinda - Relational Database Management System
 
@@ -19,28 +19,23 @@ conan install . --profile=conan/clang-17 --build=missing --settings build_type=R
 * Conan profiles for supported compilers: `gcc-13`, `clang-17` and `msvc-2022`
 * Conan build types: `Release`, `Debug`
 
-### Configure
+### Configure, build and test
 ```
-cmake --preset conan-release
+cmake --preset release
+cmake --build --preset=release
 ```
-* When compiling with `MSVC` use `conan-default` preset, in other cases use either `conan-debug` or `conan-release`
-* Use the same preset as the build type specified in previous step
-
-### Build
-```
-cmake --build --preset=conan-release
-```
-* Use the same preset as the build type specified when installing dependencies
-
-## Testing
-Building of tests is enabled by default. Execute the tests with the following command:
-```
-ctest --preset conan-release || ctest --preset conan-release --rerun-failed --output-on-failure
-```
-
 Disable building of tests by:
 * Adding `--conf tools.build:skip_test=True` to `conan install` command
 * Adding `-DBUILD_TESTING=OFF` during CMake configure
+
+Building of tests is enabled by default. Execute the tests with the following command:
+```
+ctest --preset release
+```
+
+Use the preset matching the build type used when installing dependencies.
+When compiling with `MSVC` or using some other multi configuration generator use
+`multi-debug` or `multi-release` presets.
 
 ## Additional tools
 ### ClangFormat 
