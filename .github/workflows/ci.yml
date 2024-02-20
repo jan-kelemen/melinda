@@ -96,9 +96,9 @@ jobs:
           
       - name: Build
         run: |
-          cmake --build --preset=release
+          cmake --build --preset=multi-release
 
       - name: Test
         run: |
-          ctest --preset release
+          ctest --preset multi-release
 

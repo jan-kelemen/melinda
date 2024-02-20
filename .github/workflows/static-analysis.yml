@@ -221,5 +221,5 @@ jobs:
           
       - name: Build
         run: |
-          cmake --build --preset=debug
+          cmake --build --preset=multi-debug
 

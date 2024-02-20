@@ -63,18 +63,43 @@
         {
             "name": "debug",
             "configurePreset": "debug"
+        },
+        {
+            "name": "multi-release",
+            "configurePreset": "default",
+            "inherits": "release"
+        },
+        {
+            "name": "multi-debug",
+            "configurePreset": "default",
+            "inherits": "debug"
         }
     ],
     "testPresets": [
         {
+            "name": "common",
+            "output": {"outputOnFailure": true },
+            "hidden": true
+        },
+        {
             "name": "release",
             "configurePreset": "release",
-            "output": {"outputOnFailure": true}
+            "inherits": "common"
         },
         {
             "name": "debug",
             "configurePreset": "debug",
-            "output": {"outputOnFailure": true}
+            "inherits": "common"
+        },
+        {
+            "name": "multi-release",
+            "configurePreset": "default",
+            "inherits": ["release", "common"]
+        },
+        {
+            "name": "multi-debug",
+            "configurePreset": "default",
+            "inherits": ["debug", "common"]
         }
     ]
 }
