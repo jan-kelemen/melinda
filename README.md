@@ -1,4 +1,4 @@
-# melinda [![GitHub Build status](https://github.com/jan-kelemen/melinda/workflows/GitHub%20CI/badge.svg)](https://github.com/jan-kelemen/melinda/actions?query=workflow%3A%22GitHub+CI%22)
+# melinda [![GitHub Build status](https://github.com/jan-kelemen/melinda/workflows/GitHub%20CI/badge.svg)](https://github.com/jan-kelemen/melinda/actions/workflows/ci.yml/badge.svg?branch=master)
 
 Melinda - Relational Database Management System
 
