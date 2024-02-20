@@ -67,11 +67,13 @@
         {
             "name": "multi-release",
             "configurePreset": "default",
+            "configuration": "Release",
             "inherits": "release"
         },
         {
             "name": "multi-debug",
             "configurePreset": "default",
+            "configuration": "Debug",
             "inherits": "debug"
         }
     ],
@@ -94,11 +96,13 @@
         {
             "name": "multi-release",
             "configurePreset": "default",
+            "configuration": "Release",
             "inherits": ["release", "common"]
         },
         {
             "name": "multi-debug",
             "configurePreset": "default",
+            "configuration": "Debug",
             "inherits": ["debug", "common"]
         }
     ]
