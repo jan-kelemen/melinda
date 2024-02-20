@@ -26,6 +26,7 @@ class DanaConan(ConanFile):
 
     def generate(self):
         tc = CMakeToolchain(self)
+        tc.user_presets_path = "ConanPresets.json"
         tc.generate()
 
         cmake = CMakeDeps(self)
