@@ -48,6 +48,7 @@ IndentRequires: 'false'
 IndentWidth: '4'
 IndentWrappedFunctionNames: 'false'
 InsertBraces: 'false'
+InsertNewlineAtEOF: 'true'
 KeepEmptyLinesAtEOF: 'false'
 KeepEmptyLinesAtTheStartOfBlocks: 'false'
 Language: Cpp

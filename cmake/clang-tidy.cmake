@@ -6,6 +6,7 @@ if (MELINDA_ENABLE_CLANG_TIDY)
         ${CLANG_TIDY_EXE};
         -format-style='file';
         -header-filter=${PROJECT_SOURCE_DIR}/src;
+        -extra-arg=-Wno-unknown-warning-option
     )
 endif()
 

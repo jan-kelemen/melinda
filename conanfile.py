@@ -36,3 +36,4 @@ class DanaConan(ConanFile):
         cmake = CMake(self)
         cmake.configure()
         cmake.build()
+

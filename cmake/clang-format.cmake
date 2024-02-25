@@ -7,3 +7,4 @@ add_custom_target(clang-format
     COMMAND 
         ${CLANG_FORMAT_EXE} -style=file -i ${ALL_SOURCE_FILES}
 )
+

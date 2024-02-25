@@ -20,6 +20,25 @@
   { include: [ "<wchar.h>", public, "<cwchar>", public ] },
   { include: [ "<wctype.h>", public, "<cwctype>", public ] },
 
+  # libstc++ aliases
+  { include: [ "<bits/chrono.h>", private, "<chrono>", public ] },
+  { include: [ "<bits/fs_path.h>", private, "<filesystem>", public ] },
+  { include: [ "<bits/local_lim.h>", private, "<limits.h>", public ] },
+  { include: [ "<bits/memory_resource.h>", private, "<memory_resource>", public ] },
+  { include: [ "<bits/refwrap.h>", private, "<functional>", public ] },
+  { include: [ "<bits/shared_ptr.h>", private, "<memory>", public ] },
+  { include: [ "<bits/std_function.h>", private, "<functional>", public ] },
+  { include: [ "<bits/stdint-intn.h>", private, "<stdint.h>", public ] },
+  { include: [ "<bits/stdint-uintn.h>", private, "<stdint.h>", public ] },
+  { include: [ "<bits/time.h>", private, "<time.h>", public ] },
+  { include: [ "<bits/types/clock_t.h>", private, "<time.h>", public ] },
+  { include: [ "<bits/types/mbstate_t.h>", private, "<wchar.h>", public ] },
+  { include: [ "<bits/types/struct_timespec.h>", private, "<time.h>", public ] },
+  { include: [ "<bits/types/struct_timeval.h>", private, "<time.h>", public ] },
+  { include: [ "<bits/types/struct_tm.h>", private, "<time.h>", public ] },
+  { include: [ "<bits/types/time_t.h>", private, "<time.h>", public ] },
+  { include: [ "<bits/utility.h>", private, "<utility>", public ] },
+  
   # Catch2 aliases
   { include: [ "<catch2/catch_message.hpp>", public, "<catch2/catch_test_macros.hpp>", public ] },
 
