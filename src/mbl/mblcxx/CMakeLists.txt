@@ -16,6 +16,11 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         INTERFACE
             tl::expected
     )
+
+    target_compile_definitions(mblcxx
+        INTERFACE
+            MELINDA_MBLCXX_USE_TL_EXPECTED
+    )
 endif()
 
 if (MELINDA_BUILD_TESTS)
