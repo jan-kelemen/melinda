@@ -18,6 +18,11 @@ namespace melinda::mqlast
     {
         syntax_tree rv;
 
+        if (parse_tree.empty())
+        {
+            return rv;
+        }
+
         for (auto const& child :
             mqlprs::tree_util::children_of_type<mqlprs::create_statement>(
                 parse_tree.root()))
@@ -26,7 +31,8 @@ namespace melinda::mqlast
                 mqlprs::tree_util::children_of_type<mqlprs::identifier>(child)};
             assert(std::distance(identifiers.begin(), identifiers.end()) == 1);
 
-            auto const& identifier{identifiers.begin()->lexeme()};
+            auto const& identifier{
+                identifiers.begin()->children().begin()->lexeme()};
             rv.commands.emplace_back(
                 create_schema_command{{identifier.begin(), identifier.end()}});
         }
