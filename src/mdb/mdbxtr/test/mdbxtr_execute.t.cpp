@@ -17,12 +17,12 @@ namespace
         working_directory_guard()
         {
             static std::mt19937 engine{std::random_device()()};
-            std::uniform_int_distribution<uint8_t> dist('A', 'z');
+            std::uniform_int_distribution<int> dist('A', 'z');
 
             std::array<char, L_tmpnam> buffer{};
             std::generate_n(buffer.begin(),
                 L_tmpnam - 1,
-                [&dist]() mutable { return dist(engine); });
+                [&dist]() mutable { return static_cast<char>(dist(engine)); });
 
             current_ = previous_ / buffer.data();
 

@@ -1,9 +1,19 @@
 #include <mdbxtr_execute.hpp>
 
+#include <mblcxx_result.hpp>
 #include <mqlast_from_parse_tree.hpp>
+#include <mqlast_syntax_tree.hpp>
 #include <mqlprs_parse.hpp>
 
+#include <lexy/parse_tree.hpp>
+
 #include <filesystem>
+#include <variant>
+
+// IWYU pragma: no_include <lexy/input/base.hpp>
+// IWYU pragma: no_include <lexy/_detail/iterator.hpp>
+// IWYU pragma: no_include <ranges>
+// IWYU pragma: no_include <vector>
 
 melinda::mblcxx::result<std::uint64_t> melinda::mdbxtr::execute(
     std::string_view sql_text)
