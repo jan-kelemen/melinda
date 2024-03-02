@@ -1,6 +1,6 @@
 #include <mdbxtr_execute.hpp>
 
-#include <mblcxx_result.hpp>
+#include <mblcxx_expected.hpp>
 #include <mqlast_from_parse_tree.hpp>
 #include <mqlast_syntax_tree.hpp>
 #include <mqlprs_parse.hpp>
@@ -15,20 +15,20 @@
 // IWYU pragma: no_include <ranges>
 // IWYU pragma: no_include <vector>
 
-melinda::mblcxx::result<std::uint64_t> melinda::mdbxtr::execute(
-    std::string_view sql_text)
+melinda::mblcxx::expected<std::uint64_t, std::error_code>
+melinda::mdbxtr::execute(std::string_view sql_text)
 {
     auto const parse_tree_result{mqlprs::parse(sql_text)};
     if (!parse_tree_result)
     {
-        return mblcxx::error<std::error_code>{
+        return mblcxx::unexpected{
             std::make_error_code(std::errc::invalid_argument)};
     }
 
     auto const ast_result{mqlast::from_parse_tree(*parse_tree_result)};
     if (!ast_result)
     {
-        return mblcxx::error<std::error_code>{
+        return mblcxx::unexpected{
             std::make_error_code(std::errc::invalid_argument)};
     }
 
@@ -46,17 +46,17 @@ melinda::mblcxx::result<std::uint64_t> melinda::mdbxtr::execute(
             {
                 if (ec)
                 {
-                    return mblcxx::error<std::error_code>{ec};
+                    return mblcxx::unexpected{ec};
                 }
-                return mblcxx::error<std::error_code>(
-                    std::make_error_code(std::errc::file_exists));
+                return mblcxx::unexpected{
+                    std::make_error_code(std::errc::file_exists)};
             }
             ++executed_commands;
         }
         else
         {
-            return mblcxx::error<std::error_code>(
-                std::make_error_code(std::errc::not_supported));
+            return mblcxx::unexpected{
+                std::make_error_code(std::errc::not_supported)};
         }
     }
 

@@ -11,7 +11,11 @@ option(MELINDA_ENABLE_CPPCHECK "Enable cppcheck in build" OFF)
 option(MELINDA_ENABLE_IWYU "Enable include-what-you-use in build" OFF)
 
 find_package(lexy REQUIRED)
-find_package(tl-expected REQUIRED)
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    find_package(tl-expected REQUIRED)
+endif()
+
 
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(CTest)

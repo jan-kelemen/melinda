@@ -1,7 +1,7 @@
 #ifndef MELINDA_MQLPRS_PARSE_INCLUDED
 #define MELINDA_MQLPRS_PARSE_INCLUDED
 
-#include <mblcxx_result.hpp>
+#include <mblcxx_expected.hpp>
 
 #include <mqlprs_parse_errors.hpp>
 
@@ -80,7 +80,7 @@ namespace melinda::mqlprs
     };
 
     template<typename Production = root>
-    [[nodiscard]] mblcxx::result<
+    [[nodiscard]] mblcxx::expected<
         lexy::parse_tree_for<lexy::string_input<lexy::utf8_char_encoding>>,
         parse_errors>
     parse(std::string_view query)
@@ -94,7 +94,7 @@ namespace melinda::mqlprs
                 lexy::collect<parse_errors>(error_callback{}))};
             !result)
         {
-            return mblcxx::error<parse_errors>{std::move(result).errors()};
+            return mblcxx::unexpected{std::move(result).errors()};
         }
 
         return tree;
