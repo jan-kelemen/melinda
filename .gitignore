@@ -1,6 +1,12 @@
+# Build output
 build/
-.vs/
-.cache/
 ConanPresets.json
+
+# User files
 CMakeUserPresets.json
 compile_commands.json
+
+# IDEs
+.vs/
+.idea/
+.cache/
