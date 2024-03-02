@@ -2,12 +2,13 @@
 
 #include <mqlast_syntax_tree.hpp>
 
-#include <mblcxx_result.hpp>
+#include <mblcxx_expected.hpp>
 #include <mqlprs_parse.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 
 #include <string_view>
+#include <system_error>
 
 // IWYU pragma: no_include <lexy/_detail/iterator.hpp>
 // IWYU pragma: no_include <lexy/input/base.hpp>
@@ -21,7 +22,8 @@ using namespace melinda;
 
 namespace
 {
-    mblcxx::result<mqlast::syntax_tree> from_query(std::string_view query)
+    mblcxx::expected<mqlast::syntax_tree, std::error_code> from_query(
+        std::string_view query)
     {
         auto parse_tree{mqlprs::parse(query)};
         REQUIRE(parse_tree);

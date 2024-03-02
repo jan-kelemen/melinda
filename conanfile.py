@@ -15,7 +15,9 @@ class DanaConan(ConanFile):
 
     def requirements(self):
         self.requires("foonathan-lexy/2022.12.1")
-        self.requires("tl-expected/20190710")
+
+        if self.settings.compiler == "clang":
+            self.requires("tl-expected/20190710")
 
     def build_requirements(self):
         self.tool_requires("cmake/[^3.27]")

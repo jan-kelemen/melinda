@@ -6,15 +6,16 @@
 #include <mqlprs_parse.hpp>
 #include <mqlprs_tree_util.hpp>
 
-#include <mblcxx_result.hpp>
+#include <mblcxx_expected.hpp>
 
 #include <cassert>
+#include <system_error>
 
 namespace melinda::mqlast
 {
     template<typename T>
-    [[nodiscard]] mblcxx::result<syntax_tree> from_parse_tree(
-        T const& parse_tree)
+    [[nodiscard]] mblcxx::expected<syntax_tree, std::error_code>
+    from_parse_tree(T const& parse_tree)
     {
         syntax_tree rv;
 
