@@ -1,9 +1,11 @@
 #include <mdbxtr_execute.hpp>
 
+#include <mblcxx_result.hpp>
+
 #include <catch2/catch_test_macros.hpp>
 
+#include <algorithm>
 #include <array>
-#include <cstdio>
 #include <filesystem>
 #include <random>
 
